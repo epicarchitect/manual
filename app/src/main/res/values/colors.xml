@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="brand">#4CAF50</color>
+    <color name="chest_background">#EEF3EE</color>
+    <color name="favorite">#FFC107</color>
+</resources>

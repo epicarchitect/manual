@@ -1,0 +1,49 @@
+<resources>
+    <string name="app_name">Справочник</string>
+
+    <dimen name="unblockOfferLayout_marginTop">100dp</dimen>
+
+    <string name="premium_productId">android.test.purchased</string>
+    <string name="admob_application_id">ca-app-pub-3940256099942544~3347511713</string>
+    <string name="admob_publisher_id">pub-3562401600467746</string>
+    <string name="admob_rewardedAd_id">ca-app-pub-3940256099942544/5224354917</string>
+    <string name="privacyPolicy_url">https://alexander-kolmachikhin.github.io/projects/epic_to_to_list/privacy_policy.html</string>
+
+    <string name="settings_title">Настройки</string>
+    <string name="settings_fontSize_description">Размер текста</string>
+    <string name="settings_gdpr_description">Настройки рекламы</string>
+    <string name="settings_changeGdpr_button">Изменить настройки</string>
+    <string name="settings_backgrounds_description">Фон приложения</string>
+
+    <string name="chapters_title">Статьи</string>
+    <string name="chapters_searchHint">Поиск по названию</string>
+    <string name="chapters_tags_button">Теги</string>
+    <string name="chapters_tagsCount_button">Теги (%d)</string>
+    <string name="chapters_noSelectedTags_description">Теги не выбраны.</string>
+    <string name="chapters_noItems_description">Статьи не найдены.</string>
+    <string name="chapters_menu_settings_button">Настройки</string>
+    <string name="chapters_menu_review_button">Написать отзыв</string>
+    <string name="chapters_favoriteGroup_title">Избранное</string>
+    <string name="chapters_openPlayMarketFailed">Не удалось открыть Play market</string>
+    <string name="chapters_premiumOffer_learnMore">Узнать больше</string>
+    <string name="chapters_premiumOffer_description">Данная статья доступна только в полной версии.</string>
+    <string name="chapters_chest_item_title">Наш сундучок</string>
+
+    <string name="tagSelection_title">Теги</string>
+    <string name="tagSelection_apply_button">Применить</string>
+    <string name="tagSelection_selectAll_button">Выбрать все</string>
+    <string name="tagSelection_clearAll_button">Очистить все</string>
+
+    <string name="chapter_copyText_button">Скопировать текст</string>
+    <string name="chapter_copied_description">Скопированно</string>
+
+    <string name="premiumOfferFragment_title">Полная версия</string>
+    <string name="premiumOfferFragment_priceTitle">Одноразовый платеж</string>
+    <string name="premiumOfferFragment_buy">Получить полную версию</string>
+    <string name="premiumOfferFragment_finished">Полная версия разблокирована!</string>
+
+    <string name="unblockOffer_description">Чтобы продолжить читать статью</string>
+    <string name="unblockOffer_showAd">Посмотреть рекламу</string>
+    <string name="unblockOffer_or">или</string>
+    <string name="unblockOffer_buyPremium">Купить полную версию</string>
+</resources>

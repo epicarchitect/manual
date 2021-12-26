@@ -1,0 +1,134 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <style name="Base" parent="" />
+
+    <style name="Base.Widget" parent="android:Widget" />
+
+    <style name="Base.ShapeAppearanceOverlay" />
+
+    <style name="Base.ThemeOverlay" />
+
+    <style name="Base.Dialog" parent="Theme.MaterialComponents.DayNight.Dialog" />
+
+    <style name="Base.Activity.Launcher" />
+
+    <style name="Base.Activity" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="android:forceDarkAllowed" tools:targetApi="q">false</item>
+        <item name="android:statusBarColor">?android:attr/colorBackground</item>
+        <item name="android:navigationBarColor">?android:attr/colorBackground</item>
+        <item name="android:overScrollMode">never</item>
+        <item name="android:splitMotionEvents">false</item>
+        <item name="android:datePickerDialogTheme">@style/Base.Dialog.DatePicker</item>
+        <item name="android:timePickerDialogTheme">@style/Base.Dialog.TimePicker</item>
+        <item name="textInputStyle">@style/Base.Widget.TextInputLayout.OutlinedBox.Dense</item>
+        <item name="materialButtonStyle">@style/Base.Widget.Button.TextButton</item>
+        <item name="materialCardViewStyle">@style/Base.Widget.CardView</item>
+        <item name="editTextStyle">@style/Base.Widget.TextInputEditText.OutlinedBox.Dense</item>
+        <item name="android:scrollViewStyle">@style/Base.Widget.ScrollView</item>
+        <item name="chipStyle">@style/Base.Widget.Chip.Action</item>
+        <item name="bottomSheetDialogTheme">@style/Base.BottomSheetDialog</item>
+        <item name="android:listViewStyle">@style/Base.Widget.ListView</item>
+        <item name="navigationViewStyle">@style/Base.Widget.NavigationView</item>
+        <item name="toolbarStyle">@style/Base.Widget.Toolbar</item>
+        <item name="appBarLayoutStyle">@style/Base.Widget.AppBarLayout</item>
+    </style>
+
+    <style name="Base.Widget.AppBarLayout" parent="Widget.Design.AppBarLayout">
+        <item name="android:stateListAnimator">@null</item>
+        <item name="android:elevation">0dp</item>
+        <item name="android:background">?android:attr/colorBackground</item>
+    </style>
+
+    <style name="Base.Widget.Toolbar" parent="Widget.MaterialComponents.Toolbar.Surface">
+        <item name="android:background">@android:color/transparent</item>
+        <item name="contentInsetStart">0dp</item>
+        <item name="android:elevation">0dp</item>
+        <item name="navigationIconTint">?attr/colorControlNormal</item>
+    </style>
+
+    <style name="Base.Widget.NavigationView" parent="Widget.MaterialComponents.NavigationView">
+        <item name="android:background">?android:attr/colorBackground</item>
+        <item name="itemMaxLines">3</item>
+    </style>
+
+    <style name="Base.Widget.TextInputLayout.OutlinedBox.Dense" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense">
+        <item name="boxStrokeWidth">1dp</item>
+        <item name="boxStrokeWidthFocused">1dp</item>
+        <item name="materialThemeOverlay">@style/Base.ThemeOverlay.TextInputEditText.OutlinedBox.Dense</item>
+    </style>
+
+    <style name="Base.ThemeOverlay.TextInputEditText.OutlinedBox.Dense" parent="ThemeOverlay.MaterialComponents.TextInputEditText.OutlinedBox.Dense">
+        <item name="editTextStyle">@style/Base.Widget.TextInputEditText.OutlinedBox.Dense</item>
+    </style>
+
+    <style name="Base.Widget.TextInputEditText.OutlinedBox.Dense" parent="Widget.MaterialComponents.TextInputEditText.OutlinedBox.Dense">
+        <item name="android:importantForAutofill" tools:targetApi="o">no</item>
+    </style>
+
+    <style name="Base.Dialog.DatePicker">
+        <item name="android:windowBackground">@drawable/dialog_window_background</item>
+        <item name="colorPrimary">?attr/colorAccent</item> <!-- Api 23, 24 support -->
+    </style>
+
+    <style name="Base.Dialog.TimePicker">
+        <item name="android:windowBackground">@drawable/dialog_window_background</item>
+        <item name="colorPrimary">?attr/colorAccent</item> <!-- Api 23, 24 support -->
+    </style>
+
+    <style name="Base.Widget.Button.TextButton" parent="Widget.MaterialComponents.Button.TextButton">
+        <item name="cornerRadius">24dp</item>
+        <item name="android:paddingStart">12dp</item>
+        <item name="android:paddingEnd">12dp</item>
+        <item name="iconSize">18dp</item>
+    </style>
+
+    <style name="Base.Widget.CardView" parent="Widget.MaterialComponents.CardView">
+        <item name="cardCornerRadius">24dp</item>
+        <item name="cardElevation">3dp</item>
+    </style>
+
+    <style name="Base.Widget.ScrollView">
+        <item name="android:scrollbars">none</item>
+    </style>
+
+    <style name="Base.Widget.ListView" parent="Widget.AppCompat.ListView">
+        <item name="android:scrollbars">none</item>
+        <item name="android:divider">@null</item>
+    </style>
+
+    <style name="Base.Widget.Chip.Action" parent="Widget.MaterialComponents.Chip.Action">
+        <item name="chipIconSize">18dp</item>
+        <item name="iconStartPadding">4dp</item>
+        <item name="chipIconTint">?attr/colorControlNormal</item>
+    </style>
+
+    <style name="Base.BottomSheetDialog" parent="Theme.MaterialComponents.DayNight.BottomSheetDialog">
+        <item name="android:overScrollMode">never</item>
+        <item name="android:splitMotionEvents">false</item>
+        <item name="android:datePickerDialogTheme">@style/Base.Dialog.DatePicker</item>
+        <item name="android:timePickerDialogTheme">@style/Base.Dialog.TimePicker</item>
+        <item name="textInputStyle">@style/Base.Widget.TextInputLayout.OutlinedBox.Dense</item>
+        <item name="materialButtonStyle">@style/Base.Widget.Button.TextButton</item>
+        <item name="materialCardViewStyle">@style/Base.Widget.CardView</item>
+        <item name="editTextStyle">@style/Base.Widget.TextInputEditText.OutlinedBox.Dense</item>
+        <item name="android:scrollViewStyle">@style/Base.Widget.ScrollView</item>
+        <item name="chipStyle">@style/Base.Widget.Chip.Action</item>
+        <item name="bottomSheetDialogTheme">@style/Base.BottomSheetDialog</item>
+        <item name="android:listViewStyle">@style/Base.Widget.ListView</item>
+        <item name="navigationViewStyle">@style/Base.Widget.NavigationView</item>
+        <item name="toolbarStyle">@style/Base.Widget.Toolbar</item>
+        <item name="bottomSheetStyle">@style/Base.Widget.BottomSheet</item>
+    </style>
+
+    <style name="Base.Widget.BottomSheet" parent="Widget.MaterialComponents.BottomSheet">
+        <item name="shapeAppearanceOverlay">@style/Base.ShapeAppearanceOverlay.BottomSheet</item>
+    </style>
+
+    <style name="Base.ShapeAppearanceOverlay.BottomSheet" parent="ShapeAppearanceOverlay.MaterialComponents.BottomSheet">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSizeTopRight">24dp</item>
+        <item name="cornerSizeTopLeft">24dp</item>
+        <item name="cornerSizeBottomRight">0dp</item>
+        <item name="cornerSizeBottomLeft">0dp</item>
+    </style>
+</resources>

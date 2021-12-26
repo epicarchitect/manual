@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Activity.Launcher" parent="Base.Activity.Launcher">
+        <item name="android:windowBackground">@drawable/bg_launcher</item>
+        <item name="android:colorBackground">@android:color/background_dark</item>
+    </style>
+
+    <style name="Activity" parent="Base.Activity">
+        <item name="android:colorBackground">@android:color/background_dark</item>
+        <item name="colorPrimary">@color/brand</item>
+        <item name="colorPrimaryDark">@color/brand</item>
+        <item name="colorSecondary">@color/brand</item>
+        <item name="colorOnSecondary">@android:color/white</item>
+        <item name="colorAccent">@color/brand</item>
+        <item name="android:datePickerDialogTheme">@style/Dialog.DatePicker</item>
+        <item name="android:timePickerDialogTheme">@style/Dialog.TimePicker</item>
+        <item name="bottomSheetDialogTheme">@style/BottomSheetDialog</item>
+    </style>
+
+    <style name="Dialog.DatePicker" parent="Base.Dialog.DatePicker">
+        <item name="colorAccent">@color/brand</item>
+        <item name="colorOnPrimary">@color/brand</item>
+        <item name="colorSurface">#222</item>
+    </style>
+
+    <style name="Dialog.TimePicker" parent="Base.Dialog.TimePicker">
+        <item name="colorAccent">@color/brand</item>
+        <item name="colorOnPrimary">@color/brand</item>
+        <item name="colorSurface">#222</item>
+    </style>
+
+    <style name="BottomSheetDialog" parent="Base.BottomSheetDialog">
+        <item name="colorPrimary">@color/brand</item>
+        <item name="colorPrimaryDark">@color/brand</item>
+        <item name="colorSecondary">@color/brand</item>
+        <item name="colorOnSecondary">@android:color/white</item>
+        <item name="colorAccent">@color/brand</item>
+    </style>
+</resources>

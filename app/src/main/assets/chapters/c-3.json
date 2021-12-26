@@ -1,0 +1,13 @@
+{
+  "id": 3,
+  "name": "Chapter 3",
+  "tagIds": [
+    4,
+    5
+  ],
+  "contentIds": [
+    0,
+    1,
+    1
+  ]
+}

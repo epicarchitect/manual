@@ -1,0 +1,13 @@
+{
+  "unblockContentsByAds": true,
+  "restrictChapters": true,
+  "restrictContents": true,
+  "availableChapterIds": [
+    2,
+    3
+  ],
+  "availableContentIds": [
+    6,
+    7
+  ]
+}
