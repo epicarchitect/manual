@@ -35,9 +35,6 @@ class App : Application() {
     }
 
     fun singlesModule() = module(createdAtStart = true) {
-        single {
-
-        }
         single { Room.databaseBuilder(this@App, MainDatabase::class.java, "main").build() }
         single { get<MainDatabase>().favoriteChapterIdsDao }
         single { get<MainDatabase>().unblockedContentIdsDao }
