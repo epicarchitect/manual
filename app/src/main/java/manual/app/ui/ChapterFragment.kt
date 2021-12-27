@@ -129,7 +129,6 @@ class ChapterFragment(
                 }
 
                 if (item.isBlocked) {
-                    textView.setOnLongClickListener(null)
                     unblockLayout.isVisible = true
                     buyButton.setOnClickListener {
                         delegate.navigateToPremiumOffer(this@ChapterFragment)
@@ -155,26 +154,6 @@ class ChapterFragment(
                         showAdButton.setOnClickListener(null)
                     }
                 } else {
-                    textView.setOnLongClickListener {
-                        val copyItem = getString(R.string.chapter_copyText_button)
-                        it.showPopupMenu(listOf(copyItem)) {
-                            when (it) {
-                                copyItem -> {
-                                    val clipboardManager = requireContext().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-                                    clipboardManager.setPrimaryClip(
-                                        ClipData.newPlainText(
-                                            item.name,
-                                            item.html
-                                        )
-                                    )
-                                    Toast.makeText(requireContext(), R.string.chapter_copied_description, Toast.LENGTH_SHORT).show()
-                                }
-                            }
-                        }
-
-                        true
-                    }
-
                     unblockLayout.isVisible = false
                     buyButton.setOnClickListener(null)
                     showAdButton.setOnClickListener(null)

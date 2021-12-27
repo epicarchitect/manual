@@ -34,9 +34,6 @@
     <string name="tagSelection_selectAll_button">Выбрать все</string>
     <string name="tagSelection_clearAll_button">Очистить все</string>
 
-    <string name="chapter_copyText_button">Скопировать текст</string>
-    <string name="chapter_copied_description">Скопированно</string>
-
     <string name="premiumOfferFragment_title">Полная версия</string>
     <string name="premiumOfferFragment_priceTitle">Одноразовый платеж</string>
     <string name="premiumOfferFragment_buy">Получить полную версию</string>
