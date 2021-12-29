@@ -4,24 +4,30 @@ import android.graphics.Color
 import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Bundle
+import androidx.core.content.edit
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import androidx.fragment.app.commit
 import com.bumptech.glide.Glide
-import com.bumptech.glide.request.target.Target
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.target.Target
+import com.google.android.play.core.review.ReviewManagerFactory
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import manual.app.R
 import manual.app.ads.GDPRHelper
 import manual.app.ads.RewardedVideoManager
-import manual.app.data.AppBackground
 import manual.app.databinding.AppActivityBinding
+import manual.app.premium.PremiumManager
 import manual.app.repository.AppBackgroundsRepository
+import manual.app.repository.MonetizationConfigRepository
 import manual.core.activity.CoreActivity
+import manual.core.coroutines.flow.launchWith
 import manual.core.fragment.FragmentFactoryStore
 import manual.core.fragment.setFactory
 import manual.core.koin.attachKoinModule
@@ -32,6 +38,17 @@ class AppActivity : CoreActivity<AppActivityBinding>(AppActivityBinding::inflate
     private val fontScaleManager: FontScaleManager by inject()
     private val appBackgroundsRepository: AppBackgroundsRepository by inject()
     private val nightModeManager: NightModeManager by inject()
+    private val premiumManager: PremiumManager by inject()
+    private val monetizationConfigRepository: MonetizationConfigRepository by inject()
+    private val preferences by lazy { getSharedPreferences("AppActivity", MODE_PRIVATE) }
+
+    private var reviewRequested
+        get() = preferences.getBoolean("reviewRequested", false)
+        set(value) = preferences.edit { putBoolean("reviewRequested", value) }
+
+    private var openCount
+        get() = preferences.getInt("openCount", 0)
+        set(value) = preferences.edit { putInt("openCount", value) }
 
     override fun getThemeResourceId() = R.style.Activity
 
@@ -100,6 +117,37 @@ class AppActivity : CoreActivity<AppActivityBinding>(AppActivityBinding::inflate
 
         if (!isRecreated) {
             navigate<ChaptersFragment>(addToBackStack = false)
+        }
+
+        if (!reviewRequested) {
+            combine(
+                premiumManager.premiumEnabledFlow().filterNotNull(),
+                monetizationConfigRepository.monetizationConfigFlow()
+            ) { premiumEnabled, config ->
+                val minOpenCount = when {
+                    premiumEnabled || !config.restrictContents && !config.restrictChapters -> 5
+                    else -> 15
+                }
+
+                if (!reviewRequested && openCount >= minOpenCount) {
+                    requestReview()
+                }
+            }.launchWith(this@AppActivity)
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        openCount++
+    }
+
+    private fun requestReview() = with(ReviewManagerFactory.create(this)) {
+        requestReviewFlow().addOnCompleteListener { request ->
+            if (request.isSuccessful) {
+                launchReviewFlow(this@AppActivity, request.result).addOnCompleteListener {
+                    reviewRequested = true
+                }
+            }
         }
     }
 
