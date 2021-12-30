@@ -110,8 +110,12 @@ class AppActivity : CoreActivity<AppActivityBinding>(AppActivityBinding::inflate
                 nightModeManager.mode = NightModeManager.Mode.NOT_NIGHT
             }
 
-            if (appBackground != AppBackgroundsRepository.nightAppBackground && appBackground != AppBackgroundsRepository.lightAppBackground) {
+            if (appBackground != AppBackgroundsRepository.lightAppBackground) {
                 window.statusBarColor = Color.BLACK
+                window.navigationBarColor = Color.BLACK
+            } else {
+                window.statusBarColor = Color.WHITE
+                window.navigationBarColor = Color.WHITE
             }
         }
 
