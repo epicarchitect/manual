@@ -14,7 +14,13 @@ import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
-import com.google.android.play.core.review.ReviewManagerFactory
+import com.google.android.material.snackbar.Snackbar
+import com.google.android.play.core.appupdate.AppUpdateManager
+import com.google.android.play.core.install.InstallStateUpdatedListener
+import com.google.android.play.core.install.model.AppUpdateType
+import com.google.android.play.core.install.model.InstallStatus
+import com.google.android.play.core.install.model.UpdateAvailability
+import com.google.android.play.core.review.ReviewManager
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
@@ -39,6 +45,8 @@ class AppActivity : CoreActivity<AppActivityBinding>(AppActivityBinding::inflate
     private val appBackgroundsRepository: AppBackgroundsRepository by inject()
     private val nightModeManager: NightModeManager by inject()
     private val premiumManager: PremiumManager by inject()
+    private val appUpdateManager: AppUpdateManager by inject()
+    private val reviewManager: ReviewManager by inject()
     private val monetizationConfigRepository: MonetizationConfigRepository by inject()
     private val preferences by lazy { getSharedPreferences("AppActivity", MODE_PRIVATE) }
 
@@ -49,6 +57,18 @@ class AppActivity : CoreActivity<AppActivityBinding>(AppActivityBinding::inflate
     private var openCount
         get() = preferences.getInt("openCount", 0)
         set(value) = preferences.edit { putInt("openCount", value) }
+
+    private val installStateUpdatedListener = InstallStateUpdatedListener {
+        if (it.installStatus() == InstallStatus.DOWNLOADED) {
+            Snackbar.make(
+                requireBinding().root,
+                R.string.app_updateDownloaded_description,
+                Snackbar.LENGTH_INDEFINITE
+            ).setAction(R.string.app_completeUpdate_button) {
+                appUpdateManager.completeUpdate()
+            }.show()
+        }
+    }
 
     override fun getThemeResourceId() = R.style.Activity
 
@@ -134,9 +154,36 @@ class AppActivity : CoreActivity<AppActivityBinding>(AppActivityBinding::inflate
                 }
 
                 if (!reviewRequested && openCount >= minOpenCount) {
-                    requestReview()
+                    with(reviewManager) {
+                        requestReviewFlow().addOnCompleteListener { request ->
+                            if (request.isSuccessful) {
+                                launchReviewFlow(this@AppActivity, request.result).addOnCompleteListener {
+                                    reviewRequested = true
+                                }
+                            }
+                        }
+                    }
                 }
             }.launchWith(this@AppActivity)
+        }
+
+        appUpdateManager.appUpdateInfo.addOnSuccessListener { appUpdateInfo ->
+            if (appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE) {
+                if (appUpdateInfo.installStatus() != InstallStatus.DOWNLOADING) {
+                    Snackbar.make(
+                        root,
+                        R.string.app_updateAvailable_description,
+                        Snackbar.LENGTH_INDEFINITE
+                    ).setAction(R.string.app_downloadUpdate_button) {
+                        appUpdateManager.startUpdateFlowForResult(
+                            appUpdateInfo,
+                            AppUpdateType.FLEXIBLE,
+                            this@AppActivity,
+                            RequestCode.APP_UPDATE
+                        )
+                    }.show()
+                }
+            }
         }
     }
 
@@ -145,14 +192,14 @@ class AppActivity : CoreActivity<AppActivityBinding>(AppActivityBinding::inflate
         openCount++
     }
 
-    private fun requestReview() = with(ReviewManagerFactory.create(this)) {
-        requestReviewFlow().addOnCompleteListener { request ->
-            if (request.isSuccessful) {
-                launchReviewFlow(this@AppActivity, request.result).addOnCompleteListener {
-                    reviewRequested = true
-                }
-            }
-        }
+    override fun onStart() {
+        super.onStart()
+        appUpdateManager.registerListener(installStateUpdatedListener)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        appUpdateManager.unregisterListener(installStateUpdatedListener)
     }
 
     inline fun <reified T : Fragment> navigate(
@@ -212,5 +259,9 @@ class AppActivity : CoreActivity<AppActivityBinding>(AppActivityBinding::inflate
                 navigate<ChapterFragment>(bundleOf(ChapterFragment.Argument.Int.CHAPTER_ID to chapterId))
             }
         }
+    }
+
+    object RequestCode {
+        const val APP_UPDATE = 12
     }
 }

@@ -4,13 +4,15 @@ import android.app.Application
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.preferencesDataStoreFile
 import androidx.room.Room
+import com.google.android.play.core.appupdate.AppUpdateManagerFactory
+import com.google.android.play.core.review.ReviewManagerFactory
 import com.google.gson.GsonBuilder
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import manual.app.database.MainDatabase
 import manual.app.premium.BillingClientManager
 import manual.app.premium.PremiumManager
 import manual.app.repository.*
-import manual.app.database.MainDatabase
 import manual.app.ui.FontScaleManager
 import manual.app.ui.NightModeManager
 import manual.app.viewmodel.ChapterViewModel
@@ -35,6 +37,8 @@ class App : Application() {
     }
 
     fun singlesModule() = module(createdAtStart = true) {
+        single { ReviewManagerFactory.create(this@App) }
+        single { AppUpdateManagerFactory.create(this@App) }
         single { Room.databaseBuilder(this@App, MainDatabase::class.java, "main").build() }
         single { get<MainDatabase>().favoriteChapterIdsDao }
         single { get<MainDatabase>().unblockedContentIdsDao }

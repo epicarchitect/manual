@@ -1,5 +1,9 @@
 <resources>
     <string name="app_name">Справочник</string>
+    <string name="app_updateAvailable_description">Доступна новая версия приложения</string>
+    <string name="app_updateDownloaded_description">Обновление приложения скачано</string>
+    <string name="app_downloadUpdate_button">Скачать</string>
+    <string name="app_completeUpdate_button">Установить</string>
 
     <dimen name="unblockOfferLayout_marginTop">100dp</dimen>
 
