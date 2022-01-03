@@ -1,7 +1,0 @@
-<layer-list android:opacity="opaque"
-    xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:drawable="@android:color/background_dark"/>
-    <item>
-        <bitmap android:gravity="center" android:src="@drawable/splash"/>
-    </item>
-</layer-list>

@@ -2,14 +2,11 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
 
     <style name="Activity.Launcher" parent="Base.Activity.Launcher">
-        <item name="android:windowBackground">@drawable/bg_launcher</item>
-        <item name="android:colorBackground">@android:color/background_light</item>
-        <item name="android:windowLightStatusBar" tools:targetApi="m">true</item>
+        <item name="android:colorBackground">@android:color/background_dark</item>
     </style>
 
     <style name="Activity" parent="Base.Activity">
-        <item name="android:colorBackground">@android:color/background_light</item>
-        <item name="android:windowLightStatusBar" tools:targetApi="m">true</item>
+        <item name="android:colorBackground">@android:color/background_dark</item>
         <item name="colorPrimary">@color/brand</item>
         <item name="colorPrimaryDark">@color/brand</item>
         <item name="colorSecondary">@color/brand</item>

@@ -3,10 +3,10 @@
 
     <item>
         <shape android:shape="rectangle">
-            <gradient android:centerColor="?android:attr/colorBackground"
+            <gradient android:centerColor="?android:attr/colorButtonNormal"
                 android:angle="90"
                 android:centerY="0.85"
-                android:startColor="?android:attr/colorBackground"/>
+                android:startColor="?android:attr/colorButtonNormal"/>
         </shape>
     </item>
 </selector>

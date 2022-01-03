@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <style name="Activity.Launcher" parent="Base.Activity.Launcher">
-        <item name="android:windowBackground">@drawable/bg_launcher</item>
         <item name="android:colorBackground">@android:color/background_dark</item>
     </style>
 

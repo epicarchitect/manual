@@ -47,4 +47,6 @@
     <string name="unblockOffer_showAd">Посмотреть рекламу</string>
     <string name="unblockOffer_or">или</string>
     <string name="unblockOffer_buyPremium">Купить полную версию</string>
+
+    <string name="launch_nextButton">Продолжить</string>
 </resources>

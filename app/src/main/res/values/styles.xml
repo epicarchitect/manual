@@ -14,8 +14,8 @@
 
     <style name="Base.Activity" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="android:forceDarkAllowed" tools:targetApi="q">false</item>
-        <item name="android:statusBarColor">?android:attr/colorBackground</item>
-        <item name="android:navigationBarColor">?android:attr/colorBackground</item>
+        <item name="android:statusBarColor">@android:color/black</item>
+        <item name="android:navigationBarColor">@android:color/black</item>
         <item name="android:overScrollMode">never</item>
         <item name="android:splitMotionEvents">false</item>
         <item name="android:datePickerDialogTheme">@style/Base.Dialog.DatePicker</item>

@@ -84,6 +84,7 @@ class AppActivity : CoreActivity<AppActivityBinding>(AppActivityBinding::inflate
         setFactory { ChaptersFragment(ChaptersFragmentDelegate()) }
         setFactory { ChapterFragment(ChapterFragmentDelegate()) }
         setFactory { ChestFragment(ChestFragmentDelegate()) }
+        setFactory { LaunchFragment(LaunchFragmentDelegate()) }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -97,30 +98,15 @@ class AppActivity : CoreActivity<AppActivityBinding>(AppActivityBinding::inflate
 
             when (appBackground) {
                 AppBackgroundsRepository.lightAppBackground -> {
-                    root.setBackgroundResource(android.R.color.background_light)
+                    backgroundImageView.setBackgroundResource(android.R.color.background_light)
                 }
                 AppBackgroundsRepository.nightAppBackground -> {
-                    root.setBackgroundResource(android.R.color.background_dark)
+                    backgroundImageView.setBackgroundResource(android.R.color.background_dark)
                 }
                 else -> {
-                    Glide.with(root).load(Uri.parse("file:///android_asset/${appBackground.source}")).listener(
-                        object : RequestListener<Drawable> {
-                            override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {
-                                return true
-                            }
-
-                            override fun onResourceReady(
-                                resource: Drawable?,
-                                model: Any?,
-                                target: Target<Drawable>?,
-                                dataSource: DataSource?,
-                                isFirstResource: Boolean
-                            ): Boolean {
-                                root.background = resource
-                                return true
-                            }
-                        }
-                    ).submit()
+                    Glide.with(backgroundImageView)
+                        .load(Uri.parse("file:///android_asset/${appBackground.source}"))
+                        .into(backgroundImageView)
                 }
             }
 
@@ -129,18 +115,18 @@ class AppActivity : CoreActivity<AppActivityBinding>(AppActivityBinding::inflate
             } else {
                 nightModeManager.mode = NightModeManager.Mode.NOT_NIGHT
             }
-
-            if (appBackground != AppBackgroundsRepository.lightAppBackground) {
-                window.statusBarColor = Color.BLACK
-                window.navigationBarColor = Color.BLACK
-            } else {
-                window.statusBarColor = Color.WHITE
-                window.navigationBarColor = Color.WHITE
-            }
         }
 
         if (!isRecreated) {
-            navigate<ChaptersFragment>(addToBackStack = false)
+            supportFragmentManager.commit {
+                replace(
+                    R.id.fragmentContainerView,
+                    ChaptersFragment::class.java,
+                    null
+                )
+            }
+
+            navigate<LaunchFragment>()
         }
 
         if (!reviewRequested) {
@@ -204,10 +190,9 @@ class AppActivity : CoreActivity<AppActivityBinding>(AppActivityBinding::inflate
 
     inline fun <reified T : Fragment> navigate(
         arguments: Bundle? = null,
-        addToBackStack: Boolean = true,
         tag: String? = T::class.java.name
     ) = supportFragmentManager.commit {
-        if (addToBackStack) addToBackStack(null)
+        addToBackStack(null)
         setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
         replace(
             R.id.fragmentContainerView,
@@ -258,6 +243,12 @@ class AppActivity : CoreActivity<AppActivityBinding>(AppActivityBinding::inflate
             } else {
                 navigate<ChapterFragment>(bundleOf(ChapterFragment.Argument.Int.CHAPTER_ID to chapterId))
             }
+        }
+    }
+
+    private inner class LaunchFragmentDelegate : LaunchFragment.Delegate {
+        override fun onNext() {
+            supportFragmentManager.popBackStack()
         }
     }
 
