@@ -20,6 +20,6 @@
         android:layout_margin="44dp"
         android:text="@string/launch_nextButton"
         android:textAppearance="?attr/textAppearanceOverline"
-        android:textColor="@android:color/white"
+        android:textColor="@color/launch_nextButton"
         android:textSize="20sp" />
 </FrameLayout>
