@@ -5,12 +5,10 @@
     <string name="app_downloadUpdate_button">Скачать</string>
     <string name="app_completeUpdate_button">Установить</string>
 
-    <dimen name="unblockOfferLayout_marginTop">100dp</dimen>
-
     <string name="premium_productId">android.test.purchased</string>
     <string name="admob_application_id">ca-app-pub-3940256099942544~3347511713</string>
     <string name="admob_publisher_id">pub-3562401600467746</string>
-    <string name="admob_rewardedAd_id">ca-app-pub-3940256099942544/5224354917</string>
+    <string name="admob_interstitialAd_id">ca-app-pub-3940256099942544/1033173712</string>
     <string name="privacyPolicy_url">https://alexander-kolmachikhin.github.io/projects/epic_to_to_list/privacy_policy.html</string>
 
     <string name="settings_title">Настройки</string>
@@ -43,10 +41,9 @@
     <string name="premiumOfferFragment_buy">Получить полную версию</string>
     <string name="premiumOfferFragment_finished">Полная версия разблокирована!</string>
 
-    <string name="unblockOffer_description">Чтобы продолжить читать статью</string>
-    <string name="unblockOffer_showAd">Посмотреть рекламу</string>
-    <string name="unblockOffer_or">или</string>
-    <string name="unblockOffer_buyPremium">Купить полную версию</string>
-
     <string name="launch_nextButton">Продолжить</string>
+
+    <string name="removeAdsOffer_title">Предложение</string>
+    <string name="removeAdsOffer_description">Хотите отключить рекламу?</string>
+    <string name="removeAdsOffer_learMore_button">Узнать больше</string>
 </resources>

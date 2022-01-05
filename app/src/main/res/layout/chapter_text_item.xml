@@ -3,78 +3,27 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:layout_marginTop="16dp">
 
     <TextView
         android:id="@+id/name_textView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
+        android:paddingHorizontal="16dp"
         android:textAppearance="?attr/textAppearanceHeadline6"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginBottom="5dp"
         tools:text="@tools:sample/lorem" />
 
     <TextView
         android:id="@+id/textView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="2dp"
         android:paddingHorizontal="16dp"
-        android:paddingTop="2dp"
-        android:paddingBottom="4dp"
         android:textAppearance="?attr/textAppearanceBody1"
         app:layout_constraintTop_toBottomOf="@id/name_textView"
         tools:text="@tools:sample/lorem/random" />
-
-    <LinearLayout
-        android:id="@+id/unblock_layout"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        app:layout_constraintHeight_min="wrap"
-        android:background="@drawable/blocking_background"
-        android:clickable="true"
-        android:focusable="true"
-        android:gravity="center"
-        android:orientation="vertical"
-        android:visibility="gone"
-        app:layout_constraintTop_toBottomOf="@id/name_textView"
-        app:layout_constraintBottom_toBottomOf="@id/textView"
-        android:layout_marginTop="@dimen/unblockOfferLayout_marginTop"
-        tools:visibility="visible">
-
-        <TextView
-            android:id="@+id/description_textView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="34dp"
-            android:layout_marginHorizontal="16dp"
-            android:gravity="center"
-            android:text="@string/unblockOffer_description" />
-
-        <Button
-            android:id="@+id/showAd_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="8dp"
-            android:text="@string/unblockOffer_showAd" />
-
-        <TextView
-            android:id="@+id/or_textView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="@string/unblockOffer_or" />
-
-        <Button
-            android:id="@+id/buy_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="8dp"
-            android:text="@string/unblockOffer_buyPremium" />
-
-    </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

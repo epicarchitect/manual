@@ -24,7 +24,6 @@ class ChapterViewModel(
     chaptersRepository: ChaptersRepository,
     contentsRepository: ContentsRepository,
     private val favoriteChapterIdsRepository: FavoriteChapterIdsRepository,
-    private val unblockedContentIdsRepository: UnblockedContentIdsRepository,
     private val assetManager: AssetManager,
     private val chapterId: Int
 ) : CoreViewModel<ChapterViewModel.State>() {
@@ -36,7 +35,6 @@ class ChapterViewModel(
             favoriteChapterIdsRepository.isFavoriteChapterFlow(chapterId),
             monetizationConfigRepository.monetizationConfigFlow(),
             premiumManager.premiumEnabledFlow().filterNotNull(),
-            unblockedContentIdsRepository.unblockedContentIdsFlow(),
             contentsRepository.contentsFlow()
         ) {
             val tagDatas = it[0] as List<TagData>
@@ -44,8 +42,7 @@ class ChapterViewModel(
             val isFavorite = it[2] as Boolean
             val monetizationConfig = it[3] as MonetizationConfig
             val premiumEnabled = it[4] as Boolean
-            val unblockedContentIds = it[5] as List<Int>
-            val contentDatas = it[6] as List<ContentData>
+            val contentDatas = it[5] as List<ContentData>
 
             updateState {
                 State(
@@ -67,11 +64,6 @@ class ChapterViewModel(
                                 Content.Html(
                                     contentId = it.id,
                                     name = it.name,
-                                    canUnblockByAds = monetizationConfig.unblockContentsByAds,
-                                    isBlocked = monetizationConfig.restrictContents
-                                            && !monetizationConfig.availableContentIds.contains(it.id)
-                                            && !premiumEnabled
-                                            && !unblockedContentIds.contains(it.id),
                                     html = HtmlCompat.fromHtml(assetManager.read(it.source), HtmlCompat.FROM_HTML_MODE_COMPACT),
                                 )
                             } else {
@@ -80,17 +72,6 @@ class ChapterViewModel(
                                     name = it.name,
                                     uri = Uri.parse("file:///android_asset/${it.source}")
                                 )
-                            }
-                        }.let {
-                            mutableListOf<Content>().apply {
-                                for (item in it) {
-                                    if (item is Content.Html && item.isBlocked) {
-                                        add(item)
-                                        break
-                                    } else {
-                                        add(item)
-                                    }
-                                }
                             }
                         }
                     }
@@ -103,16 +84,10 @@ class ChapterViewModel(
         favoriteChapterIdsRepository.setFavoriteChapterId(chapterId, isFavorite)
     }
 
-    fun unblockContent(id: Int) = launch {
-        unblockedContentIdsRepository.unblockContentId(id)
-    }
-
     sealed class Content {
         data class Html(
             val contentId: Int,
             val name: String,
-            val canUnblockByAds: Boolean,
-            val isBlocked: Boolean,
             val html: Spanned
         ) : Content()
 

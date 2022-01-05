@@ -10,11 +10,8 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.children
-import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import androidx.core.widget.doAfterTextChanged
-import androidx.transition.Fade
-import androidx.transition.TransitionManager
 import com.mctech.library.keyboard.visibilitymonitor.KeyboardVisibilityMonitor
 import kotlinx.coroutines.flow.map
 import manual.app.R
@@ -24,7 +21,6 @@ import manual.core.fragment.CoreFragment
 import manual.core.fragment.FragmentFactoryStore
 import manual.core.fragment.setFactory
 import manual.core.view.*
-import manual.app.data.Tag
 import manual.app.databinding.*
 import manual.core.coroutines.flow.onEachChanged
 import manual.core.fragment.instantiate
@@ -190,6 +186,7 @@ class ChaptersFragment(private val delegate: Delegate) : CoreFragment<ChaptersFr
         setup<ChaptersViewModel.Item.Group, TitleItemBinding>(TitleItemBinding::inflate) {
             bind { item ->
                 textView.text = item.name
+                textView.isVisible = item.name.isNotEmpty()
             }
         }
 
@@ -236,13 +233,14 @@ class ChaptersFragment(private val delegate: Delegate) : CoreFragment<ChaptersFr
 
     private inner class TagSelectionBottomSheetDialogFragmentDelegate : TagSelectionBottomSheetDialogFragment.Delegate {
         override fun onSelected(fragment: TagSelectionBottomSheetDialogFragment, tagIds: List<Int>) {
-            viewModel.setSelectedTagIds(tagIds)
             fragment.dismiss()
+            viewModel.setSelectedTagIds(tagIds)
         }
     }
 
     interface Delegate {
         fun navigateToChapter(fragment: ChaptersFragment, chapterId: Int)
         fun navigateToSettings(fragment: ChaptersFragment)
+        fun navigateToPremiumOffer(fragment: ChaptersFragment)
     }
 }

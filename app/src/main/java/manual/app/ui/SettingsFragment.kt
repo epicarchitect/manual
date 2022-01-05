@@ -13,6 +13,7 @@ import manual.app.databinding.SettingsFragmentBinding
 import manual.app.repository.AppBackgroundsRepository
 import manual.app.repository.MonetizationConfigRepository
 import manual.core.coroutines.flow.launchWith
+import manual.core.coroutines.flow.onEachChanged
 import manual.core.fragment.CoreFragment
 import manual.core.view.buildBindingRecyclerViewAdapter
 import manual.core.view.requireBindingRecyclerViewAdapter
@@ -75,10 +76,10 @@ class SettingsFragment : CoreFragment<SettingsFragmentBinding>(SettingsFragmentB
         }.launchWith(viewLifecycleOwner)
 
         monetizationConfigRepository.monetizationConfigFlow().onEach {
-            changeGdprButton.isVisible = it.unblockContentsByAds && gdprHelper.isEEA
-            gdprDescriptionTextView.isVisible = it.unblockContentsByAds && gdprHelper.isEEA
+            changeGdprButton.isVisible = it.showAds && gdprHelper.isEEA
+            gdprDescriptionTextView.isVisible = it.showAds && gdprHelper.isEEA
             changeGdprButton.setOnClickListener {
-                gdprHelper.openConsentDialog {}
+                gdprHelper.openConsentDialog(requireActivity()) {}
             }
         }.launchWith(viewLifecycleOwner)
     }

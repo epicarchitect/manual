@@ -1,19 +1,14 @@
 package manual.app.ui
 
-import android.graphics.Color
-import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Bundle
 import androidx.core.content.edit
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
 import androidx.fragment.app.commit
 import com.bumptech.glide.Glide
-import com.bumptech.glide.load.DataSource
-import com.bumptech.glide.load.engine.GlideException
-import com.bumptech.glide.request.RequestListener
-import com.bumptech.glide.request.target.Target
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.play.core.appupdate.AppUpdateManager
 import com.google.android.play.core.install.InstallStateUpdatedListener
@@ -26,8 +21,7 @@ import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import manual.app.R
-import manual.app.ads.GDPRHelper
-import manual.app.ads.RewardedVideoManager
+import manual.app.ads.InterstitialAdManager
 import manual.app.databinding.AppActivityBinding
 import manual.app.premium.PremiumManager
 import manual.app.repository.AppBackgroundsRepository
@@ -36,7 +30,6 @@ import manual.core.activity.CoreActivity
 import manual.core.coroutines.flow.launchWith
 import manual.core.fragment.FragmentFactoryStore
 import manual.core.fragment.setFactory
-import manual.core.koin.attachKoinModule
 import org.koin.android.ext.android.inject
 
 class AppActivity : CoreActivity<AppActivityBinding>(AppActivityBinding::inflate) {
@@ -48,6 +41,8 @@ class AppActivity : CoreActivity<AppActivityBinding>(AppActivityBinding::inflate
     private val appUpdateManager: AppUpdateManager by inject()
     private val reviewManager: ReviewManager by inject()
     private val monetizationConfigRepository: MonetizationConfigRepository by inject()
+    private val interstitialAdManager: InterstitialAdManager by inject()
+    private val alertDialogManager: AlertDialogManager by inject()
     private val preferences by lazy { getSharedPreferences("AppActivity", MODE_PRIVATE) }
 
     private var reviewRequested
@@ -71,13 +66,6 @@ class AppActivity : CoreActivity<AppActivityBinding>(AppActivityBinding::inflate
     }
 
     override fun getThemeResourceId() = R.style.Activity
-
-    init {
-        attachKoinModule {
-            single { GDPRHelper(this@AppActivity) }
-            single { RewardedVideoManager(this@AppActivity, get()) }
-        }
-    }
 
     override fun FragmentFactoryStore.setup() {
         setFactory { PremiumOfferFragment(FullVersionOfferFragmentDelegate()) }
@@ -135,7 +123,7 @@ class AppActivity : CoreActivity<AppActivityBinding>(AppActivityBinding::inflate
                 monetizationConfigRepository.monetizationConfigFlow()
             ) { premiumEnabled, config ->
                 val minOpenCount = when {
-                    premiumEnabled || !config.restrictContents && !config.restrictChapters -> 5
+                    premiumEnabled || !config.showAds && !config.restrictChapters -> 5
                     else -> 15
                 }
 
@@ -171,6 +159,8 @@ class AppActivity : CoreActivity<AppActivityBinding>(AppActivityBinding::inflate
                 }
             }
         }
+
+        supportFragmentManager.registerFragmentLifecycleCallbacks(FragmentLifecycleCallbacks(), false)
     }
 
     override fun onResume() {
@@ -228,6 +218,10 @@ class AppActivity : CoreActivity<AppActivityBinding>(AppActivityBinding::inflate
         override fun navigateToSettings(fragment: ChaptersFragment) {
             navigate<SettingsFragment>()
         }
+
+        override fun navigateToPremiumOffer(fragment: ChaptersFragment) {
+            navigate<PremiumOfferFragment>()
+        }
     }
 
     private inner class FullVersionOfferFragmentDelegate : PremiumOfferFragment.Delegate {
@@ -249,6 +243,24 @@ class AppActivity : CoreActivity<AppActivityBinding>(AppActivityBinding::inflate
     private inner class LaunchFragmentDelegate : LaunchFragment.Delegate {
         override fun onNext() {
             supportFragmentManager.popBackStack()
+        }
+    }
+
+    private inner class FragmentLifecycleCallbacks : FragmentManager.FragmentLifecycleCallbacks() {
+        override fun onFragmentDestroyed(fragmentManager: FragmentManager, fragment: Fragment) {
+            if (fragment is ChapterFragment) {
+                interstitialAdManager.show(this@AppActivity) {
+                    alertDialogManager.showAlert(
+                        context = this@AppActivity,
+                        title = getString(R.string.removeAdsOffer_title),
+                        message = getString(R.string.removeAdsOffer_description),
+                        positiveButtonTitle = getString(R.string.removeAdsOffer_learMore_button),
+                        onPositive = {
+                            navigate<PremiumOfferFragment>()
+                        }
+                    )
+                }
+            }
         }
     }
 

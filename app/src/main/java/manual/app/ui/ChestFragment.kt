@@ -60,8 +60,6 @@ class ChestFragment(
                         startActivity(Intent(Intent.ACTION_VIEW, it))
                     }
                 }
-
-                unblockLayout.isVisible = false
             }
         }
 

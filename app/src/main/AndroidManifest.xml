@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="manual.app"
     android:installLocation="preferExternal">
 
@@ -20,7 +21,9 @@
         <activity
             android:name=".ui.AppActivity"
             android:exported="true"
-            android:theme="@style/Activity.Launcher">
+            android:screenOrientation="portrait"
+            android:theme="@style/Activity.Launcher"
+            tools:ignore="LockedOrientationActivity">
 
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -30,6 +33,6 @@
 
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
-            android:value="@string/admob_application_id"/>
+            android:value="@string/admob_application_id" />
     </application>
 </manifest>

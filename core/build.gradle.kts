@@ -26,7 +26,6 @@ android {
 }
 
 dependencies {
-    /** Android Framework */
     implementation("androidx.core:core-ktx:1.7.0")
     implementation("androidx.appcompat:appcompat:1.4.0")
     implementation("androidx.work:work-runtime-ktx:2.7.1")
@@ -34,11 +33,5 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-common-java8:2.4.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.4.0")
     implementation("com.google.android.material:material:1.4.0")
-
-    /** Kotlin */
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2")
-
-    /** DI */
-    implementation("io.insert-koin:koin-core:3.1.4")
-    implementation("io.insert-koin:koin-android:3.1.4")
 }

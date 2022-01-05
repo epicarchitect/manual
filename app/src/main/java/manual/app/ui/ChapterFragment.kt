@@ -1,22 +1,14 @@
 package manual.app.ui
 
 import android.annotation.SuppressLint
-import android.content.ClipData
-import android.content.ClipboardManager
-import android.content.Context
 import android.content.Intent
-import android.util.Log
-import android.widget.Toast
 import androidx.core.view.isVisible
-import androidx.transition.Fade
-import androidx.transition.TransitionManager
 import com.bumptech.glide.Glide
 import com.stfalcon.imageviewer.StfalconImageViewer
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import manual.app.R
-import manual.app.ads.RewardedVideoManager
 import manual.app.databinding.*
 import manual.app.viewmodel.ChapterViewModel
 import manual.core.coroutines.flow.launchWith
@@ -25,7 +17,6 @@ import manual.core.fragment.CoreFragment
 import manual.core.os.require
 import manual.core.view.*
 import me.saket.bettermovementmethod.BetterLinkMovementMethod
-import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 
@@ -35,7 +26,6 @@ class ChapterFragment(
 
     private val chapterId: Int get() = arguments.require(Argument.Int.CHAPTER_ID)
     private val viewModel: ChapterViewModel by viewModel { parametersOf(chapterId) }
-    private val rewardedVideoManager: RewardedVideoManager by inject()
 
     @SuppressLint("SetTextI18n")
     override fun ChapterFragmentBinding.onCreated() {
@@ -126,37 +116,6 @@ class ChapterFragment(
                     } else {
                         startActivity(Intent(Intent.ACTION_VIEW, it))
                     }
-                }
-
-                if (item.isBlocked) {
-                    unblockLayout.isVisible = true
-                    buyButton.setOnClickListener {
-                        delegate.navigateToPremiumOffer(this@ChapterFragment)
-                    }
-
-                    if (item.canUnblockByAds) {
-                        orTextView.isVisible = true
-                        showAdButton.isVisible = true
-                        showAdButton.setOnClickListener {
-                            rewardedVideoManager.showRewardedVideo(object : RewardedVideoManager.RewardedVideoCallback {
-                                override fun onReward() {
-                                    viewModel.unblockContent(item.contentId)
-                                }
-
-                                override fun onFailed(code: Int, message: String?) {
-                                    Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
-                                }
-                            })
-                        }
-                    } else {
-                        orTextView.isVisible = false
-                        showAdButton.isVisible = false
-                        showAdButton.setOnClickListener(null)
-                    }
-                } else {
-                    unblockLayout.isVisible = false
-                    buyButton.setOnClickListener(null)
-                    showAdButton.setOnClickListener(null)
                 }
             }
         }

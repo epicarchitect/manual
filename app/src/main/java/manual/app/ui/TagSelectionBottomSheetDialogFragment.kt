@@ -60,6 +60,7 @@ class TagSelectionBottomSheetDialogFragment(
             setup<TagSelectionViewModel.Item.Group, TitleItemBinding>(TitleItemBinding::inflate) {
                 bind { item ->
                     textView.text = item.name
+                    textView.isVisible = item.name.isNotEmpty()
                 }
             }
         }
