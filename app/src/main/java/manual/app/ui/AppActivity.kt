@@ -19,6 +19,7 @@ import com.google.android.play.core.review.ReviewManager
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.runBlocking
 import manual.app.R
 import manual.app.ads.InterstitialAdManager
@@ -28,6 +29,7 @@ import manual.app.repository.AppBackgroundsRepository
 import manual.app.repository.MonetizationConfigRepository
 import manual.core.activity.CoreActivity
 import manual.core.coroutines.flow.launchWith
+import manual.core.coroutines.flow.onEachChanged
 import manual.core.fragment.FragmentFactoryStore
 import manual.core.fragment.setFactory
 import org.koin.android.ext.android.inject
@@ -44,6 +46,7 @@ class AppActivity : CoreActivity<AppActivityBinding>(AppActivityBinding::inflate
     private val interstitialAdManager: InterstitialAdManager by inject()
     private val alertDialogManager: AlertDialogManager by inject()
     private val preferences by lazy { getSharedPreferences("AppActivity", MODE_PRIVATE) }
+    private var showAds: Boolean? = null
 
     private var reviewRequested
         get() = preferences.getBoolean("reviewRequested", false)
@@ -117,29 +120,29 @@ class AppActivity : CoreActivity<AppActivityBinding>(AppActivityBinding::inflate
             navigate<LaunchFragment>()
         }
 
-        if (!reviewRequested) {
-            combine(
-                premiumManager.premiumEnabledFlow().filterNotNull(),
-                monetizationConfigRepository.monetizationConfigFlow()
-            ) { premiumEnabled, config ->
-                val minOpenCount = when {
-                    premiumEnabled || !config.showAds && !config.restrictChapters -> 5
-                    else -> 15
-                }
+        combine(
+            premiumManager.premiumEnabledFlow().filterNotNull(),
+            monetizationConfigRepository.monetizationConfigFlow()
+        ) { premiumEnabled, config ->
+            showAds = premiumEnabled || config.showAds
 
-                if (!reviewRequested && openCount >= minOpenCount) {
-                    with(reviewManager) {
-                        requestReviewFlow().addOnCompleteListener { request ->
-                            if (request.isSuccessful) {
-                                launchReviewFlow(this@AppActivity, request.result).addOnCompleteListener {
-                                    reviewRequested = true
-                                }
+            val minOpenCount = when {
+                premiumEnabled || !config.showAds && !config.restrictChapters -> 5
+                else -> 15
+            }
+
+            if (!reviewRequested && openCount >= minOpenCount) {
+                with(reviewManager) {
+                    requestReviewFlow().addOnCompleteListener { request ->
+                        if (request.isSuccessful) {
+                            launchReviewFlow(this@AppActivity, request.result).addOnCompleteListener {
+                                reviewRequested = true
                             }
                         }
                     }
                 }
-            }.launchWith(this@AppActivity)
-        }
+            }
+        }.launchWith(this@AppActivity)
 
         appUpdateManager.appUpdateInfo.addOnSuccessListener { appUpdateInfo ->
             if (appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE) {
@@ -249,16 +252,18 @@ class AppActivity : CoreActivity<AppActivityBinding>(AppActivityBinding::inflate
     private inner class FragmentLifecycleCallbacks : FragmentManager.FragmentLifecycleCallbacks() {
         override fun onFragmentDestroyed(fragmentManager: FragmentManager, fragment: Fragment) {
             if (fragment is ChapterFragment) {
-                interstitialAdManager.show(this@AppActivity) {
-                    alertDialogManager.showAlert(
-                        context = this@AppActivity,
-                        title = getString(R.string.removeAdsOffer_title),
-                        message = getString(R.string.removeAdsOffer_description),
-                        positiveButtonTitle = getString(R.string.removeAdsOffer_learMore_button),
-                        onPositive = {
-                            navigate<PremiumOfferFragment>()
-                        }
-                    )
+                if (showAds == true) {
+                    interstitialAdManager.show(this@AppActivity) {
+                        alertDialogManager.showAlert(
+                            context = this@AppActivity,
+                            title = getString(R.string.removeAdsOffer_title),
+                            message = getString(R.string.removeAdsOffer_description),
+                            positiveButtonTitle = getString(R.string.removeAdsOffer_learMore_button),
+                            onPositive = {
+                                navigate<PremiumOfferFragment>()
+                            }
+                        )
+                    }
                 }
             }
         }
