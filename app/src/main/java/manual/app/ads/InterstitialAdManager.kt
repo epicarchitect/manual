@@ -22,10 +22,6 @@ class InterstitialAdManager(
     private var interstitialAd: InterstitialAd? = null
     private val isPersonalized get() = gdprHelper.isEEA && gdprHelper.consentStatus == ConsentStatus.PERSONALIZED
 
-    init {
-        load()
-    }
-
     private fun load() {
         InterstitialAd.load(
             context,
