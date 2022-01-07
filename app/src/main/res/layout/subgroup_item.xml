@@ -8,8 +8,17 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingHorizontal="16dp"
-        android:paddingTop="20dp"
-        android:paddingBottom="8dp"
+        android:paddingVertical="8dp"
         android:textAppearance="?attr/textAppearanceHeadline6"
+        android:textSize="16sp"
         tools:text="@tools:sample/lorem" />
+
+    <ImageView
+        android:id="@+id/expand_imageView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end|center"
+        android:layout_marginEnd="20dp"
+        android:src="@drawable/ic_collapsed"
+        tools:ignore="ContentDescription" />
 </FrameLayout>

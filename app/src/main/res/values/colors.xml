@@ -4,4 +4,5 @@
     <color name="chest_background">#EEF3EE</color>
     <color name="favorite">#FFC107</color>
     <color name="launch_nextButton">#FFFFFF</color>
+    <color name="expandedSubgroup">#EEF3EE</color>
 </resources>

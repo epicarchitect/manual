@@ -22,6 +22,7 @@ class ChaptersViewModel(
 
     private val searchTextStateFlow = MutableStateFlow<String?>(null)
     private val selectedTagIdsStateFlow = MutableStateFlow<List<Int>>(emptyList())
+    private val expandedSubgroupIdsStateFlow = MutableStateFlow<Set<Int>>(emptySet())
 
     init {
         combine(
@@ -32,7 +33,8 @@ class ChaptersViewModel(
             premiumManager.premiumEnabledFlow().filterNotNull(),
             monetizationConfigRepository.monetizationConfigFlow(),
             favoriteChapterIdsRepository.favoriteChapterIdsFlow(),
-            tagsRepository.tagsFlow()
+            tagsRepository.tagsFlow(),
+            expandedSubgroupIdsStateFlow
         ) {
             val chapters = it[0] as List<ChapterData>
             val chapterGroups = it[1] as List<ChapterGroupData>
@@ -42,6 +44,7 @@ class ChaptersViewModel(
             val monetizationConfig = it[5] as MonetizationConfig
             val favoriteChapterIds = it[6] as List<Int>
             val tags = it[7] as List<TagData>
+            val expandedSubgroupIds = it[8] as Set<Int>
 
             fun ChapterData.toItem() = Item.Chapter(
                 id = id,
@@ -70,31 +73,84 @@ class ChaptersViewModel(
                         }.let {
                             if (searchText.isNullOrEmpty()) it
                             else it.filterByName(searchText)
-                        }.sortedBy { it.id }
-
-                        add(Item.Chest)
-                        val favorites = filteredChapters.filter { favoriteChapterIds.contains(it.id) }
-
-                        if (favorites.isNotEmpty()) {
-                            add(Item.FavoritesGroup)
-                            addAll(
-                                favorites.map {
-                                    it.toItem()
-                                }
-                            )
                         }
 
-                        chapterGroups.sortedBy { it.id }.forEach { group ->
-                            val chaptersOfGroup = filteredChapters.filter { group.chapterIds.contains(it.id) }
+                        val filteredChapterGroups = chapterGroups.let {
+                            if (selectedTagIds.isEmpty()) it
+                            else chapterGroups.filter { group ->
+                                filteredChapters.any { group.chapterIds.contains(it.id) }
+                            }
+                        }
 
-                            if (chaptersOfGroup.isNotEmpty()) {
-                                add(Item.Group(group.name))
+                        if (searchText == null) {
+                            add(Item.Chest)
+
+                            val favorites = filteredChapters.filter { favoriteChapterIds.contains(it.id) }
+
+                            if (favorites.isNotEmpty()) {
+                                add(Item.FavoritesGroup)
                                 addAll(
-                                    chaptersOfGroup.map {
+                                    favorites.map {
                                         it.toItem()
                                     }
                                 )
                             }
+
+                            fun addSubgroups(group: ChapterGroupData) {
+                                val subgroups = filteredChapterGroups.filter { group.subgroupIds.contains(it.id) }
+                                subgroups.sortedBy { it.id }.forEach { subgroup ->
+                                    val chaptersOfSubGroup = filteredChapters.filter { subgroup.chapterIds.contains(it.id) }
+
+                                    if (chaptersOfSubGroup.isNotEmpty() || subgroup.subgroupIds.isNotEmpty()) {
+                                        val isExpanded = expandedSubgroupIds.contains(subgroup.id)
+
+                                        add(
+                                            Item.Subgroup(
+                                                subgroup.id,
+                                                subgroup.name,
+                                                isExpanded
+                                            )
+                                        )
+
+                                        if (isExpanded) {
+                                            addAll(
+                                                chaptersOfSubGroup.map {
+                                                    it.toItem()
+                                                }
+                                            )
+                                            if (subgroup.subgroupIds.isNotEmpty()) {
+                                                addSubgroups(subgroup)
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+
+                            val rootGroups = filteredChapterGroups.filter { group ->
+                                filteredChapterGroups.all { !it.subgroupIds.contains(group.id) }
+                            }
+
+                            rootGroups.sortedBy { it.id }.forEach { group ->
+                                val chaptersOfGroup = filteredChapters.filter { group.chapterIds.contains(it.id) }
+
+                                if (chaptersOfGroup.isNotEmpty() || group.subgroupIds.isNotEmpty()) {
+                                    add(Item.Group(group.name))
+                                    addAll(
+                                        chaptersOfGroup.map {
+                                            it.toItem()
+                                        }
+                                    )
+                                    if (group.subgroupIds.isNotEmpty()) {
+                                        addSubgroups(group)
+                                    }
+                                }
+                            }
+                        } else {
+                            addAll(
+                                filteredChapters.map {
+                                    it.toItem()
+                                }.filter { it.id != -1 }
+                            )
                         }
                     }
                 )
@@ -114,9 +170,18 @@ class ChaptersViewModel(
         selectedTagIdsStateFlow.value = ids
     }
 
-    fun searchStateFlow() = searchTextStateFlow.asStateFlow()
-
-    fun selectedTagsStateFlow() = selectedTagIdsStateFlow.asStateFlow()
+    fun setExpendedSubgroup(
+        subgroupId: Int,
+        isExpanded: Boolean
+    ) {
+        expandedSubgroupIdsStateFlow.value = HashSet(expandedSubgroupIdsStateFlow.value).apply {
+            if (isExpanded) {
+                add(subgroupId)
+            } else {
+                remove(subgroupId)
+            }
+        }
+    }
 
     private fun List<ChapterData>.filterByName(text: String) = text.trim().split(" ").let { textParts ->
         filter { chapter ->
@@ -148,6 +213,8 @@ class ChaptersViewModel(
         ) : Item()
 
         data class Group(val name: String) : Item()
+
+        data class Subgroup(val id: Int, val name: String, val isExpanded: Boolean) : Item()
 
         object FavoritesGroup : Item()
 

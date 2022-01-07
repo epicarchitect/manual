@@ -1,0 +1,11 @@
+{
+  "id": 5,
+  "name": "Subgroup 5",
+  "chapterIds": [
+    1,
+    2,
+    3,
+    4
+  ],
+  "subgroupIds": []
+}

@@ -64,9 +64,11 @@ class ChaptersFragment(private val delegate: Delegate) : CoreFragment<ChaptersFr
             false
         })
 
+        chaptersRecyclerView.itemAnimator = null
         chaptersRecyclerView.adapter = buildBindingRecyclerViewAdapter(viewLifecycleOwner) {
             setupChapterItem()
             setupGroupItem()
+            setupSubGroupItem()
             setupFavoriteGroupItem()
             setupChestItem()
         }
@@ -187,6 +189,25 @@ class ChaptersFragment(private val delegate: Delegate) : CoreFragment<ChaptersFr
             bind { item ->
                 textView.text = item.name
                 textView.isVisible = item.name.isNotEmpty()
+            }
+        }
+
+    private fun BindingRecyclerViewAdapterBuilder.setupSubGroupItem() =
+        setup<ChaptersViewModel.Item.Subgroup, SubgroupItemBinding>(SubgroupItemBinding::inflate) {
+            bind { item ->
+                if (item.isExpanded) {
+                    textView.setBackgroundResource(R.color.expandedSubgroup)
+                    expandImageView.setImageResource(R.drawable.ic_expanded)
+                } else {
+                    textView.setBackgroundResource(android.R.color.transparent)
+                    expandImageView.setImageResource(R.drawable.ic_collapsed)
+                }
+
+                root.setOnClickListener {
+                    viewModel.setExpendedSubgroup(item.id, !item.isExpanded)
+                }
+
+                textView.text = item.name
             }
         }
 

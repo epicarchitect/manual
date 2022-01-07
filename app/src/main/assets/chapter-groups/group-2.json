@@ -1,9 +1,13 @@
 {
-  "id": 1,
-  "name": "qwe",
+  "id": 2,
+  "name": "Group 2",
   "chapterIds": [
-    4,
-    5,
+    -10,
+    2
+  ],
+  "subgroupIds": [
+    1,
+    3,
     6
   ]
 }
