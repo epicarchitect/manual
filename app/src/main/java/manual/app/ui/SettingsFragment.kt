@@ -76,8 +76,9 @@ class SettingsFragment : CoreFragment<SettingsFragmentBinding>(SettingsFragmentB
         }.launchWith(viewLifecycleOwner)
 
         monetizationConfigRepository.monetizationConfigFlow().onEach {
-            changeGdprButton.isVisible = it.showAds && gdprHelper.isEEA
-            gdprDescriptionTextView.isVisible = it.showAds && gdprHelper.isEEA
+            val isAdsShowing = it.showInterstitialAds || it.showNativeAds
+            changeGdprButton.isVisible = isAdsShowing  && gdprHelper.isEEA
+            gdprDescriptionTextView.isVisible = isAdsShowing && gdprHelper.isEEA
             changeGdprButton.setOnClickListener {
                 gdprHelper.openConsentDialog(requireActivity()) {}
             }

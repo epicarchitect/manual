@@ -12,6 +12,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import manual.app.ads.GDPRHelper
 import manual.app.ads.InterstitialAdManager
+import manual.app.ads.NativeAdsManager
 import manual.app.database.MainDatabase
 import manual.app.premium.BillingClientManager
 import manual.app.premium.PremiumManager
@@ -44,6 +45,7 @@ class App : Application() {
         single { AlertDialogManager() }
         single { GDPRHelper(this@App) }
         single { InterstitialAdManager(this@App, get()) }
+        single { NativeAdsManager(this@App, get()) }
         single { ReviewManagerFactory.create(this@App) }
         single { AppUpdateManagerFactory.create(this@App) }
         single { MainDatabase.create(this@App) }

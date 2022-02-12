@@ -9,6 +9,7 @@
     <string name="admob_application_id">ca-app-pub-3940256099942544~3347511713</string>
     <string name="admob_publisher_id">pub-3562401600467746</string>
     <string name="admob_interstitialAd_id">ca-app-pub-3940256099942544/1033173712</string>
+    <string name="admob_nativeAd_id">ca-app-pub-3940256099942544/2247696110</string>
     <string name="privacyPolicy_url">https://alexander-kolmachikhin.github.io/projects/epic_to_to_list/privacy_policy.html</string>
 
     <string name="settings_title">Настройки</string>

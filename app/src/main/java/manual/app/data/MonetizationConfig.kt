@@ -1,7 +1,8 @@
 package manual.app.data
 
 data class MonetizationConfig(
-    val showAds: Boolean,
+    val showInterstitialAds: Boolean,
+    val showNativeAds: Boolean,
     val restrictChapters: Boolean,
     val availableChapterIds: List<Int>,
 )

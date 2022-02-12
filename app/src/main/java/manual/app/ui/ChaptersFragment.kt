@@ -5,16 +5,19 @@ import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.net.Uri
 import android.text.TextWatcher
+import android.view.View
+import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.children
 import androidx.core.view.isVisible
+import androidx.core.view.updateLayoutParams
 import androidx.core.widget.doAfterTextChanged
 import com.mctech.library.keyboard.visibilitymonitor.KeyboardVisibilityMonitor
 import kotlinx.coroutines.flow.map
 import manual.app.R
+import manual.app.ads.NativeAdsManager
 import manual.core.coroutines.flow.launchWith
 import manual.app.viewmodel.ChaptersViewModel
 import manual.core.fragment.CoreFragment
@@ -24,12 +27,14 @@ import manual.core.view.*
 import manual.app.databinding.*
 import manual.core.coroutines.flow.onEachChanged
 import manual.core.fragment.instantiate
+import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 import java.util.*
 
 class ChaptersFragment(private val delegate: Delegate) : CoreFragment<ChaptersFragmentBinding>(ChaptersFragmentBinding::inflate) {
 
     private val viewModel: ChaptersViewModel by sharedViewModel()
+    private val nativeAdsManager: NativeAdsManager by inject()
     private var searchTextChangeListener: TextWatcher? = null
 
     override fun FragmentFactoryStore.setup() {
@@ -71,6 +76,7 @@ class ChaptersFragment(private val delegate: Delegate) : CoreFragment<ChaptersFr
             setupSubGroupItem()
             setupFavoriteGroupItem()
             setupChestItem()
+            setupAdItem()
         }
 
         tagsRecyclerView.adapter = buildBindingRecyclerViewAdapter(viewLifecycleOwner) {
@@ -226,6 +232,94 @@ class ChaptersFragment(private val delegate: Delegate) : CoreFragment<ChaptersFr
                 }
             }
         }
+
+    private fun BindingRecyclerViewAdapterBuilder.setupAdItem() =
+        setup<ChaptersViewModel.Item.NativeAd, NativeAdItemBinding>(NativeAdItemBinding::inflate) {
+            bind { _ ->
+                val nativeAd = nativeAdsManager.randomNativeAd()
+
+                if (nativeAd == null) {
+                    root.updateLayoutParams {
+                        height = 0
+                    }
+                    return@bind
+                } else {
+                    root.updateLayoutParams {
+                        height = ViewGroup.LayoutParams.WRAP_CONTENT
+                    }
+                }
+
+                adView.mediaView = adMediaView
+                adView.headlineView = adHeadlineTextView
+                adView.bodyView = adBodyTextView
+                adView.callToActionView = adActionButton
+                adView.iconView = adIconImageView
+                adView.priceView = adPriceTextView
+                adView.starRatingView = ratingBar
+                adView.storeView = adStoreTextView
+                adView.advertiserView = adAdvertiserTextView
+
+                // The headline and media content are guaranteed to be in every UnifiedNativeAd.
+                (adView.headlineView as TextView).text = nativeAd.headline
+                adView.mediaView!!.setMediaContent(nativeAd.mediaContent!!)
+
+                // These assets aren't guaranteed to be in every UnifiedNativeAd, so it's important to
+                // check before trying to display them.
+                if (nativeAd.body == null) {
+                    adView.bodyView!!.visibility = View.INVISIBLE
+                } else {
+                    adView.bodyView!!.visibility = View.VISIBLE
+                    (adView.bodyView as TextView).text = nativeAd.body
+                }
+
+                if (nativeAd.callToAction == null) {
+                    adView.callToActionView!!.visibility = View.INVISIBLE
+                } else {
+                    adView.callToActionView!!.visibility = View.VISIBLE
+                    (adView.callToActionView as Button).text = nativeAd.callToAction
+                }
+
+                if (nativeAd.icon == null) {
+                    adView.iconView!!.visibility = View.GONE
+                } else {
+                    (adView.iconView as ImageView).setImageDrawable(nativeAd.icon!!.drawable)
+                    adView.iconView!!.visibility = View.VISIBLE
+                }
+
+                if (nativeAd.price == null) {
+                    adView.priceView!!.visibility = View.INVISIBLE
+                } else {
+                    adView.priceView!!.visibility = View.VISIBLE
+                    (adView.priceView as TextView).text = nativeAd.price
+                }
+
+                if (nativeAd.store == null) {
+                    adView.storeView!!.visibility = View.INVISIBLE
+                } else {
+                    adView.storeView!!.visibility = View.VISIBLE
+                    (adView.storeView as TextView).text = nativeAd.store
+                }
+
+                if (nativeAd.starRating == null) {
+                    adView.starRatingView!!.visibility = View.INVISIBLE
+                } else {
+                    (adView.starRatingView as RatingBar).rating = nativeAd.starRating!!.toFloat()
+                    adView.starRatingView!!.visibility = View.VISIBLE
+                }
+
+                if (nativeAd.advertiser == null) {
+                    adView.advertiserView!!.visibility = View.INVISIBLE
+                } else {
+                    (adView.advertiserView as TextView).text = nativeAd.advertiser
+                    adView.advertiserView!!.visibility = View.VISIBLE
+                }
+
+                // This method tells the Google Mobile Ads SDK that you have finished populating your
+                // native ad view with this native ad.
+                adView.setNativeAd(nativeAd)
+            }
+        }
+
 
     fun goToAppInStore() = with(requireActivity()) {
         try {

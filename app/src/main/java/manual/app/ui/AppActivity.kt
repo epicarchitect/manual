@@ -19,7 +19,6 @@ import com.google.android.play.core.review.ReviewManager
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.runBlocking
 import manual.app.R
 import manual.app.ads.InterstitialAdManager
@@ -29,7 +28,6 @@ import manual.app.repository.AppBackgroundsRepository
 import manual.app.repository.MonetizationConfigRepository
 import manual.core.activity.CoreActivity
 import manual.core.coroutines.flow.launchWith
-import manual.core.coroutines.flow.onEachChanged
 import manual.core.fragment.FragmentFactoryStore
 import manual.core.fragment.setFactory
 import org.koin.android.ext.android.inject
@@ -46,7 +44,8 @@ class AppActivity : CoreActivity<AppActivityBinding>(AppActivityBinding::inflate
     private val interstitialAdManager: InterstitialAdManager by inject()
     private val alertDialogManager: AlertDialogManager by inject()
     private val preferences by lazy { getSharedPreferences("AppActivity", MODE_PRIVATE) }
-    private var showAds: Boolean? = null
+    private var showInterstitialAds: Boolean? = null
+    private var chapterCloseCount = 0
 
     private var reviewRequested
         get() = preferences.getBoolean("reviewRequested", false)
@@ -124,10 +123,10 @@ class AppActivity : CoreActivity<AppActivityBinding>(AppActivityBinding::inflate
             premiumManager.premiumEnabledFlow().filterNotNull(),
             monetizationConfigRepository.monetizationConfigFlow()
         ) { premiumEnabled, config ->
-            showAds = premiumEnabled || config.showAds
+            showInterstitialAds = premiumEnabled || config.showInterstitialAds
 
             val minOpenCount = when {
-                premiumEnabled || !config.showAds && !config.restrictChapters -> 5
+                premiumEnabled || !config.showInterstitialAds && !config.restrictChapters -> 5
                 else -> 15
             }
 
@@ -252,7 +251,8 @@ class AppActivity : CoreActivity<AppActivityBinding>(AppActivityBinding::inflate
     private inner class FragmentLifecycleCallbacks : FragmentManager.FragmentLifecycleCallbacks() {
         override fun onFragmentDestroyed(fragmentManager: FragmentManager, fragment: Fragment) {
             if (fragment is ChapterFragment) {
-                if (showAds == true) {
+                chapterCloseCount++
+                if (showInterstitialAds == true && chapterCloseCount % 3 == 0 && chapterCloseCount > 0) {
                     interstitialAdManager.show(this@AppActivity) {
                         alertDialogManager.showAlert(
                             context = this@AppActivity,

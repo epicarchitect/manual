@@ -1,5 +1,6 @@
 {
-  "showAds": true,
+  "showInterstitialAds": true,
+  "showNativeAds": true,
   "restrictChapters": true,
   "availableChapterIds": [
     2,

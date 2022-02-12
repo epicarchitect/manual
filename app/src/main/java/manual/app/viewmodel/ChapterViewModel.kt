@@ -74,6 +74,10 @@ class ChapterViewModel(
                                 )
                             }
                         }
+                    }.toMutableList().apply {
+                        if (!premiumEnabled && monetizationConfig.showNativeAds) {
+                            add(Content.NativeAd())
+                        }
                     }
                 )
             }
@@ -96,6 +100,8 @@ class ChapterViewModel(
             val name: String,
             val uri: Uri
         ) : Content()
+
+        class NativeAd : Content()
     }
 
     data class Tag(val name: String)

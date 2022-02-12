@@ -130,10 +130,20 @@ class ChaptersViewModel(
                                 filteredChapterGroups.all { !it.subgroupIds.contains(group.id) }
                             }
 
+                            var skippedGroupsForAd = 0
+
                             rootGroups.sortedBy { it.id }.forEach { group ->
                                 val chaptersOfGroup = filteredChapters.filter { group.chapterIds.contains(it.id) }
 
                                 if (chaptersOfGroup.isNotEmpty() || group.subgroupIds.isNotEmpty()) {
+                                    if (skippedGroupsForAd > 0) {
+                                        if (!premiumEnabled && monetizationConfig.showNativeAds) {
+                                            add(Item.NativeAd())
+                                            skippedGroupsForAd = 0
+                                        }
+                                    } else {
+                                        skippedGroupsForAd++
+                                    }
                                     add(Item.Group(group.name))
                                     addAll(
                                         chaptersOfGroup.map {
@@ -215,6 +225,8 @@ class ChaptersViewModel(
         data class Group(val name: String) : Item()
 
         data class Subgroup(val id: Int, val name: String, val isExpanded: Boolean) : Item()
+
+        class NativeAd : Item()
 
         object FavoritesGroup : Item()
 

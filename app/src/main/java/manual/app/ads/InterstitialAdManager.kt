@@ -22,23 +22,20 @@ class InterstitialAdManager(
     private var interstitialAd: InterstitialAd? = null
     private val isPersonalized get() = gdprHelper.isEEA && gdprHelper.consentStatus == ConsentStatus.PERSONALIZED
 
+    init {
+        load()
+    }
+
     private fun load() {
         InterstitialAd.load(
             context,
             context.getString(R.string.admob_interstitialAd_id),
             buildRequest(isPersonalized),
             object : InterstitialAdLoadCallback() {
-                override fun onAdFailedToLoad(adError: LoadAdError) {
-                    Toast.makeText(context, adError.message, Toast.LENGTH_SHORT).show()
-                }
+                override fun onAdFailedToLoad(adError: LoadAdError) = Unit
 
                 override fun onAdLoaded(ad: InterstitialAd) {
                     interstitialAd = ad
-                    ad.fullScreenContentCallback = object : FullScreenContentCallback() {
-                        override fun onAdFailedToShowFullScreenContent(adError: AdError) {
-                            Toast.makeText(context, adError.message, Toast.LENGTH_SHORT).show()
-                        }
-                    }
                 }
             }
         )
