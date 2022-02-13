@@ -249,6 +249,11 @@ class ChaptersFragment(private val delegate: Delegate) : CoreFragment<ChaptersFr
                     }
                 }
 
+
+                premiumButton.setOnClickListener {
+                    delegate.navigateToPremiumOffer(this@ChaptersFragment)
+                }
+
                 adView.mediaView = adMediaView
                 adView.headlineView = adHeadlineTextView
                 adView.bodyView = adBodyTextView

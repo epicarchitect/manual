@@ -33,7 +33,9 @@ class ChestFragment(
         }
 
         viewModel.state.map { it?.contents }.onEachChanged {
-            contentsRecyclerView.requireBindingRecyclerViewAdapter().loadItems(it ?: emptyList())
+            contentsRecyclerView.requireBindingRecyclerViewAdapter().loadItems(
+                it?.filterNot { it is ChapterViewModel.Content.NativeAd } ?: emptyList()
+            )
         }.launchWith(viewLifecycleOwner)
 
         viewModel.state.map { it?.title }.onEachChanged {

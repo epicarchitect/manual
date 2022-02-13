@@ -161,6 +161,11 @@ class ChapterFragment(
                         height = ViewGroup.LayoutParams.WRAP_CONTENT
                     }
                 }
+
+                premiumButton.setOnClickListener {
+                    delegate.navigateToPremiumOffer(this@ChapterFragment)
+                }
+
                 adView.mediaView = adMediaView
                 adView.headlineView = adHeadlineTextView
                 adView.bodyView = adBodyTextView
