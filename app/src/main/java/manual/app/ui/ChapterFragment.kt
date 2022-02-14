@@ -2,6 +2,8 @@ package manual.app.ui
 
 import android.annotation.SuppressLint
 import android.content.Intent
+import android.media.MediaPlayer
+import android.net.Uri
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
@@ -29,6 +31,7 @@ import me.saket.bettermovementmethod.BetterLinkMovementMethod
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
+import java.io.InputStream
 
 class ChapterFragment(
     private val delegate: Delegate
@@ -52,6 +55,7 @@ class ChapterFragment(
         contentsRecyclerView.adapter = buildBindingRecyclerViewAdapter(viewLifecycleOwner) {
             setupHtmlContent()
             setupImageContent()
+            setupAudioContent()
             setupAdItem()
         }
 
@@ -142,6 +146,25 @@ class ChapterFragment(
                     StfalconImageViewer.Builder(context, listOf(item.uri)) { view, uri ->
                         Glide.with(root).load(uri).into(view)
                     }.withHiddenStatusBar(false).show()
+                }
+            }
+        }
+
+    private fun BindingRecyclerViewAdapterBuilder.setupAudioContent() =
+        setup<ChapterViewModel.Content.Audio, ChapterAudioItemBinding>(ChapterAudioItemBinding::inflate) {
+            bind { item ->
+                nameTextView.isVisible = item.name.isNotEmpty()
+                nameTextView.text = item.name
+                if (item.isPlaying) {
+                    playButton.setImageResource(R.drawable.ic_pause)
+                    root.setOnClickListener {
+                        viewModel.stopAudioItem()
+                    }
+                } else {
+                    playButton.setImageResource(R.drawable.ic_play)
+                    root.setOnClickListener {
+                        viewModel.playAudioItem(item)
+                    }
                 }
             }
         }

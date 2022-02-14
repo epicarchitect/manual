@@ -13,6 +13,13 @@ android {
         targetSdk = 31
         versionCode = 1
         versionName = "1.0"
+
+        // for Oboe
+        externalNativeBuild {
+            cmake {
+                arguments + "-DANDROID_STL=c++_shared"
+            }
+        }
     }
 
     compileOptions {
@@ -26,6 +33,7 @@ android {
 
     buildFeatures {
         viewBinding = true
+        prefab = true
     }
 }
 
@@ -35,15 +43,18 @@ dependencies {
 
     /** Android Framework */
     implementation("androidx.core:core-ktx:1.7.0")
-    implementation("androidx.appcompat:appcompat:1.4.0")
+    implementation("androidx.appcompat:appcompat:1.4.1")
     implementation("androidx.work:work-runtime-ktx:2.7.1")
-    implementation("androidx.fragment:fragment-ktx:1.4.0")
+    implementation("androidx.fragment:fragment-ktx:1.4.1")
     implementation("androidx.lifecycle:lifecycle-common-java8:2.4.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.4.0")
     implementation("androidx.datastore:datastore-preferences:1.0.0")
-    implementation("com.google.android.material:material:1.4.0")
-    implementation("com.google.android.play:core:1.10.2")
+    implementation("com.google.android.material:material:1.5.0")
+    implementation("com.google.android.play:core:1.10.3")
     implementation("com.google.android.play:core-ktx:1.8.1")
+
+    /** Audio */
+    implementation("com.gauravk.audiovisualizer:audiovisualizer:0.9.2")
 
     /** Kotlin */
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2")
@@ -67,9 +78,9 @@ dependencies {
     implementation("me.saket:better-link-movement-method:2.2.0")
 
     /** Database */
-    implementation("androidx.room:room-runtime:2.4.0")
-    implementation("androidx.room:room-ktx:2.4.0")
-    kapt("androidx.room:room-compiler:2.4.0")
+    implementation("androidx.room:room-runtime:2.4.1")
+    implementation("androidx.room:room-ktx:2.4.1")
+    kapt("androidx.room:room-compiler:2.4.1")
 
     /** Ads */
     implementation("com.google.android.gms:play-services-ads:20.5.0")

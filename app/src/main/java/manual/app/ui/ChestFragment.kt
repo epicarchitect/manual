@@ -7,6 +7,8 @@ import androidx.transition.TransitionManager
 import com.bumptech.glide.Glide
 import com.stfalcon.imageviewer.StfalconImageViewer
 import kotlinx.coroutines.flow.map
+import manual.app.R
+import manual.app.databinding.ChapterAudioItemBinding
 import manual.app.databinding.ChapterImageItemBinding
 import manual.app.databinding.ChapterTextItemBinding
 import manual.app.databinding.ChestFragmentBinding
@@ -30,6 +32,7 @@ class ChestFragment(
         contentsRecyclerView.adapter = buildBindingRecyclerViewAdapter(viewLifecycleOwner) {
             setupHtmlContent()
             setupImageContent()
+            setupAudioContent()
         }
 
         viewModel.state.map { it?.contents }.onEachChanged {
@@ -75,6 +78,25 @@ class ChestFragment(
                     StfalconImageViewer.Builder(context, listOf(item.uri)) { view, uri ->
                         Glide.with(root).load(uri).into(view)
                     }.withHiddenStatusBar(false).show()
+                }
+            }
+        }
+
+    private fun BindingRecyclerViewAdapterBuilder.setupAudioContent() =
+        setup<ChapterViewModel.Content.Audio, ChapterAudioItemBinding>(ChapterAudioItemBinding::inflate) {
+            bind { item ->
+                nameTextView.isVisible = item.name.isNotEmpty()
+                nameTextView.text = item.name
+                if (item.isPlaying) {
+                    playButton.setImageResource(R.drawable.ic_pause)
+                    root.setOnClickListener {
+                        viewModel.stopAudioItem()
+                    }
+                } else {
+                    playButton.setImageResource(R.drawable.ic_play)
+                    root.setOnClickListener {
+                        viewModel.playAudioItem(item)
+                    }
                 }
             }
         }
