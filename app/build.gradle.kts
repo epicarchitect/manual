@@ -13,13 +13,6 @@ android {
         targetSdk = 31
         versionCode = 1
         versionName = "1.0"
-
-        // for Oboe
-        externalNativeBuild {
-            cmake {
-                arguments + "-DANDROID_STL=c++_shared"
-            }
-        }
     }
 
     compileOptions {
@@ -33,7 +26,6 @@ android {
 
     buildFeatures {
         viewBinding = true
-        prefab = true
     }
 }
 
@@ -52,9 +44,6 @@ dependencies {
     implementation("com.google.android.material:material:1.5.0")
     implementation("com.google.android.play:core:1.10.3")
     implementation("com.google.android.play:core-ktx:1.8.1")
-
-    /** Audio */
-    implementation("com.gauravk.audiovisualizer:audiovisualizer:0.9.2")
 
     /** Kotlin */
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2")
