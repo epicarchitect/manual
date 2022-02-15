@@ -1,6 +1,5 @@
 package manual.app.viewmodel
 
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
 import manual.app.repository.TagGroupsRepository

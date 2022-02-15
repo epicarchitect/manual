@@ -3,8 +3,6 @@ package manual.app
 import android.app.Application
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.preferencesDataStoreFile
-import androidx.room.Room
-import androidx.room.migration.AutoMigrationSpec
 import com.google.android.play.core.appupdate.AppUpdateManagerFactory
 import com.google.android.play.core.review.ReviewManagerFactory
 import com.google.gson.GsonBuilder

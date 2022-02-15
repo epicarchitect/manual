@@ -18,18 +18,17 @@ import com.mctech.library.keyboard.visibilitymonitor.KeyboardVisibilityMonitor
 import kotlinx.coroutines.flow.map
 import manual.app.R
 import manual.app.ads.NativeAdsManager
-import manual.core.coroutines.flow.launchWith
+import manual.app.databinding.*
 import manual.app.viewmodel.ChaptersViewModel
+import manual.core.coroutines.flow.launchWith
+import manual.core.coroutines.flow.onEachChanged
 import manual.core.fragment.CoreFragment
 import manual.core.fragment.FragmentFactoryStore
+import manual.core.fragment.instantiate
 import manual.core.fragment.setFactory
 import manual.core.view.*
-import manual.app.databinding.*
-import manual.core.coroutines.flow.onEachChanged
-import manual.core.fragment.instantiate
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
-import java.util.*
 
 class ChaptersFragment(private val delegate: Delegate) : CoreFragment<ChaptersFragmentBinding>(ChaptersFragmentBinding::inflate) {
 

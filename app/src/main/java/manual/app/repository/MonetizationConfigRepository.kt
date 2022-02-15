@@ -2,7 +2,6 @@ package manual.app.repository
 
 import android.content.res.AssetManager
 import com.google.gson.Gson
-import com.google.gson.JsonArray
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow

@@ -4,12 +4,11 @@ import android.content.res.AssetManager
 import com.google.gson.Gson
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
-import manual.core.resources.mapEachFilePath
 import manual.app.data.ChapterGroup
 import manual.core.resources.mapEachFile
-import manual.core.resources.read
 
 class ChapterGroupsRepository(
     private val assetManager: AssetManager,

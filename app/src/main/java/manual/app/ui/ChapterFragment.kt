@@ -2,8 +2,6 @@ package manual.app.ui
 
 import android.annotation.SuppressLint
 import android.content.Intent
-import android.media.MediaPlayer
-import android.net.Uri
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
@@ -21,17 +19,18 @@ import manual.app.R
 import manual.app.ads.NativeAdsManager
 import manual.app.databinding.*
 import manual.app.viewmodel.ChapterViewModel
-import manual.app.viewmodel.ChaptersViewModel
 import manual.core.coroutines.flow.launchWith
 import manual.core.coroutines.flow.onEachChanged
 import manual.core.fragment.CoreFragment
 import manual.core.os.require
-import manual.core.view.*
+import manual.core.view.BindingRecyclerViewAdapterBuilder
+import manual.core.view.buildBindingRecyclerViewAdapter
+import manual.core.view.handleLinks
+import manual.core.view.requireBindingRecyclerViewAdapter
 import me.saket.bettermovementmethod.BetterLinkMovementMethod
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
-import java.io.InputStream
 
 class ChapterFragment(
     private val delegate: Delegate
