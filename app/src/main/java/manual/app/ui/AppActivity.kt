@@ -123,7 +123,7 @@ class AppActivity : CoreActivity<AppActivityBinding>(AppActivityBinding::inflate
             premiumManager.premiumEnabledFlow().filterNotNull(),
             monetizationConfigRepository.monetizationConfigFlow()
         ) { premiumEnabled, config ->
-            showInterstitialAds = premiumEnabled || config.showInterstitialAds
+            showInterstitialAds = !premiumEnabled && config.showInterstitialAds
 
             val minOpenCount = when {
                 premiumEnabled || !config.showInterstitialAds && !config.restrictChapters -> 5
