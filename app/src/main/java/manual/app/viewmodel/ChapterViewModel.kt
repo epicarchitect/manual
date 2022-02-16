@@ -3,7 +3,6 @@
 package manual.app.viewmodel
 
 import android.content.res.AssetManager
-import android.media.MediaPlayer
 import manual.core.viewmodel.CoreViewModel
 import android.net.Uri
 import android.text.Spanned
@@ -28,9 +27,6 @@ class ChapterViewModel(
     private val chapterId: Int
 ) : CoreViewModel<ChapterViewModel.State>() {
 
-    private var mediaPlayer: MediaPlayer? = null
-    private val audioPlayingContentIdStateFlow = MutableStateFlow<Int?>(null)
-
     init {
         combine(
             tagsRepository.tagsFlow(),
@@ -38,8 +34,7 @@ class ChapterViewModel(
             favoriteChapterIdsRepository.isFavoriteChapterFlow(chapterId),
             monetizationConfigRepository.monetizationConfigFlow(),
             premiumManager.premiumEnabledFlow().filterNotNull(),
-            contentsRepository.contentsFlow(),
-            audioPlayingContentIdStateFlow
+            contentsRepository.contentsFlow()
         ) {
             val tagDatas = it[0] as List<TagData>
             val chapterData = it[1] as ChapterData
@@ -47,7 +42,6 @@ class ChapterViewModel(
             val monetizationConfig = it[3] as MonetizationConfig
             val premiumEnabled = it[4] as Boolean
             val contentDatas = it[5] as List<ContentData>
-            val audioPlayingContentId = it[6] as Int?
 
             updateState {
                 State(
@@ -77,8 +71,7 @@ class ChapterViewModel(
                                     Content.Audio(
                                         contentId = it.id,
                                         name = it.name,
-                                        path = it.source,
-                                        isPlaying = audioPlayingContentId == it.id
+                                        source = it.source
                                     )
                                 }
                                 else -> {
@@ -104,37 +97,6 @@ class ChapterViewModel(
         favoriteChapterIdsRepository.setFavoriteChapterId(chapterId, isFavorite)
     }
 
-    fun playAudioItem(item: Content.Audio) {
-        audioPlayingContentIdStateFlow.value = item.contentId
-        mediaPlayer?.stop()
-        mediaPlayer?.release()
-        mediaPlayer = MediaPlayer().also {
-            val fd = assetManager.openFd(item.path)
-            it.setDataSource(fd.fileDescriptor, fd.startOffset, fd.length)
-            fd.close()
-            it.prepare()
-            it.start()
-        }
-    }
-
-    fun stopAudioItem() {
-        audioPlayingContentIdStateFlow.value = null
-        mediaPlayer?.let {
-            it.stop()
-            it.release()
-            mediaPlayer = null
-        }
-    }
-
-    override fun onCleared() {
-        super.onCleared()
-        mediaPlayer?.let {
-            it.stop()
-            it.release()
-            mediaPlayer = null
-        }
-    }
-
     sealed class Content {
         data class Html(
             val contentId: Int,
@@ -151,8 +113,7 @@ class ChapterViewModel(
         data class Audio(
             val contentId: Int,
             val name: String,
-            val path: String,
-            val isPlaying: Boolean
+            val source: String
         ) : Content()
 
         class NativeAd : Content()

@@ -4,17 +4,12 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.ImageView
-import android.widget.RatingBar
-import android.widget.TextView
+import android.widget.*
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import com.bumptech.glide.Glide
 import com.stfalcon.imageviewer.StfalconImageViewer
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.*
 import manual.app.R
 import manual.app.ads.NativeAdsManager
 import manual.app.databinding.*
@@ -39,6 +34,7 @@ class ChapterFragment(
     private val chapterId: Int get() = arguments.require(Argument.Int.CHAPTER_ID)
     private val viewModel: ChapterViewModel by viewModel { parametersOf(chapterId) }
     private val nativeAdsManager: NativeAdsManager by inject()
+    private val audioAssetPlayer: AudioAssetPlayer by inject()
 
     @SuppressLint("SetTextI18n")
     override fun ChapterFragmentBinding.onCreated() {
@@ -149,24 +145,62 @@ class ChapterFragment(
             }
         }
 
+    @SuppressLint("SetTextI18n")
     private fun BindingRecyclerViewAdapterBuilder.setupAudioContent() =
         setup<ChapterViewModel.Content.Audio, ChapterAudioItemBinding>(ChapterAudioItemBinding::inflate) {
-            bind { item ->
+            bind { scope, item ->
                 nameTextView.isVisible = item.name.isNotEmpty()
                 nameTextView.text = item.name
-                if (item.isPlaying) {
-                    playButton.setImageResource(R.drawable.ic_pause)
-                    root.setOnClickListener {
-                        viewModel.stopAudioItem()
+                audioAssetPlayer.state.onEach {
+                    if (it?.path == item.source) {
+                        if (it.isPlaying) {
+                            playButton.setImageResource(R.drawable.ic_pause)
+                            playButton.setOnClickListener {
+                                audioAssetPlayer.pause()
+                            }
+                        } else {
+                            playButton.setImageResource(R.drawable.ic_play)
+                            playButton.setOnClickListener {
+                                audioAssetPlayer.resume()
+                            }
+                        }
+
+                        seekBar.isEnabled = true
+                        seekBar.max = it.duration
+                        seekBar.progress = it.position
+                        seekBar.setOnSeekBarChangeListener(
+                            object : SeekBar.OnSeekBarChangeListener {
+                                override fun onStartTrackingTouch(seekBar: SeekBar) = Unit
+                                override fun onStopTrackingTouch(seekBar: SeekBar) = Unit
+                                override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
+                                    if (fromUser) {
+                                        audioAssetPlayer.seekTo(progress)
+                                    }
+                                }
+                            }
+                        )
+
+                        positionTextView.isVisible = true
+                        durationTextView.isVisible = true
+                        durationDividerTextView.isVisible = true
+                        positionTextView.text = formatAudioTime(it.position)
+                        durationTextView.text = formatAudioTime(it.duration)
+                    } else {
+                        seekBar.setOnSeekBarChangeListener(null)
+                        seekBar.isEnabled = false
+                        seekBar.progress = 0
+                        playButton.setImageResource(R.drawable.ic_play)
+                        playButton.setOnClickListener {
+                            audioAssetPlayer.play(item.source)
+                        }
+                        positionTextView.isVisible = false
+                        durationTextView.isVisible = false
+                        durationDividerTextView.isVisible = false
                     }
-                } else {
-                    playButton.setImageResource(R.drawable.ic_play)
-                    root.setOnClickListener {
-                        viewModel.playAudioItem(item)
-                    }
-                }
+                }.launchIn(scope)
             }
         }
+
 
     private fun BindingRecyclerViewAdapterBuilder.setupAdItem() =
         setup<ChapterViewModel.Content.NativeAd, NativeAdItemBinding>(NativeAdItemBinding::inflate) {
@@ -259,6 +293,17 @@ class ChapterFragment(
             }
         }
 
+    private fun formatAudioTime(time: Int): String = buildString {
+        val seconds = time / 1000 % 60
+        val minutes = time / 1000 / 60
+
+        append(minutes)
+        append(":")
+        if (seconds < 10) {
+            append(0)
+        }
+        append(seconds)
+    }
 
     object Argument {
         object Int {

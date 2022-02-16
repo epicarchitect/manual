@@ -16,6 +16,7 @@ import manual.app.premium.BillingClientManager
 import manual.app.premium.PremiumManager
 import manual.app.repository.*
 import manual.app.ui.AlertDialogManager
+import manual.app.ui.AudioAssetPlayer
 import manual.app.ui.FontScaleManager
 import manual.app.ui.NightModeManager
 import manual.app.viewmodel.ChapterViewModel
@@ -46,6 +47,7 @@ class App : Application() {
         single { NativeAdsManager(this@App, get()) }
         single { ReviewManagerFactory.create(this@App) }
         single { AppUpdateManagerFactory.create(this@App) }
+        single { AudioAssetPlayer(this@App, CoroutineScope(Dispatchers.IO)) }
         single { MainDatabase.create(this@App) }
         single { get<MainDatabase>().favoriteChapterIdsDao }
         single { assets }
