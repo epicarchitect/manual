@@ -21,7 +21,6 @@
         <activity
             android:name=".ui.AppActivity"
             android:exported="true"
-            android:windowSoftInputMode="adjustNothing"
             android:screenOrientation="portrait"
             android:theme="@style/Activity.Launcher"
             tools:ignore="LockedOrientationActivity">

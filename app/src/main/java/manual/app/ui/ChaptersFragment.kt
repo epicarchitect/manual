@@ -2,6 +2,7 @@ package manual.app.ui
 
 import android.annotation.SuppressLint
 import android.content.ActivityNotFoundException
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.text.TextWatcher
@@ -42,13 +43,8 @@ class ChaptersFragment(private val delegate: Delegate) : CoreFragment<ChaptersFr
 
     @SuppressLint("SetTextI18n")
     override fun ChaptersFragmentBinding.onCreated() {
-        moreButton.setOnClickListener {
-            it.showPopupMenu(R.menu.main) {
-                when (it.itemId) {
-                    R.id.settings -> delegate.navigateToSettings(this@ChaptersFragment)
-                    R.id.review -> goToAppInStore()
-                }
-            }
+        settingsButton.setOnClickListener {
+            delegate.navigateToSettings(this@ChaptersFragment)
         }
 
         KeyboardVisibilityMonitor(viewLifecycleOwner, activity as AppCompatActivity) {
@@ -68,14 +64,48 @@ class ChaptersFragment(private val delegate: Delegate) : CoreFragment<ChaptersFr
             false
         })
 
+        searchEditText.doAfterTextChanged { viewModel.setSearchText(it?.toString() ?: "") }
+
         chaptersRecyclerView.itemAnimator = null
         chaptersRecyclerView.adapter = buildBindingRecyclerViewAdapter(viewLifecycleOwner) {
             setupChapterItem()
             setupGroupItem()
-            setupSubGroupItem()
             setupFavoriteGroupItem()
             setupChestItem()
             setupAdItem()
+        }
+
+        searchTypeSpinner.adapter = SearchTypeSpinnerAdapter(
+            requireContext(),
+            listOf(
+                "Поиск по группам",
+                "Поиск по тегам",
+                "Поиск по названию",
+                "Показывать только избранное"
+            )
+        )
+
+        searchTypeSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                when (position) {
+                    0 -> {
+                        viewModel.setSearchType(ChaptersViewModel.SearchType.BY_GROUPS)
+                    }
+                    1 -> {
+                        viewModel.setSearchType(ChaptersViewModel.SearchType.BY_TAGS)
+                    }
+                    2 -> {
+                        viewModel.setSearchType(ChaptersViewModel.SearchType.BY_NAME)
+                        searchEditText.showKeyboard()
+                    }
+                    3 -> {
+                        viewModel.setSearchType(ChaptersViewModel.SearchType.ONLY_FAVORITES)
+                    }
+                    else -> error("hm")
+                }
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>?) = Unit
         }
 
         tagsRecyclerView.adapter = buildBindingRecyclerViewAdapter(viewLifecycleOwner) {
@@ -84,63 +114,57 @@ class ChaptersFragment(private val delegate: Delegate) : CoreFragment<ChaptersFr
                     chip.text = item.name
                 }
             }
+
+            setup<SelectTagsButtonItem, SelectTagsButtonItemBinding>(SelectTagsButtonItemBinding::inflate) {
+                bind { item ->
+                    root.setOnClickListener {
+                        fragmentFactoryStore.instantiate<TagSelectionBottomSheetDialogFragment>().apply {
+                            arguments = TagSelectionBottomSheetDialogFragment.buildArguments(
+                                (viewModel.state.value!!.searchState as ChaptersViewModel.SearchState.ByTags).tags.map { it.id }
+                            )
+                        }.show(childFragmentManager, null)
+                    }
+                }
+            }
         }
 
         viewModel.state.map { it == null }.onEachChanged {
-            titleTextView.alpha = if (it) 0.0f else 1.0f // для того чтоб небыло конфликта с searchText
             progressBar.isVisible = it
-            searchButton.isVisible = !it
-            moreButton.isVisible = !it
-            divider.isVisible = !it
         }.launchWith(viewLifecycleOwner)
 
-        viewModel.state.map { it?.selectedTags }.onEachChanged { selectedTags ->
-            if (selectedTags == null) {
-                tagsButton.isVisible = false
-                tagsEmptyTextView.isVisible = false
-                tagsButton.setOnClickListener(null)
-            } else {
-                tagsButton.isVisible = true
-                tagsEmptyTextView.isVisible = selectedTags.isEmpty()
-                if (selectedTags.isEmpty()) {
-                    tagsButton.text = getString(R.string.chapters_tags_button)
-                } else {
-                    tagsButton.text = getString(R.string.chapters_tagsCount_button, selectedTags.size)
+        viewModel.state.map { it?.searchState }.onEachChanged { searchState ->
+            when (searchState) {
+                is ChaptersViewModel.SearchState.ByGroups -> {
+                    searchEditText.isVisible = false
+                    searchButton.isVisible = false
+                    tagsRecyclerView.isVisible = false
+                    if (searchState.isRoot) {
+                        titleTextView.text = "Root"
+                        titleTextView.setOnClickListener(null)
+                    } else {
+                        titleTextView.text = searchState.currentGroupTitle
+                        titleTextView.setOnClickListener {
+                            viewModel.navigateUpFromGroup()
+                        }
+                    }
                 }
-
-                tagsButton.setOnClickListener {
-                    fragmentFactoryStore.instantiate<TagSelectionBottomSheetDialogFragment>().apply {
-                        arguments = TagSelectionBottomSheetDialogFragment.buildArguments(selectedTags.map { it.id })
-                    }.show(childFragmentManager, null)
-                }
-            }
-
-            tagsRecyclerView.requireBindingRecyclerViewAdapter().loadItems(selectedTags ?: emptyList())
-        }.launchWith(viewLifecycleOwner)
-
-        viewModel.state.map { it?.searchText }.onEachChanged {
-            if (it == null) {
-                titleTextView.isVisible = true
-                searchEditText.isVisible = false
-                searchButton.setImageResource(R.drawable.ic_search)
-                searchButton.setOnClickListener {
-                    searchTextChangeListener = searchEditText.doAfterTextChanged { viewModel.setSearchText(it?.toString() ?: "") }
-                    viewModel.setSearchText("")
+                is ChaptersViewModel.SearchState.ByName -> {
+                    searchEditText.isVisible = true
+                    searchButton.isVisible = true
+                    tagsRecyclerView.isVisible = false
                     searchEditText.showKeyboard()
                 }
-            } else {
-                titleTextView.isVisible = false
-                searchEditText.isVisible = true
-                searchButton.setImageResource(R.drawable.ic_clear)
-                searchButton.setOnClickListener {
-                    searchEditText.removeTextChangedListener(searchTextChangeListener)
-                    searchEditText.hideKeyboard()
-                    viewModel.setSearchText(null)
+                is ChaptersViewModel.SearchState.ByTags -> {
+                    searchEditText.isVisible = false
+                    searchButton.isVisible = false
+                    tagsRecyclerView.isVisible = true
+                    tagsRecyclerView.requireBindingRecyclerViewAdapter().loadItems(listOf(SelectTagsButtonItem) + searchState.tags)
                 }
-            }
-
-            if (searchEditText.text?.toString() != it) {
-                searchEditText.setText(it)
+                is ChaptersViewModel.SearchState.OnlyFavorites -> {
+                    searchEditText.isVisible = false
+                    searchButton.isVisible = false
+                    tagsRecyclerView.isVisible = false
+                }
             }
         }.launchWith(viewLifecycleOwner)
 
@@ -190,29 +214,13 @@ class ChaptersFragment(private val delegate: Delegate) : CoreFragment<ChaptersFr
         }
 
     private fun BindingRecyclerViewAdapterBuilder.setupGroupItem() =
-        setup<ChaptersViewModel.Item.Group, TitleItemBinding>(TitleItemBinding::inflate) {
+        setup<ChaptersViewModel.Item.Group, GroupItemBinding>(GroupItemBinding::inflate) {
             bind { item ->
                 textView.text = item.name
                 textView.isVisible = item.name.isNotEmpty()
-            }
-        }
-
-    private fun BindingRecyclerViewAdapterBuilder.setupSubGroupItem() =
-        setup<ChaptersViewModel.Item.Subgroup, SubgroupItemBinding>(SubgroupItemBinding::inflate) {
-            bind { item ->
-                if (item.isExpanded) {
-                    textView.setBackgroundResource(R.color.expandedSubgroup)
-                    expandImageView.setImageResource(R.drawable.ic_expanded)
-                } else {
-                    textView.setBackgroundResource(android.R.color.transparent)
-                    expandImageView.setImageResource(R.drawable.ic_collapsed)
-                }
-
                 root.setOnClickListener {
-                    viewModel.setExpendedSubgroup(item.id, !item.isExpanded)
+                    viewModel.navigateInGroup(item.id)
                 }
-
-                textView.text = item.name
             }
         }
 
@@ -350,12 +358,39 @@ class ChaptersFragment(private val delegate: Delegate) : CoreFragment<ChaptersFr
         }
     }
 
+    private inner class SearchTypeSpinnerAdapter(
+        context: Context,
+        list: List<String>
+    ) : ArrayAdapter<String>(context, R.layout.spinner_item, list) {
+
+        override fun getView(
+            position: Int,
+            convertView: View?,
+            parent: ViewGroup
+        ) = if (convertView == null) {
+            SpinnerItemBinding.inflate(layoutInflater, parent, false)
+        } else {
+            SpinnerItemBinding.bind(convertView)
+        }.apply {
+            val item = getItem(position) ?: return@apply
+            titleTextView.text = item
+        }.root
+
+        override fun getDropDownView(
+            position: Int,
+            convertView: View?,
+            parent: ViewGroup
+        ) = getView(position, convertView, parent)
+    }
+
     private inner class TagSelectionBottomSheetDialogFragmentDelegate : TagSelectionBottomSheetDialogFragment.Delegate {
         override fun onSelected(fragment: TagSelectionBottomSheetDialogFragment, tagIds: List<Int>) {
             fragment.dismiss()
             viewModel.setSelectedTagIds(tagIds)
         }
     }
+
+    object SelectTagsButtonItem
 
     interface Delegate {
         fun navigateToChapter(fragment: ChaptersFragment, chapterId: Int)

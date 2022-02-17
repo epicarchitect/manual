@@ -1,5 +1,6 @@
 package manual.app.ui
 
+import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
 import androidx.core.content.edit
@@ -104,6 +105,14 @@ class AppActivity : CoreActivity<AppActivityBinding>(AppActivityBinding::inflate
                 nightModeManager.mode = NightModeManager.Mode.NIGHT
             } else {
                 nightModeManager.mode = NightModeManager.Mode.NOT_NIGHT
+            }
+
+            if (appBackground == AppBackgroundsRepository.lightAppBackground) {
+                window.statusBarColor = Color.WHITE
+                window.navigationBarColor = Color.WHITE
+            } else {
+                window.statusBarColor = Color.BLACK
+                window.navigationBarColor = Color.BLACK
             }
         }
 
