@@ -10,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.widget.*
+import androidx.activity.addCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.children
 import androidx.core.view.isVisible
@@ -66,7 +67,10 @@ class ChaptersFragment(private val delegate: Delegate) : CoreFragment<ChaptersFr
 
         searchEditText.doAfterTextChanged { viewModel.setSearchText(it?.toString() ?: "") }
 
-        chaptersRecyclerView.itemAnimator = null
+        searchButton.setOnClickListener {
+            searchEditText.showKeyboard()
+        }
+
         chaptersRecyclerView.adapter = buildBindingRecyclerViewAdapter(viewLifecycleOwner) {
             setupChapterItem()
             setupGroupItem()
@@ -96,7 +100,6 @@ class ChaptersFragment(private val delegate: Delegate) : CoreFragment<ChaptersFr
                     }
                     2 -> {
                         viewModel.setSearchType(ChaptersViewModel.SearchType.BY_NAME)
-                        searchEditText.showKeyboard()
                     }
                     3 -> {
                         viewModel.setSearchType(ChaptersViewModel.SearchType.ONLY_FAVORITES)
@@ -132,21 +135,32 @@ class ChaptersFragment(private val delegate: Delegate) : CoreFragment<ChaptersFr
             progressBar.isVisible = it
         }.launchWith(viewLifecycleOwner)
 
+        val backPressedCallback = requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, false) {
+            viewModel.navigateUpFromGroup()
+        }
+
+        backButton.setOnClickListener {
+            viewModel.navigateUpFromGroup()
+        }
+
+        titleTextView.setOnClickListener {
+            viewModel.navigateUpFromGroup()
+        }
+
         viewModel.state.map { it?.searchState }.onEachChanged { searchState ->
             when (searchState) {
                 is ChaptersViewModel.SearchState.ByGroups -> {
+                    backButton.isVisible = !searchState.isRoot
                     searchEditText.isVisible = false
                     searchButton.isVisible = false
                     tagsRecyclerView.isVisible = false
+                    backPressedCallback.isEnabled = !searchState.isRoot
                     if (searchState.isRoot) {
-                        titleTextView.text = "Root"
-                        titleTextView.setOnClickListener(null)
+                        titleTextView.text = getString(R.string.chapters_title)
                     } else {
                         titleTextView.text = searchState.currentGroupTitle
-                        titleTextView.setOnClickListener {
-                            viewModel.navigateUpFromGroup()
-                        }
                     }
+                    searchEditText.hideKeyboard()
                 }
                 is ChaptersViewModel.SearchState.ByName -> {
                     searchEditText.isVisible = true
@@ -159,11 +173,18 @@ class ChaptersFragment(private val delegate: Delegate) : CoreFragment<ChaptersFr
                     searchButton.isVisible = false
                     tagsRecyclerView.isVisible = true
                     tagsRecyclerView.requireBindingRecyclerViewAdapter().loadItems(listOf(SelectTagsButtonItem) + searchState.tags)
+                    if (searchState.tags.isEmpty()) {
+                        fragmentFactoryStore.instantiate<TagSelectionBottomSheetDialogFragment>().apply {
+                            arguments = TagSelectionBottomSheetDialogFragment.buildArguments(emptyList())
+                        }.show(childFragmentManager, null)
+                    }
+                    searchEditText.hideKeyboard()
                 }
                 is ChaptersViewModel.SearchState.OnlyFavorites -> {
                     searchEditText.isVisible = false
                     searchButton.isVisible = false
                     tagsRecyclerView.isVisible = false
+                    searchEditText.hideKeyboard()
                 }
             }
         }.launchWith(viewLifecycleOwner)

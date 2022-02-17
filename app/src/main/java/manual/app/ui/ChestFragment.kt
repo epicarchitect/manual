@@ -54,7 +54,6 @@ class ChestFragment(
 
         viewModel.state.map { it == null }.onEachChanged {
             progressBar.isVisible = it
-            appBarLayout.isVisible = !it
             contentsRecyclerView.isVisible = !it
         }.launchWith(viewLifecycleOwner)
     }

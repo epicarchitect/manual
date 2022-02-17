@@ -34,13 +34,6 @@
         <item name="android:listViewStyle">@style/Base.Widget.ListView</item>
         <item name="navigationViewStyle">@style/Base.Widget.NavigationView</item>
         <item name="toolbarStyle">@style/Base.Widget.Toolbar</item>
-        <item name="appBarLayoutStyle">@style/Base.Widget.AppBarLayout</item>
-    </style>
-
-    <style name="Base.Widget.AppBarLayout" parent="Widget.Design.AppBarLayout">
-        <item name="android:stateListAnimator">@null</item>
-        <item name="android:elevation">0dp</item>
-        <item name="android:background">?android:attr/colorBackground</item>
     </style>
 
     <style name="Base.Widget.Toolbar" parent="Widget.MaterialComponents.Toolbar.Surface">

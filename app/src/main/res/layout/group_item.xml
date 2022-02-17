@@ -1,15 +1,27 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:background="?attr/selectableItemBackground">
 
     <TextView
         android:id="@+id/textView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingHorizontal="16dp"
-        android:paddingTop="12dp"
-        android:paddingBottom="8dp"
-        android:textAppearance="?attr/textAppearanceHeadline6"
+        android:layout_gravity="center_vertical"
+        android:layout_marginEnd="60dp"
+        android:layout_marginStart="16dp"
+        android:textStyle="bold"
+        android:layout_marginVertical="16dp"
+        android:textAppearance="?attr/textAppearanceBody1"
         tools:text="@tools:sample/lorem" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end|center"
+        android:padding="4dp"
+        android:layout_marginEnd="16dp"
+        android:src="@drawable/ic_arrow"
+        tools:ignore="ContentDescription" />
 </FrameLayout>

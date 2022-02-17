@@ -19,6 +19,6 @@
         android:layout_height="wrap_content"
         android:layout_gravity="end|center"
         android:layout_marginEnd="20dp"
-        android:src="@drawable/ic_collapsed"
+        android:src="@drawable/ic_arrow"
         tools:ignore="ContentDescription" />
 </FrameLayout>

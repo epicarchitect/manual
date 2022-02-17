@@ -96,7 +96,6 @@ class ChapterFragment(
         viewModel.state.map { it?.isBlocked }.onEachChanged {
             premiumOfferLayout.isVisible = it == true
             contentsRecyclerView.isVisible = it == false
-            divider.isVisible = it == false
             if (it == true) {
                 premiumOfferLearnMoreButton.setOnClickListener {
                     delegate.navigateToPremiumOffer(this@ChapterFragment)

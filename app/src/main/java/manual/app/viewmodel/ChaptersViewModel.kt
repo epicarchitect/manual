@@ -95,6 +95,14 @@ class ChaptersViewModel(
                                     }
 
                                     addAll(
+                                        rootChapterDatas.map {
+                                            it.toItem()
+                                        }.sortedBy {
+                                            it.name
+                                        }
+                                    )
+
+                                    addAll(
                                         rootChapterGroupDatas.map {
                                             Item.Group(
                                                 it.id,
@@ -104,16 +112,18 @@ class ChaptersViewModel(
                                             it.name
                                         }
                                     )
+                                } else {
+                                    val currentGroupData = chapterGroupDatas.first { it.id == currentGroupId }
 
                                     addAll(
-                                        rootChapterDatas.map {
+                                        chapterDatas.filter {
+                                            currentGroupData.chapterIds.contains(it.id)
+                                        }.map {
                                             it.toItem()
                                         }.sortedBy {
                                             it.name
                                         }
                                     )
-                                } else {
-                                    val currentGroupData = chapterGroupDatas.first { it.id == currentGroupId }
 
                                     addAll(
                                         chapterGroupDatas.filter {
@@ -123,16 +133,6 @@ class ChaptersViewModel(
                                                 it.id,
                                                 it.name
                                             )
-                                        }.sortedBy {
-                                            it.name
-                                        }
-                                    )
-
-                                    addAll(
-                                        chapterDatas.filter {
-                                            currentGroupData.chapterIds.contains(it.id)
-                                        }.map {
-                                            it.toItem()
                                         }.sortedBy {
                                             it.name
                                         }
@@ -358,7 +358,11 @@ class ChaptersViewModel(
     }
 
     fun navigateUpFromGroup() {
-        groupIdsStack.value = groupIdsStack.value.dropLast(1)
+        groupIdsStack.value.let {
+            if (it.size > 1) {
+                groupIdsStack.value = groupIdsStack.value.dropLast(1)
+            }
+        }
     }
 
     fun setSelectedTagIds(ids: List<Int>) {
