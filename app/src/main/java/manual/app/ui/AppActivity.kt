@@ -75,7 +75,6 @@ class AppActivity : CoreActivity<AppActivityBinding>(AppActivityBinding::inflate
         setFactory { ChaptersFragment(ChaptersFragmentDelegate()) }
         setFactory { ChapterFragment(ChapterFragmentDelegate()) }
         setFactory { ChestFragment(ChestFragmentDelegate()) }
-        setFactory { LaunchFragment(LaunchFragmentDelegate()) }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -106,14 +105,6 @@ class AppActivity : CoreActivity<AppActivityBinding>(AppActivityBinding::inflate
             } else {
                 nightModeManager.mode = NightModeManager.Mode.NOT_NIGHT
             }
-
-            if (appBackground == AppBackgroundsRepository.lightAppBackground) {
-                window.statusBarColor = Color.WHITE
-                window.navigationBarColor = Color.WHITE
-            } else {
-                window.statusBarColor = Color.BLACK
-                window.navigationBarColor = Color.BLACK
-            }
         }
 
         if (!isRecreated) {
@@ -124,8 +115,6 @@ class AppActivity : CoreActivity<AppActivityBinding>(AppActivityBinding::inflate
                     null
                 )
             }
-
-            navigate<LaunchFragment>()
         }
 
         combine(
@@ -177,6 +166,7 @@ class AppActivity : CoreActivity<AppActivityBinding>(AppActivityBinding::inflate
     override fun onResume() {
         super.onResume()
         openCount++
+        requireBinding().darkView.animate().alpha(0f).setDuration(1000).start()
     }
 
     override fun onStart() {
@@ -187,6 +177,11 @@ class AppActivity : CoreActivity<AppActivityBinding>(AppActivityBinding::inflate
     override fun onStop() {
         super.onStop()
         appUpdateManager.unregisterListener(installStateUpdatedListener)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        requireBinding().darkView.animate().alpha(1f).setDuration(300).start()
     }
 
     inline fun <reified T : Fragment> navigate(
@@ -248,12 +243,6 @@ class AppActivity : CoreActivity<AppActivityBinding>(AppActivityBinding::inflate
             } else {
                 navigate<ChapterFragment>(bundleOf(ChapterFragment.Argument.Int.CHAPTER_ID to chapterId))
             }
-        }
-    }
-
-    private inner class LaunchFragmentDelegate : LaunchFragment.Delegate {
-        override fun onNext() {
-            supportFragmentManager.popBackStack()
         }
     }
 

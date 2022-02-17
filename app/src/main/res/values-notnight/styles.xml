@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="Activity.Launcher" parent="Base.Activity.Launcher">
-        <item name="android:colorBackground">@android:color/background_light</item>
-    </style>
+    <style name="Activity.Launcher" parent="Base.Activity.Launcher" />
 
     <style name="Activity" parent="Base.Activity">
         <item name="android:colorBackground">@android:color/background_light</item>

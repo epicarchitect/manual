@@ -19,7 +19,7 @@
         android:theme="@style/Activity">
 
         <activity
-            android:name=".ui.AppActivity"
+            android:name=".ui.LaunchActivity"
             android:exported="true"
             android:screenOrientation="portrait"
             android:theme="@style/Activity.Launcher"
@@ -30,6 +30,13 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity
+            android:name=".ui.AppActivity"
+            android:exported="true"
+            android:screenOrientation="portrait"
+            android:theme="@style/Activity"
+            tools:ignore="LockedOrientationActivity"/>
 
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"

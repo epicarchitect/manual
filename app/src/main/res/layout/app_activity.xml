@@ -14,4 +14,10 @@
         android:id="@+id/fragmentContainerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
+
+    <View
+        android:id="@+id/dark_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@android:color/background_dark"/>
 </FrameLayout>

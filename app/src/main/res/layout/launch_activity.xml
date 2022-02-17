@@ -2,13 +2,13 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@android:color/background_dark">
 
     <ImageView
         android:id="@+id/background_imageView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:scaleType="centerCrop"
         tools:ignore="ContentDescription"
         tools:src="@drawable/launch" />
 
@@ -22,4 +22,10 @@
         android:textAppearance="?attr/textAppearanceOverline"
         android:textColor="@color/launch_nextButton"
         android:textSize="20sp" />
+
+    <View
+        android:id="@+id/dark_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@android:color/background_dark"/>
 </FrameLayout>
