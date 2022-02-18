@@ -19,13 +19,7 @@
     <string name="settings_backgrounds_description">Фон приложения</string>
 
     <string name="chapters_title">Статьи</string>
-    <string name="chapters_searchHint">Поиск по названию</string>
-    <string name="chapters_tags_button">Теги</string>
-    <string name="chapters_tagsCount_button">Теги (%d)</string>
-    <string name="chapters_noSelectedTags_description">Теги не выбраны.</string>
     <string name="chapters_noItems_description">Статьи не найдены.</string>
-    <string name="chapters_menu_settings_button">Настройки</string>
-    <string name="chapters_menu_review_button">Написать отзыв</string>
     <string name="chapters_favoriteGroup_title">Избранное</string>
     <string name="chapters_openPlayMarketFailed">Не удалось открыть Play market</string>
     <string name="chapters_premiumOffer_learnMore">Узнать больше</string>

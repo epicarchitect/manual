@@ -98,7 +98,7 @@ class ChaptersViewModel(
                                         rootChapterDatas.map {
                                             it.toItem()
                                         }.sortedBy {
-                                            it.name
+                                            it.id
                                         }
                                     )
 
@@ -109,7 +109,7 @@ class ChaptersViewModel(
                                                 it.name
                                             )
                                         }.sortedBy {
-                                            it.name
+                                            it.id
                                         }
                                     )
                                 } else {
@@ -121,7 +121,7 @@ class ChaptersViewModel(
                                         }.map {
                                             it.toItem()
                                         }.sortedBy {
-                                            it.name
+                                            it.id
                                         }
                                     )
 
@@ -134,7 +134,7 @@ class ChaptersViewModel(
                                                 it.name
                                             )
                                         }.sortedBy {
-                                            it.name
+                                            it.id
                                         }
                                     )
                                 }

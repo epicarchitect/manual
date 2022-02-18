@@ -163,27 +163,30 @@ class ChaptersFragment(private val delegate: Delegate) : CoreFragment<ChaptersFr
                     searchEditText.hideKeyboard()
                 }
                 is ChaptersViewModel.SearchState.ByName -> {
+                    backButton.isVisible = false
+                    titleTextView.text = getString(R.string.chapters_title)
                     searchEditText.isVisible = true
                     searchButton.isVisible = true
                     tagsRecyclerView.isVisible = false
+                    backPressedCallback.isEnabled = false
                     searchEditText.showKeyboard()
                 }
                 is ChaptersViewModel.SearchState.ByTags -> {
+                    backButton.isVisible = false
+                    titleTextView.text = getString(R.string.chapters_title)
                     searchEditText.isVisible = false
                     searchButton.isVisible = false
                     tagsRecyclerView.isVisible = true
+                    backPressedCallback.isEnabled = false
                     tagsRecyclerView.requireBindingRecyclerViewAdapter().loadItems(listOf(SelectTagsButtonItem) + searchState.tags)
-                    if (searchState.tags.isEmpty()) {
-                        fragmentFactoryStore.instantiate<TagSelectionBottomSheetDialogFragment>().apply {
-                            arguments = TagSelectionBottomSheetDialogFragment.buildArguments(emptyList())
-                        }.show(childFragmentManager, null)
-                    }
                     searchEditText.hideKeyboard()
                 }
                 is ChaptersViewModel.SearchState.OnlyFavorites -> {
+                    backButton.isVisible = false
                     searchEditText.isVisible = false
                     searchButton.isVisible = false
                     tagsRecyclerView.isVisible = false
+                    backPressedCallback.isEnabled = false
                     searchEditText.hideKeyboard()
                 }
             }
