@@ -147,6 +147,8 @@ class ChaptersViewModel(
                                     else it.filterByName(searchText)
                                 }.map {
                                     it.toItem()
+                                }.sortedBy {
+                                    it.id
                                 }
                             )
                         }
@@ -157,6 +159,8 @@ class ChaptersViewModel(
                                     else it.filterByTagIds(selectedTagIds)
                                 }.map {
                                     it.toItem()
+                                }.sortedBy {
+                                    it.id
                                 }
                             )
                         }
@@ -166,6 +170,8 @@ class ChaptersViewModel(
                                     favoriteChapterIds.contains(it.id)
                                 }.map {
                                     it.toItem()
+                                }.sortedBy {
+                                    it.id
                                 }
                             )
                         }
