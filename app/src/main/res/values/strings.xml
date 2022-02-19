@@ -17,6 +17,7 @@
     <string name="settings_gdpr_description">Настройки рекламы</string>
     <string name="settings_changeGdpr_button">Изменить настройки</string>
     <string name="settings_backgrounds_description">Фон приложения</string>
+    <string name="settings_sendReview_button">Написать отзыв</string>
 
     <string name="chapters_title">Статьи</string>
     <string name="chapters_noItems_description">Статьи не найдены.</string>
@@ -24,7 +25,13 @@
     <string name="chapters_openPlayMarketFailed">Не удалось открыть Play market</string>
     <string name="chapters_premiumOffer_learnMore">Узнать больше</string>
     <string name="chapters_premiumOffer_description">Данная статья доступна только в полной версии.</string>
-    <string name="chapters_chest_item_title">Наш сундучок</string>
+    <string name="chapters_searchByGroups">Поиск по группам</string>
+    <string name="chapters_searchByTags">Поиск по тегам</string>
+    <string name="chapters_searchByName">Поиск по названию</string>
+    <string name="chapters_searchByFavorites">Поиск по избранным</string>
+    <string name="chapters_searchByName_hint">Введите название статьи</string>
+    <string name="chapters_selectTags_button">Выбрать теги</string>
+    <string name="chapters_noTagsSelected">Теги не выбраны.</string>
 
     <string name="tagSelection_title">Теги</string>
     <string name="tagSelection_apply_button">Применить</string>

@@ -4,7 +4,7 @@
     android:layout_height="50dp"
     android:layout_gravity="center_vertical"
     android:layout_marginHorizontal="4dp"
-    android:text="Выбрать теги"
+    android:text="@string/chapters_selectTags_button"
     android:textColor="@android:color/white"
     app:chipBackgroundColor="?attr/colorPrimary"
     app:chipIcon="@drawable/ic_add"

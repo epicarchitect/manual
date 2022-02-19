@@ -25,7 +25,7 @@ class BindingRecyclerViewAdapterBuilder(val lifecycleOwner: LifecycleOwner) {
 
     inline fun <reified ITEM : Any, VIEW_BINDING : ViewBinding> setup(
             noinline bindingFactory: (LayoutInflater, ViewGroup, Boolean) -> VIEW_BINDING,
-            setup: ItemProviderBuilder<ITEM, VIEW_BINDING>.() -> Unit
+            setup: ItemProviderBuilder<ITEM, VIEW_BINDING>.() -> Unit = {}
     ) = adapter.addItemConfig(
             ITEM::class,
             ItemProviderBuilder<ITEM, VIEW_BINDING>(lifecycleOwner, bindingFactory).apply(setup).build()

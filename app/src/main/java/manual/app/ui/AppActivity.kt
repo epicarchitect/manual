@@ -1,6 +1,5 @@
 package manual.app.ui
 
-import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
 import androidx.core.content.edit

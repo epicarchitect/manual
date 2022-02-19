@@ -81,10 +81,10 @@ class ChaptersFragment(private val delegate: Delegate) : CoreFragment<ChaptersFr
                 requireContext(),
                 searchTypes.map {
                     when (it) {
-                        ChaptersViewModel.SearchType.BY_GROUPS -> "Поиск по группам"
-                        ChaptersViewModel.SearchType.BY_TAGS -> "Поиск по тегам"
-                        ChaptersViewModel.SearchType.BY_NAME -> "Поиск по названию"
-                        ChaptersViewModel.SearchType.BY_FAVORITES -> "Поиск по избранным"
+                        ChaptersViewModel.SearchType.BY_GROUPS -> getString(R.string.chapters_searchByGroups)
+                        ChaptersViewModel.SearchType.BY_TAGS -> getString(R.string.chapters_searchByTags)
+                        ChaptersViewModel.SearchType.BY_NAME -> getString(R.string.chapters_searchByName)
+                        ChaptersViewModel.SearchType.BY_FAVORITES -> getString(R.string.chapters_searchByFavorites)
                     }
                 }
             )
@@ -108,7 +108,7 @@ class ChaptersFragment(private val delegate: Delegate) : CoreFragment<ChaptersFr
             }
 
             setup<SelectTagsButtonItem, SelectTagsButtonItemBinding>(SelectTagsButtonItemBinding::inflate) {
-                bind { item ->
+                bind { _ ->
                     root.setOnClickListener {
                         fragmentFactoryStore.instantiate<TagSelectionBottomSheetDialogFragment>().apply {
                             arguments = TagSelectionBottomSheetDialogFragment.buildArguments(
@@ -118,6 +118,8 @@ class ChaptersFragment(private val delegate: Delegate) : CoreFragment<ChaptersFr
                     }
                 }
             }
+
+            setup<NoTagsSelectedItem, NoTagsSelectedItemBinding>(NoTagsSelectedItemBinding::inflate)
         }
 
         viewModel.state.map { it == null }.onEachChanged {
@@ -168,7 +170,11 @@ class ChaptersFragment(private val delegate: Delegate) : CoreFragment<ChaptersFr
                     searchEditText.isVisible = false
                     clearSearchButton.isVisible = false
                     tagsRecyclerView.isVisible = true
-                    tagsRecyclerView.requireBindingRecyclerViewAdapter().loadItems(listOf(SelectTagsButtonItem) + searchState.tags)
+                    tagsRecyclerView.requireBindingRecyclerViewAdapter().loadItems(
+                        listOf(SelectTagsButtonItem)
+                                + searchState.tags
+                                + if (searchState.tags.isEmpty()) listOf(NoTagsSelectedItem) else listOf()
+                    )
                     searchEditText.hideKeyboard()
                 }
                 is ChaptersViewModel.SearchState.ByFavorites -> {
@@ -406,6 +412,8 @@ class ChaptersFragment(private val delegate: Delegate) : CoreFragment<ChaptersFr
     }
 
     object SelectTagsButtonItem
+
+    object NoTagsSelectedItem
 
     interface Delegate {
         fun navigateToChapter(fragment: ChaptersFragment, chapterId: Int)

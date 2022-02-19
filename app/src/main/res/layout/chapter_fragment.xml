@@ -29,7 +29,6 @@
                 app:layout_constraintTop_toTopOf="@id/title_textView"
                 tools:ignore="ContentDescription" />
 
-
             <TextView
                 android:id="@+id/title_textView"
                 android:layout_width="0dp"

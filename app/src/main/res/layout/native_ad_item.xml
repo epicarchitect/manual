@@ -88,6 +88,7 @@
                                 android:layout_height="wrap_content"
                                 android:isIndicator="true"
                                 android:numStars="5"
+                                android:progressTint="#4CAF50"
                                 android:stepSize="0.5"
                                 tools:progress="50"/>
                         </LinearLayout>
@@ -146,6 +147,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             tools:text="Install"
+                            android:textColor="#4CAF50"
                             android:gravity="center"
                             android:textSize="12sp" />
                     </LinearLayout>
