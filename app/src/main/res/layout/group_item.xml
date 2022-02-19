@@ -1,27 +1,49 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="?attr/selectableItemBackground">
 
+    <ImageView
+        android:id="@+id/icon_imageView"
+        android:layout_width="44dp"
+        android:layout_height="44dp"
+        android:layout_marginStart="16dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@id/name_textView"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/name_textView"
+        tools:ignore="ContentDescription"
+        tools:src="@drawable/main_screen_app_icon" />
+
     <TextView
-        android:id="@+id/textView"
-        android:layout_width="match_parent"
+        android:id="@+id/name_textView"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
-        android:layout_marginEnd="60dp"
-        android:layout_marginStart="16dp"
-        android:textStyle="bold"
-        android:layout_marginVertical="16dp"
+        android:layout_margin="16dp"
+        android:ellipsize="end"
+        android:maxLines="3"
         android:textAppearance="?attr/textAppearanceBody1"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/next_imageView"
+        app:layout_constraintStart_toEndOf="@id/icon_imageView"
+        app:layout_constraintTop_toTopOf="parent"
         tools:text="@tools:sample/lorem" />
 
     <ImageView
+        android:id="@+id/next_imageView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="end|center"
-        android:padding="4dp"
+        android:layout_marginVertical="4dp"
         android:layout_marginEnd="16dp"
+        android:padding="4dp"
         android:src="@drawable/ic_arrow"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
         tools:ignore="ContentDescription" />
-</FrameLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -27,6 +27,14 @@ class SettingsFragment : CoreFragment<SettingsFragmentBinding>(SettingsFragmentB
     private val monetizationConfigRepository: MonetizationConfigRepository by inject()
 
     override fun SettingsFragmentBinding.onCreated() {
+        titleTextView.setOnClickListener {
+            requireActivity().onBackPressed()
+        }
+
+        backButton.setOnClickListener {
+            requireActivity().onBackPressed()
+        }
+
         fontSizeSeekBar.progress = ((fontScaleManager.fontScale - 1.0f) * 10).toInt()
         fontSizeSeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean)  = Unit

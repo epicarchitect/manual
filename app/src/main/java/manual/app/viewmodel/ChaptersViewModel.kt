@@ -138,7 +138,8 @@ class ChaptersViewModel(
                                         }
                                     )
                                 }
-                            }
+                            },
+                            canNavigateBack = currentGroupId != ROOT_GROUP_ID
                         )
                     }
                     SearchType.BY_NAME -> {
@@ -153,7 +154,8 @@ class ChaptersViewModel(
                                         it.toItem()
                                     }
                                 )
-                            }
+                            },
+                            canNavigateBack = true
                         )
                     }
                     SearchType.BY_TAGS -> {
@@ -177,7 +179,8 @@ class ChaptersViewModel(
                                         it.toItem()
                                     }
                                 )
-                            }
+                            },
+                            canNavigateBack = true
                         )
                     }
                     SearchType.ONLY_FAVORITES -> {
@@ -191,7 +194,8 @@ class ChaptersViewModel(
                                         it.toItem()
                                     }
                                 )
-                            }
+                            },
+                            canNavigateBack = true
                         )
                     }
                 }
@@ -357,10 +361,23 @@ class ChaptersViewModel(
         groupIdsStack.value += groupId
     }
 
-    fun navigateUpFromGroup() {
-        groupIdsStack.value.let {
-            if (it.size > 1) {
-                groupIdsStack.value = groupIdsStack.value.dropLast(1)
+    fun navigateBack() {
+        state.value?.let { state ->
+            if (state.canNavigateBack) {
+                when (state.searchState) {
+                    is SearchState.ByGroups -> {
+                        groupIdsStack.value = groupIdsStack.value.dropLast(1)
+                    }
+                    is SearchState.ByName -> {
+                        searchTypeState.value = SearchType.BY_GROUPS
+                    }
+                    is SearchState.ByTags -> {
+                        searchTypeState.value = SearchType.BY_GROUPS
+                    }
+                    is SearchState.OnlyFavorites -> {
+                        searchTypeState.value = SearchType.BY_GROUPS
+                    }
+                }
             }
         }
     }
@@ -381,7 +398,8 @@ class ChaptersViewModel(
 
     data class State(
         val searchState: SearchState,
-        val items: List<Item>
+        val items: List<Item>,
+        val canNavigateBack: Boolean
     )
 
     data class Tag(
@@ -402,8 +420,6 @@ class ChaptersViewModel(
         class NativeAd : Item()
 
         object FavoritesGroup : Item()
-
-        object Chest : Item()
     }
 
     sealed class SearchState {

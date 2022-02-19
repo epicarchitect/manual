@@ -44,9 +44,4 @@ class LaunchActivity : CoreActivity<LaunchActivityBinding>(LaunchActivityBinding
         super.onResume()
         requireBinding().darkView.animate().alpha(0f).setDuration(2000).start()
     }
-
-    override fun onPause() {
-        super.onPause()
-        requireBinding().darkView.animate().alpha(1f).setDuration(300).start()
-    }
 }

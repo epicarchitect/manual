@@ -3,6 +3,7 @@ package manual.app
 import android.app.Application
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.preferencesDataStoreFile
+import com.google.android.gms.ads.MobileAds
 import com.google.android.play.core.appupdate.AppUpdateManagerFactory
 import com.google.android.play.core.review.ReviewManagerFactory
 import com.google.gson.GsonBuilder
@@ -33,6 +34,7 @@ class App : Application() {
 
     override fun onCreate() {
         super.onCreate()
+        MobileAds.initialize(this)
         startKoin {
             androidLogger(if (BuildConfig.DEBUG) Level.ERROR else Level.NONE)
             androidContext(this@App)
@@ -59,6 +61,8 @@ class App : Application() {
         single { TagGroupsRepository(get(), get()) }
         single { TagsRepository(get(), get()) }
         single { MonetizationConfigRepository(get(), get()) }
+        single { ChapterIconsRepository(get(), get()) }
+        single { ChapterGroupIconsRepository(get(), get()) }
         single { PremiumManager(this@App, get()) }
         single { BillingClientManager(this@App, 3000) }
         single {

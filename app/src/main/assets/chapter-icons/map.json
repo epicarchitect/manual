@@ -1,0 +1,10 @@
+[
+  {
+    "chapterId": 1,
+    "source": "data/test.gif"
+  },
+  {
+    "chapterId": 2,
+    "source": "data/data-2.jpg"
+  }
+]

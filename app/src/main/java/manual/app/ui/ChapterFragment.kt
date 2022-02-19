@@ -38,6 +38,14 @@ class ChapterFragment(
 
     @SuppressLint("SetTextI18n")
     override fun ChapterFragmentBinding.onCreated() {
+        titleTextView.setOnClickListener {
+            requireActivity().onBackPressed()
+        }
+
+        backButton.setOnClickListener {
+            requireActivity().onBackPressed()
+        }
+
         tagsRecyclerView.adapter = buildBindingRecyclerViewAdapter(viewLifecycleOwner) {
             setup<ChapterViewModel.Tag, TagItemBinding>(TagItemBinding::inflate) {
                 bind { item ->

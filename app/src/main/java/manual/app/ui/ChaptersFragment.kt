@@ -5,7 +5,6 @@ import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import android.text.TextWatcher
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
@@ -14,13 +13,18 @@ import androidx.activity.addCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.children
 import androidx.core.view.isVisible
+import androidx.core.view.setPadding
 import androidx.core.view.updateLayoutParams
 import androidx.core.widget.doAfterTextChanged
+import com.bumptech.glide.Glide
 import com.mctech.library.keyboard.visibilitymonitor.KeyboardVisibilityMonitor
+import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import manual.app.R
 import manual.app.ads.NativeAdsManager
 import manual.app.databinding.*
+import manual.app.repository.ChapterGroupIconsRepository
+import manual.app.repository.ChapterIconsRepository
 import manual.app.viewmodel.ChaptersViewModel
 import manual.core.coroutines.flow.launchWith
 import manual.core.coroutines.flow.onEachChanged
@@ -28,6 +32,7 @@ import manual.core.fragment.CoreFragment
 import manual.core.fragment.FragmentFactoryStore
 import manual.core.fragment.instantiate
 import manual.core.fragment.setFactory
+import manual.core.resources.dp
 import manual.core.view.*
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
@@ -36,7 +41,8 @@ class ChaptersFragment(private val delegate: Delegate) : CoreFragment<ChaptersFr
 
     private val viewModel: ChaptersViewModel by sharedViewModel()
     private val nativeAdsManager: NativeAdsManager by inject()
-    private var searchTextChangeListener: TextWatcher? = null
+    private val chapterIconsRepository: ChapterIconsRepository by inject()
+    private val chapterGroupIconsRepository: ChapterGroupIconsRepository by inject()
 
     override fun FragmentFactoryStore.setup() {
         setFactory { TagSelectionBottomSheetDialogFragment(TagSelectionBottomSheetDialogFragmentDelegate()) }
@@ -65,17 +71,16 @@ class ChaptersFragment(private val delegate: Delegate) : CoreFragment<ChaptersFr
             false
         })
 
-        searchEditText.doAfterTextChanged { viewModel.setSearchText(it?.toString() ?: "") }
+        searchEditText.doAfterTextChanged { viewModel.setSearchText(it?.toString()) }
 
-        searchButton.setOnClickListener {
-            searchEditText.showKeyboard()
+        clearSearchButton.setOnClickListener {
+            viewModel.setSearchText(null)
         }
 
         chaptersRecyclerView.adapter = buildBindingRecyclerViewAdapter(viewLifecycleOwner) {
             setupChapterItem()
             setupGroupItem()
             setupFavoriteGroupItem()
-            setupChestItem()
             setupAdItem()
         }
 
@@ -136,25 +141,24 @@ class ChaptersFragment(private val delegate: Delegate) : CoreFragment<ChaptersFr
         }.launchWith(viewLifecycleOwner)
 
         val backPressedCallback = requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, false) {
-            viewModel.navigateUpFromGroup()
+            viewModel.navigateBack()
         }
 
         backButton.setOnClickListener {
-            viewModel.navigateUpFromGroup()
+            viewModel.navigateBack()
         }
 
         titleTextView.setOnClickListener {
-            viewModel.navigateUpFromGroup()
+            viewModel.navigateBack()
         }
 
         viewModel.state.map { it?.searchState }.onEachChanged { searchState ->
             when (searchState) {
                 is ChaptersViewModel.SearchState.ByGroups -> {
-                    backButton.isVisible = !searchState.isRoot
+                    searchTypeSpinner.setSelection(0)
                     searchEditText.isVisible = false
-                    searchButton.isVisible = false
+                    clearSearchButton.isVisible = false
                     tagsRecyclerView.isVisible = false
-                    backPressedCallback.isEnabled = !searchState.isRoot
                     if (searchState.isRoot) {
                         titleTextView.text = getString(R.string.chapters_title)
                     } else {
@@ -163,30 +167,33 @@ class ChaptersFragment(private val delegate: Delegate) : CoreFragment<ChaptersFr
                     searchEditText.hideKeyboard()
                 }
                 is ChaptersViewModel.SearchState.ByName -> {
-                    backButton.isVisible = false
+                    searchTypeSpinner.setSelection(2)
                     titleTextView.text = getString(R.string.chapters_title)
                     searchEditText.isVisible = true
-                    searchButton.isVisible = true
+                    clearSearchButton.isVisible = true
                     tagsRecyclerView.isVisible = false
-                    backPressedCallback.isEnabled = false
-                    searchEditText.showKeyboard()
+
+                    if (searchEditText.text.toString() != searchState.name) {
+                        searchEditText.setText(searchState.name)
+                    }
+
+                    clearSearchButton.isVisible = !searchState.name.isNullOrEmpty()
                 }
                 is ChaptersViewModel.SearchState.ByTags -> {
-                    backButton.isVisible = false
+                    searchTypeSpinner.setSelection(1)
                     titleTextView.text = getString(R.string.chapters_title)
                     searchEditText.isVisible = false
-                    searchButton.isVisible = false
+                    clearSearchButton.isVisible = false
                     tagsRecyclerView.isVisible = true
-                    backPressedCallback.isEnabled = false
                     tagsRecyclerView.requireBindingRecyclerViewAdapter().loadItems(listOf(SelectTagsButtonItem) + searchState.tags)
                     searchEditText.hideKeyboard()
                 }
                 is ChaptersViewModel.SearchState.OnlyFavorites -> {
-                    backButton.isVisible = false
+                    searchTypeSpinner.setSelection(3)
+                    titleTextView.text = getString(R.string.chapters_title)
                     searchEditText.isVisible = false
-                    searchButton.isVisible = false
+                    clearSearchButton.isVisible = false
                     tagsRecyclerView.isVisible = false
-                    backPressedCallback.isEnabled = false
                     searchEditText.hideKeyboard()
                 }
             }
@@ -196,12 +203,41 @@ class ChaptersFragment(private val delegate: Delegate) : CoreFragment<ChaptersFr
             chaptersRecyclerView.requireBindingRecyclerViewAdapter().loadItems(it ?: emptyList())
             noChaptersTextView.isVisible = it != null && it.isEmpty()
         }.launchWith(viewLifecycleOwner)
+
+        viewModel.state.map { it?.canNavigateBack ?: false }.onEachChanged {
+            if (it) {
+                backButton.setImageResource(R.drawable.ic_back)
+                backButton.setPadding(4.dp)
+                backButton.updateLayoutParams {
+                    width = 32.dp
+                    height = 32.dp
+                }
+            } else {
+                backButton.setImageResource(R.drawable.main_screen_app_icon)
+                backButton.setPadding(0)
+                backButton.updateLayoutParams {
+                    width = 32.dp
+                    height = 32.dp
+                }
+            }
+
+            backPressedCallback.isEnabled = it
+        }.launchWith(viewLifecycleOwner)
     }
 
     private fun BindingRecyclerViewAdapterBuilder.setupChapterItem() =
         setup<ChaptersViewModel.Item.Chapter, ChapterItemBinding>(ChapterItemBinding::inflate) {
-            bind { item ->
+            bind { scope, item ->
                 nameTextView.text = item.name
+
+                chapterIconsRepository.chapterIconFlow(item.id).onEachChanged {
+                    iconImageView.isVisible = it != null
+                    if (it != null) {
+                        Glide.with(root.context)
+                            .load("file:///android_asset/${it.source}")
+                            .into(iconImageView)
+                    }
+                }.launchIn(scope)
 
                 if (item.isBlocked) {
                     root.children.forEach { it.isEnabled = false }
@@ -239,9 +275,16 @@ class ChaptersFragment(private val delegate: Delegate) : CoreFragment<ChaptersFr
 
     private fun BindingRecyclerViewAdapterBuilder.setupGroupItem() =
         setup<ChaptersViewModel.Item.Group, GroupItemBinding>(GroupItemBinding::inflate) {
-            bind { item ->
-                textView.text = item.name
-                textView.isVisible = item.name.isNotEmpty()
+            bind { scope, item ->
+                nameTextView.text = item.name
+                chapterGroupIconsRepository.chapterGroupIconFlow(item.id).onEachChanged {
+                    iconImageView.isVisible = it != null
+                    if (it != null) {
+                        Glide.with(root.context)
+                            .load("file:///android_asset/${it.source}")
+                            .into(iconImageView)
+                    }
+                }.launchIn(scope)
                 root.setOnClickListener {
                     viewModel.navigateInGroup(item.id)
                 }
@@ -252,15 +295,6 @@ class ChaptersFragment(private val delegate: Delegate) : CoreFragment<ChaptersFr
         setup<ChaptersViewModel.Item.FavoritesGroup, TitleItemBinding>(TitleItemBinding::inflate) {
             bind { _ ->
                 textView.setText(R.string.chapters_favoriteGroup_title)
-            }
-        }
-
-    private fun BindingRecyclerViewAdapterBuilder.setupChestItem() =
-        setup<ChaptersViewModel.Item.Chest, ChestItemBinding>(ChestItemBinding::inflate) {
-            bind { _ ->
-                root.setOnClickListener {
-                    delegate.navigateToChapter(this@ChaptersFragment, -1)
-                }
             }
         }
 

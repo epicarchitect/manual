@@ -74,7 +74,6 @@ class AppActivity : CoreActivity<AppActivityBinding>(AppActivityBinding::inflate
         setFactory { PremiumOfferFragment(FullVersionOfferFragmentDelegate()) }
         setFactory { ChaptersFragment(ChaptersFragmentDelegate()) }
         setFactory { ChapterFragment(ChapterFragmentDelegate()) }
-        setFactory { ChestFragment(ChestFragmentDelegate()) }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -179,11 +178,6 @@ class AppActivity : CoreActivity<AppActivityBinding>(AppActivityBinding::inflate
         appUpdateManager.unregisterListener(installStateUpdatedListener)
     }
 
-    override fun onPause() {
-        super.onPause()
-        requireBinding().darkView.animate().alpha(1f).setDuration(300).start()
-    }
-
     inline fun <reified T : Fragment> navigate(
         arguments: Bundle? = null,
         tag: String? = T::class.java.name
@@ -204,21 +198,13 @@ class AppActivity : CoreActivity<AppActivityBinding>(AppActivityBinding::inflate
         }
 
         override fun navigateToChapter(fragment: ChapterFragment, chapterId: Int) {
-            if (chapterId == -1) {
-                navigate<ChestFragment>()
-            } else {
-                navigate<ChapterFragment>(bundleOf(ChapterFragment.Argument.Int.CHAPTER_ID to chapterId))
-            }
+            navigate<ChapterFragment>(bundleOf(ChapterFragment.Argument.Int.CHAPTER_ID to chapterId))
         }
     }
 
     private inner class ChaptersFragmentDelegate : ChaptersFragment.Delegate {
         override fun navigateToChapter(fragment: ChaptersFragment, chapterId: Int) {
-            if (chapterId == -1) {
-                navigate<ChestFragment>()
-            } else {
-                navigate<ChapterFragment>(bundleOf(ChapterFragment.Argument.Int.CHAPTER_ID to chapterId))
-            }
+            navigate<ChapterFragment>(bundleOf(ChapterFragment.Argument.Int.CHAPTER_ID to chapterId))
         }
 
         override fun navigateToSettings(fragment: ChaptersFragment) {
@@ -233,16 +219,6 @@ class AppActivity : CoreActivity<AppActivityBinding>(AppActivityBinding::inflate
     private inner class FullVersionOfferFragmentDelegate : PremiumOfferFragment.Delegate {
         override fun onPremiumPurchased(fragment: PremiumOfferFragment) {
             supportFragmentManager.popBackStack()
-        }
-    }
-
-    private inner class ChestFragmentDelegate : ChestFragment.Delegate {
-        override fun navigateToChapter(fragment: ChestFragment, chapterId: Int) {
-            if (chapterId == -1) {
-                navigate<ChestFragment>()
-            } else {
-                navigate<ChapterFragment>(bundleOf(ChapterFragment.Argument.Int.CHAPTER_ID to chapterId))
-            }
         }
     }
 
