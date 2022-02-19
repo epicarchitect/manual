@@ -77,21 +77,18 @@ class ChaptersViewModel(
                             items = mutableListOf<Item>().apply {
                                 if (currentGroupId == ROOT_GROUP_ID) {
                                     val subgroupIds = mutableSetOf<Int>()
+                                    val subgroupChapterIds = mutableSetOf<Int>()
                                     chapterGroupDatas.forEach {
                                         subgroupIds.addAll(it.subgroupIds)
+                                        subgroupChapterIds.addAll(it.chapterIds)
                                     }
 
                                     val rootChapterGroupDatas = chapterGroupDatas.filterNot {
                                         subgroupIds.contains(it.id)
                                     }
 
-                                    val rootChapterIds = mutableSetOf<Int>()
-                                    rootChapterGroupDatas.forEach {
-                                        rootChapterIds.addAll(it.chapterIds)
-                                    }
-
-                                    val rootChapterDatas = chapterDatas.filter {
-                                        rootChapterIds.contains(it.id)
+                                    val rootChapterDatas = chapterDatas.filterNot {
+                                        subgroupChapterIds.contains(it.id)
                                     }
 
                                     addAll(
