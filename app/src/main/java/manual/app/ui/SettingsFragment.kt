@@ -94,6 +94,10 @@ class SettingsFragment : CoreFragment<SettingsFragmentBinding>(SettingsFragmentB
                 gdprHelper.openConsentDialog(requireActivity()) {}
             }
         }.launchWith(viewLifecycleOwner)
+
+        reviewButton.setOnClickListener {
+            goToAppInStore()
+        }
     }
 
     fun goToAppInStore() = with(requireActivity()) {
