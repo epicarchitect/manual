@@ -6,12 +6,14 @@ fun AssetManager.forEachFilePath(
     rootPath: String,
     action: (filePath: String) -> Unit
 ) {
-    val list = checkNotNull(list(rootPath))
-    if (list.isEmpty()) {
-        action(rootPath)
-    } else {
-        list.forEach {
-            forEachFilePath("$rootPath/$it", action)
+    runCatching {
+        val list = checkNotNull(list(rootPath))
+        if (list.isEmpty()) {
+            action(rootPath)
+        } else {
+            list.forEach {
+                forEachFilePath("$rootPath/$it", action)
+            }
         }
     }
 }

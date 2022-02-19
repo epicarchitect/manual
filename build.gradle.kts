@@ -10,7 +10,8 @@ buildscript {
     }
 }
 
-@Suppress("JcenterRepositoryObsolete") allprojects {
+@Suppress("JcenterRepositoryObsolete")
+allprojects {
     repositories {
         google()
         jcenter()

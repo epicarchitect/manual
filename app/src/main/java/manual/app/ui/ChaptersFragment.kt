@@ -1,23 +1,19 @@
 package manual.app.ui
 
 import android.annotation.SuppressLint
-import android.content.ActivityNotFoundException
 import android.content.Context
-import android.content.Intent
-import android.net.Uri
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.widget.*
 import androidx.activity.addCallback
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.children
 import androidx.core.view.isVisible
 import androidx.core.view.setPadding
 import androidx.core.view.updateLayoutParams
 import androidx.core.widget.doAfterTextChanged
 import com.bumptech.glide.Glide
-import com.mctech.library.keyboard.visibilitymonitor.KeyboardVisibilityMonitor
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import manual.app.R
@@ -54,14 +50,6 @@ class ChaptersFragment(private val delegate: Delegate) : CoreFragment<ChaptersFr
             delegate.navigateToSettings(this@ChaptersFragment)
         }
 
-        KeyboardVisibilityMonitor(viewLifecycleOwner, activity as AppCompatActivity) {
-            if (it.isOpened) {
-                searchEditText.requestFocus()
-            } else {
-                searchEditText.clearFocus()
-            }
-        }
-
         searchEditText.setOnEditorActionListener(TextView.OnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_SEARCH) {
                 searchEditText.hideKeyboard()
@@ -84,37 +72,33 @@ class ChaptersFragment(private val delegate: Delegate) : CoreFragment<ChaptersFr
             setupAdItem()
         }
 
-        searchTypeSpinner.adapter = SearchTypeSpinnerAdapter(
-            requireContext(),
-            listOf(
-                "Поиск по группам",
-                "Поиск по тегам",
-                "Поиск по названию",
-                "Показывать только избранное"
-            )
-        )
+        viewModel.state.map { it?.availableSearchTypes }.filterNotNull().onEachChanged { searchTypes ->
+            searchTypeLayout.isVisible = searchTypes.isNotEmpty()
+            bottomDivider.isVisible = searchTypes.isNotEmpty()
+            searchTypeSpinner.isEnabled = searchTypes.size > 1
 
-        searchTypeSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                when (position) {
-                    0 -> {
-                        viewModel.setSearchType(ChaptersViewModel.SearchType.BY_GROUPS)
+            searchTypeSpinner.adapter = SearchTypeSpinnerAdapter(
+                requireContext(),
+                searchTypes.map {
+                    when (it) {
+                        ChaptersViewModel.SearchType.BY_GROUPS -> "Поиск по группам"
+                        ChaptersViewModel.SearchType.BY_TAGS -> "Поиск по тегам"
+                        ChaptersViewModel.SearchType.BY_NAME -> "Поиск по названию"
+                        ChaptersViewModel.SearchType.BY_FAVORITES -> "Поиск по избранным"
                     }
-                    1 -> {
-                        viewModel.setSearchType(ChaptersViewModel.SearchType.BY_TAGS)
-                    }
-                    2 -> {
-                        viewModel.setSearchType(ChaptersViewModel.SearchType.BY_NAME)
-                    }
-                    3 -> {
-                        viewModel.setSearchType(ChaptersViewModel.SearchType.ONLY_FAVORITES)
-                    }
-                    else -> error("hm")
                 }
-            }
+            )
 
-            override fun onNothingSelected(parent: AdapterView<*>?) = Unit
-        }
+            searchTypeSpinner.setSelection(searchTypes.indexOf(viewModel.state.value!!.searchState.searchType))
+
+            searchTypeSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+                override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                    viewModel.setSearchType(searchTypes[position])
+                }
+
+                override fun onNothingSelected(parent: AdapterView<*>?) = Unit
+            }
+        }.launchWith(viewLifecycleOwner)
 
         tagsRecyclerView.adapter = buildBindingRecyclerViewAdapter(viewLifecycleOwner) {
             setup<ChaptersViewModel.Tag, TagItemBinding>(TagItemBinding::inflate) {
@@ -152,10 +136,11 @@ class ChaptersFragment(private val delegate: Delegate) : CoreFragment<ChaptersFr
             viewModel.navigateBack()
         }
 
-        viewModel.state.map { it?.searchState }.onEachChanged { searchState ->
+        viewModel.state.map { it?.searchState }.filterNotNull().onEachChanged { searchState ->
+            searchTypeSpinner.setSelection(viewModel.state.value!!.availableSearchTypes.indexOf(searchState.searchType))
+
             when (searchState) {
                 is ChaptersViewModel.SearchState.ByGroups -> {
-                    searchTypeSpinner.setSelection(0)
                     searchEditText.isVisible = false
                     clearSearchButton.isVisible = false
                     tagsRecyclerView.isVisible = false
@@ -167,7 +152,6 @@ class ChaptersFragment(private val delegate: Delegate) : CoreFragment<ChaptersFr
                     searchEditText.hideKeyboard()
                 }
                 is ChaptersViewModel.SearchState.ByName -> {
-                    searchTypeSpinner.setSelection(2)
                     titleTextView.text = getString(R.string.chapters_title)
                     searchEditText.isVisible = true
                     clearSearchButton.isVisible = true
@@ -180,7 +164,6 @@ class ChaptersFragment(private val delegate: Delegate) : CoreFragment<ChaptersFr
                     clearSearchButton.isVisible = !searchState.name.isNullOrEmpty()
                 }
                 is ChaptersViewModel.SearchState.ByTags -> {
-                    searchTypeSpinner.setSelection(1)
                     titleTextView.text = getString(R.string.chapters_title)
                     searchEditText.isVisible = false
                     clearSearchButton.isVisible = false
@@ -188,8 +171,7 @@ class ChaptersFragment(private val delegate: Delegate) : CoreFragment<ChaptersFr
                     tagsRecyclerView.requireBindingRecyclerViewAdapter().loadItems(listOf(SelectTagsButtonItem) + searchState.tags)
                     searchEditText.hideKeyboard()
                 }
-                is ChaptersViewModel.SearchState.OnlyFavorites -> {
-                    searchTypeSpinner.setSelection(3)
+                is ChaptersViewModel.SearchState.ByFavorites -> {
                     titleTextView.text = getString(R.string.chapters_title)
                     searchEditText.isVisible = false
                     clearSearchButton.isVisible = false
@@ -390,31 +372,6 @@ class ChaptersFragment(private val delegate: Delegate) : CoreFragment<ChaptersFr
             }
         }
 
-
-    fun goToAppInStore() = with(requireActivity()) {
-        try {
-            startActivity(
-                Intent(
-                    Intent.ACTION_VIEW,
-                    Uri.parse("market://details?id=$packageName")
-                )
-            )
-        } catch (e: ActivityNotFoundException) {
-            startActivity(
-                Intent(
-                    Intent.ACTION_VIEW,
-                    Uri.parse("http://play.google.com/store/apps/details?id=$packageName")
-                )
-            )
-        } catch (e: Exception) {
-            e.printStackTrace()
-            Toast.makeText(
-                this,
-                R.string.chapters_openPlayMarketFailed,
-                Toast.LENGTH_SHORT
-            ).show()
-        }
-    }
 
     private inner class SearchTypeSpinnerAdapter(
         context: Context,

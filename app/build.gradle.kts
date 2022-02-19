@@ -60,9 +60,6 @@ dependencies {
     implementation("com.github.bumptech.glide:glide:4.12.0")
     kapt("com.github.bumptech.glide:compiler:4.12.0")
 
-    /** Keyboard */
-    implementation("com.mctech.library.keyboard:visibilitymonitor:1.0.6")
-
     /** Links */
     implementation("me.saket:better-link-movement-method:2.2.0")
 

@@ -10,7 +10,6 @@ import manual.app.data.MonetizationConfig
 import manual.app.data.Tag as TagData
 import manual.app.premium.PremiumManager
 import manual.app.repository.*
-import java.util.*
 
 class ChaptersViewModel(
     chaptersRepository: ChaptersRepository,
@@ -60,6 +59,137 @@ class ChaptersViewModel(
             )
 
             updateState {
+                val availableSearchTypes = mutableListOf<SearchType>().apply {
+                    if (chapterGroupDatas.isNotEmpty()) {
+                        add(SearchType.BY_GROUPS)
+                    }
+
+                    if (tagDatas.isNotEmpty()) {
+                        add(SearchType.BY_TAGS)
+                    }
+
+                    add(SearchType.BY_NAME)
+
+                    if (favoriteChapterIds.isNotEmpty()) {
+                        add(SearchType.BY_FAVORITES)
+                    }
+                }
+
+                val items = mutableListOf<Item>().apply {
+                    when (searchType) {
+                        SearchType.BY_GROUPS -> {
+                            val currentGroupId = groupIdsStack.last()
+                            if (currentGroupId == ROOT_GROUP_ID) {
+                                val subgroupIds = mutableSetOf<Int>()
+                                val subgroupChapterIds = mutableSetOf<Int>()
+                                chapterGroupDatas.forEach {
+                                    subgroupIds.addAll(it.subgroupIds)
+                                    subgroupChapterIds.addAll(it.chapterIds)
+                                }
+
+                                val rootChapterGroupDatas = chapterGroupDatas.filterNot {
+                                    subgroupIds.contains(it.id)
+                                }
+
+                                val rootChapterDatas = chapterDatas.filterNot {
+                                    subgroupChapterIds.contains(it.id)
+                                }
+
+                                addAll(
+                                    rootChapterDatas.map {
+                                        it.toItem()
+                                    }.sortedBy {
+                                        it.id
+                                    }
+                                )
+
+                                addAll(
+                                    rootChapterGroupDatas.map {
+                                        Item.Group(
+                                            it.id,
+                                            it.name
+                                        )
+                                    }.sortedBy {
+                                        it.id
+                                    }
+                                )
+                            } else {
+                                val currentGroupData = chapterGroupDatas.first { it.id == currentGroupId }
+
+                                addAll(
+                                    chapterDatas.filter {
+                                        currentGroupData.chapterIds.contains(it.id)
+                                    }.map {
+                                        it.toItem()
+                                    }.sortedBy {
+                                        it.id
+                                    }
+                                )
+
+                                addAll(
+                                    chapterGroupDatas.filter {
+                                        currentGroupData.subgroupIds.contains(it.id)
+                                    }.map {
+                                        Item.Group(
+                                            it.id,
+                                            it.name
+                                        )
+                                    }.sortedBy {
+                                        it.id
+                                    }
+                                )
+                            }
+                        }
+                        SearchType.BY_NAME -> {
+                            addAll(
+                                chapterDatas.let {
+                                    if (searchText.isNullOrEmpty()) it
+                                    else it.filterByName(searchText)
+                                }.map {
+                                    it.toItem()
+                                }
+                            )
+                        }
+                        SearchType.BY_TAGS -> {
+                            addAll(
+                                chapterDatas.let {
+                                    if (selectedTagIds.isEmpty()) it
+                                    else it.filterByTagIds(selectedTagIds)
+                                }.map {
+                                    it.toItem()
+                                }
+                            )
+                        }
+                        SearchType.BY_FAVORITES -> {
+                            addAll(
+                                chapterDatas.filter {
+                                    favoriteChapterIds.contains(it.id)
+                                }.map {
+                                    it.toItem()
+                                }
+                            )
+                        }
+                    }
+                }.let { items ->
+                    if (premiumEnabled || !monetizationConfig.showNativeAds) {
+                        items
+                    } else {
+                        var skippedForNativeAd = 0
+
+                        mutableListOf<Item>().apply {
+                            items.forEach {
+                                add(it)
+                                if (skippedForNativeAd == 4) {
+                                    add(Item.NativeAd())
+                                    skippedForNativeAd = 0
+                                } else {
+                                    skippedForNativeAd++
+                                }
+                            }
+                        }
+                    }
+                }
+
                 when (searchType) {
                     SearchType.BY_GROUPS -> {
                         val currentGroupId = groupIdsStack.last()
@@ -74,85 +204,17 @@ class ChaptersViewModel(
                                     SearchState.ByGroups(group.name, false)
                                 }
                             },
-                            items = mutableListOf<Item>().apply {
-                                if (currentGroupId == ROOT_GROUP_ID) {
-                                    val subgroupIds = mutableSetOf<Int>()
-                                    val subgroupChapterIds = mutableSetOf<Int>()
-                                    chapterGroupDatas.forEach {
-                                        subgroupIds.addAll(it.subgroupIds)
-                                        subgroupChapterIds.addAll(it.chapterIds)
-                                    }
-
-                                    val rootChapterGroupDatas = chapterGroupDatas.filterNot {
-                                        subgroupIds.contains(it.id)
-                                    }
-
-                                    val rootChapterDatas = chapterDatas.filterNot {
-                                        subgroupChapterIds.contains(it.id)
-                                    }
-
-                                    addAll(
-                                        rootChapterDatas.map {
-                                            it.toItem()
-                                        }.sortedBy {
-                                            it.id
-                                        }
-                                    )
-
-                                    addAll(
-                                        rootChapterGroupDatas.map {
-                                            Item.Group(
-                                                it.id,
-                                                it.name
-                                            )
-                                        }.sortedBy {
-                                            it.id
-                                        }
-                                    )
-                                } else {
-                                    val currentGroupData = chapterGroupDatas.first { it.id == currentGroupId }
-
-                                    addAll(
-                                        chapterDatas.filter {
-                                            currentGroupData.chapterIds.contains(it.id)
-                                        }.map {
-                                            it.toItem()
-                                        }.sortedBy {
-                                            it.id
-                                        }
-                                    )
-
-                                    addAll(
-                                        chapterGroupDatas.filter {
-                                            currentGroupData.subgroupIds.contains(it.id)
-                                        }.map {
-                                            Item.Group(
-                                                it.id,
-                                                it.name
-                                            )
-                                        }.sortedBy {
-                                            it.id
-                                        }
-                                    )
-                                }
-                            },
-                            canNavigateBack = currentGroupId != ROOT_GROUP_ID
+                            items = items,
+                            canNavigateBack = currentGroupId != ROOT_GROUP_ID,
+                            availableSearchTypes = availableSearchTypes
                         )
                     }
                     SearchType.BY_NAME -> {
                         State(
                             searchState = SearchState.ByName(searchText),
-                            items = mutableListOf<Item>().apply {
-                                addAll(
-                                    chapterDatas.let {
-                                        if (searchText.isNullOrEmpty()) it
-                                        else it.filterByName(searchText)
-                                    }.map {
-                                        it.toItem()
-                                    }
-                                )
-                            },
-                            canNavigateBack = true
+                            items = items,
+                            canNavigateBack = availableSearchTypes.first() != searchType,
+                            availableSearchTypes = availableSearchTypes
                         )
                     }
                     SearchType.BY_TAGS -> {
@@ -167,179 +229,22 @@ class ChaptersViewModel(
                                     )
                                 }
                             ),
-                            items = mutableListOf<Item>().apply {
-                                addAll(
-                                    chapterDatas.let {
-                                        if (selectedTagIds.isEmpty()) it
-                                        else it.filterByTagIds(selectedTagIds)
-                                    }.map {
-                                        it.toItem()
-                                    }
-                                )
-                            },
-                            canNavigateBack = true
+                            items = items,
+                            canNavigateBack = availableSearchTypes.first() != searchType,
+                            availableSearchTypes = availableSearchTypes
                         )
                     }
-                    SearchType.ONLY_FAVORITES -> {
+                    SearchType.BY_FAVORITES -> {
                         State(
-                            searchState = SearchState.OnlyFavorites(),
-                            items = mutableListOf<Item>().apply {
-                                addAll(
-                                    chapterDatas.filter {
-                                        favoriteChapterIds.contains(it.id)
-                                    }.map {
-                                        it.toItem()
-                                    }
-                                )
-                            },
-                            canNavigateBack = true
+                            searchState = SearchState.ByFavorites(),
+                            items = items,
+                            canNavigateBack = availableSearchTypes.first() != searchType,
+                            availableSearchTypes = availableSearchTypes
                         )
                     }
                 }
             }
         }.launch()
-
-//        combine(
-//            chaptersRepository.chaptersFlow(),
-//            chapterGroupsRepository.chapterGroupsFlow(),
-//            selectedTagIdsStateFlow,
-//            searchTextStateFlow,
-//            premiumManager.premiumEnabledFlow().filterNotNull(),
-//            monetizationConfigRepository.monetizationConfigFlow(),
-//            favoriteChapterIdsRepository.favoriteChapterIdsFlow(),
-//            tagsRepository.tagsFlow(),
-//            groupIdsStackStateFlow
-//        ) {
-//            val chapters = it[0] as List<ChapterData>
-//            val chapterGroups = it[1] as List<ChapterGroupData>
-//            val selectedTagIds = it[2] as List<Int>
-//            val searchText = it[3] as String?
-//            val premiumEnabled = it[4] as Boolean
-//            val monetizationConfig = it[5] as MonetizationConfig
-//            val favoriteChapterIds = it[6] as List<Int>
-//            val tags = it[7] as List<TagData>
-//            val groupIdsStack = it[8] as List<Int>
-//
-//            fun ChapterData.toItem() = Item.Chapter(
-//                id = id,
-//                name = name,
-//                isFavorite = favoriteChapterIds.contains(id),
-//                isBlocked = monetizationConfig.restrictChapters
-//                        && !monetizationConfig.availableChapterIds.contains(id)
-//                        && !premiumEnabled
-//            )
-//
-//            updateState {
-//                State(
-//                    searchText = searchText,
-//                    selectedTags = tags.filter {
-//                        selectedTagIds.contains(it.id)
-//                    }.map {
-//                        Tag(
-//                            id = it.id,
-//                            name = it.name
-//                        )
-//                    },
-//                    items = mutableListOf<Item>().apply {
-//                        val filteredChapters = chapters.let {
-//                            if (selectedTagIds.isEmpty()) it
-//                            else it.filterByTagIds(selectedTagIds)
-//                        }.let {
-//                            if (searchText.isNullOrEmpty()) it
-//                            else it.filterByName(searchText)
-//                        }
-//
-//                        val filteredChapterGroups = chapterGroups.let {
-//                            if (selectedTagIds.isEmpty()) it
-//                            else chapterGroups.filter { group ->
-//                                filteredChapters.any { group.chapterIds.contains(it.id) }
-//                            }
-//                        }
-//
-//                        if (searchText == null) {
-//                            add(Item.Chest)
-//
-//                            val favorites = filteredChapters.filter { favoriteChapterIds.contains(it.id) }
-//
-//                            if (favorites.isNotEmpty()) {
-//                                add(Item.FavoritesGroup)
-//                                addAll(
-//                                    favorites.map {
-//                                        it.toItem()
-//                                    }
-//                                )
-//                            }
-//
-//                            fun addSubgroups(group: ChapterGroupData) {
-//                                val subgroups = filteredChapterGroups.filter { group.subgroupIds.contains(it.id) }
-//                                subgroups.sortedBy { it.id }.forEach { subgroup ->
-//                                    val chaptersOfSubGroup = filteredChapters.filter { subgroup.chapterIds.contains(it.id) }
-//
-//                                    if (chaptersOfSubGroup.isNotEmpty() || subgroup.subgroupIds.isNotEmpty()) {
-//                                        val isExpanded = expandedSubgroupIds.contains(subgroup.id)
-//
-//                                        add(
-//                                            Item.Subgroup(
-//                                                subgroup.id,
-//                                                subgroup.name,
-//                                                isExpanded
-//                                            )
-//                                        )
-//
-//                                        if (isExpanded) {
-//                                            addAll(
-//                                                chaptersOfSubGroup.map {
-//                                                    it.toItem()
-//                                                }
-//                                            )
-//                                            if (subgroup.subgroupIds.isNotEmpty()) {
-//                                                addSubgroups(subgroup)
-//                                            }
-//                                        }
-//                                    }
-//                                }
-//                            }
-//
-//                            val rootGroups = filteredChapterGroups.filter { group ->
-//                                filteredChapterGroups.all { !it.subgroupIds.contains(group.id) }
-//                            }
-//
-//                            var skippedGroupsForAd = 0
-//
-//                            rootGroups.sortedBy { it.id }.forEach { group ->
-//                                val chaptersOfGroup = filteredChapters.filter { group.chapterIds.contains(it.id) }
-//
-//                                if (chaptersOfGroup.isNotEmpty() || group.subgroupIds.isNotEmpty()) {
-//                                    if (skippedGroupsForAd > 0) {
-//                                        if (!premiumEnabled && monetizationConfig.showNativeAds) {
-//                                            add(Item.NativeAd())
-//                                            skippedGroupsForAd = 0
-//                                        }
-//                                    } else {
-//                                        skippedGroupsForAd++
-//                                    }
-//                                    add(Item.Group(group.name))
-//                                    addAll(
-//                                        chaptersOfGroup.map {
-//                                            it.toItem()
-//                                        }
-//                                    )
-//                                    if (group.subgroupIds.isNotEmpty()) {
-//                                        addSubgroups(group)
-//                                    }
-//                                }
-//                            }
-//                        } else {
-//                            addAll(
-//                                filteredChapters.map {
-//                                    it.toItem()
-//                                }.filter { it.id != -1 }
-//                            )
-//                        }
-//                    }
-//                )
-//            }
-//        }.launch()
     }
 
     fun setChapterFavorite(chapterId: Int, isFavorite: Boolean) {
@@ -365,14 +270,8 @@ class ChaptersViewModel(
                     is SearchState.ByGroups -> {
                         groupIdsStack.value = groupIdsStack.value.dropLast(1)
                     }
-                    is SearchState.ByName -> {
-                        searchTypeState.value = SearchType.BY_GROUPS
-                    }
-                    is SearchState.ByTags -> {
-                        searchTypeState.value = SearchType.BY_GROUPS
-                    }
-                    is SearchState.OnlyFavorites -> {
-                        searchTypeState.value = SearchType.BY_GROUPS
+                    else -> {
+                        searchTypeState.value = state.availableSearchTypes.first()
                     }
                 }
             }
@@ -396,7 +295,8 @@ class ChaptersViewModel(
     data class State(
         val searchState: SearchState,
         val items: List<Item>,
-        val canNavigateBack: Boolean
+        val canNavigateBack: Boolean,
+        val availableSearchTypes: List<SearchType>
     )
 
     data class Tag(
@@ -420,17 +320,30 @@ class ChaptersViewModel(
     }
 
     sealed class SearchState {
-        data class ByGroups(val currentGroupTitle: String?, val isRoot: Boolean) : SearchState()
-        data class ByName(val name: String?) : SearchState()
-        data class ByTags(val tags: List<Tag>) : SearchState()
-        class OnlyFavorites : SearchState()
+        abstract val searchType: SearchType
+
+        data class ByGroups(val currentGroupTitle: String?, val isRoot: Boolean) : SearchState() {
+            override val searchType = SearchType.BY_GROUPS
+        }
+
+        data class ByName(val name: String?) : SearchState() {
+            override val searchType = SearchType.BY_NAME
+        }
+
+        data class ByTags(val tags: List<Tag>) : SearchState() {
+            override val searchType = SearchType.BY_TAGS
+        }
+
+        class ByFavorites : SearchState() {
+            override val searchType = SearchType.BY_FAVORITES
+        }
     }
 
     enum class SearchType {
         BY_GROUPS,
         BY_NAME,
         BY_TAGS,
-        ONLY_FAVORITES,
+        BY_FAVORITES,
     }
 
     companion object {

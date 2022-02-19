@@ -2,6 +2,7 @@ package manual.app.ads
 
 import android.app.Activity
 import android.content.Context
+import android.util.Log
 import androidx.core.os.bundleOf
 import com.google.ads.consent.ConsentStatus
 import com.google.ads.mediation.admob.AdMobAdapter
@@ -29,7 +30,9 @@ class InterstitialAdManager(
             context.getString(R.string.admob_interstitialAd_id),
             buildRequest(isPersonalized),
             object : InterstitialAdLoadCallback() {
-                override fun onAdFailedToLoad(adError: LoadAdError) = Unit
+                override fun onAdFailedToLoad(error: LoadAdError) {
+                    Log.e("InterstitialAdManager", error.toString())
+                }
 
                 override fun onAdLoaded(ad: InterstitialAd) {
                     interstitialAd = ad

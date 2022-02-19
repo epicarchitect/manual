@@ -1,11 +1,15 @@
 package manual.app.ui
 
+import android.content.ActivityNotFoundException
+import android.content.Intent
 import android.net.Uri
 import android.widget.SeekBar
+import android.widget.Toast
 import androidx.core.view.isVisible
 import com.bumptech.glide.Glide
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import manual.app.R
 import manual.app.ads.GDPRHelper
 import manual.app.data.AppBackground
 import manual.app.databinding.BgItemBinding
@@ -90,5 +94,30 @@ class SettingsFragment : CoreFragment<SettingsFragmentBinding>(SettingsFragmentB
                 gdprHelper.openConsentDialog(requireActivity()) {}
             }
         }.launchWith(viewLifecycleOwner)
+    }
+
+    fun goToAppInStore() = with(requireActivity()) {
+        try {
+            startActivity(
+                Intent(
+                    Intent.ACTION_VIEW,
+                    Uri.parse("market://details?id=$packageName")
+                )
+            )
+        } catch (e: ActivityNotFoundException) {
+            startActivity(
+                Intent(
+                    Intent.ACTION_VIEW,
+                    Uri.parse("http://play.google.com/store/apps/details?id=$packageName")
+                )
+            )
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Toast.makeText(
+                this,
+                R.string.chapters_openPlayMarketFailed,
+                Toast.LENGTH_SHORT
+            ).show()
+        }
     }
 }

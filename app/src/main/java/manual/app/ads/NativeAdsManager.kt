@@ -1,12 +1,16 @@
 package manual.app.ads
 
 import android.content.Context
+import android.util.Log
 import androidx.core.os.bundleOf
 import com.google.ads.consent.ConsentStatus
 import com.google.ads.mediation.admob.AdMobAdapter
+import com.google.android.gms.ads.AdListener
 import com.google.android.gms.ads.AdLoader
 import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.LoadAdError
 import com.google.android.gms.ads.nativead.NativeAd
+import com.google.android.gms.ads.nativead.NativeAdOptions
 import manual.app.R
 import kotlin.random.Random
 
@@ -24,9 +28,20 @@ class NativeAdsManager(
     }
 
     fun load() {
-        AdLoader.Builder(context, context.getString(R.string.admob_nativeAd_id)).forNativeAd {
-            nativeAds.add(it)
-        }.build().loadAds(buildRequest(isPersonalized),10)
+        AdLoader.Builder(context, context.getString(R.string.admob_nativeAd_id))
+            .forNativeAd {
+                nativeAds.add(it)
+            }
+            .withAdListener(
+                object : AdListener() {
+                    override fun onAdFailedToLoad(error: LoadAdError) {
+                        Log.e("NativeAdsManager", error.toString())
+                    }
+                }
+            )
+            .withNativeAdOptions(NativeAdOptions.Builder().build())
+            .build()
+            .loadAds(buildRequest(isPersonalized), 20)
     }
 
     fun randomNativeAd() = try {
