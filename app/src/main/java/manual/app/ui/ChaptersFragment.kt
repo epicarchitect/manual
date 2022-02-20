@@ -81,15 +81,16 @@ class ChaptersFragment(private val delegate: Delegate) : CoreFragment<ChaptersFr
                 requireContext(),
                 searchTypes.map {
                     when (it) {
-                        ChaptersViewModel.SearchType.BY_GROUPS -> getString(R.string.chapters_searchByGroups)
-                        ChaptersViewModel.SearchType.BY_TAGS -> getString(R.string.chapters_searchByTags)
-                        ChaptersViewModel.SearchType.BY_NAME -> getString(R.string.chapters_searchByName)
-                        ChaptersViewModel.SearchType.BY_FAVORITES -> getString(R.string.chapters_searchByFavorites)
+                        ChaptersViewModel.SearchState.ByGroups::class -> getString(R.string.chapters_searchByGroups)
+                        ChaptersViewModel.SearchState.ByTags::class -> getString(R.string.chapters_searchByTags)
+                        ChaptersViewModel.SearchState.ByName::class -> getString(R.string.chapters_searchByName)
+                        ChaptersViewModel.SearchState.ByFavorites::class -> getString(R.string.chapters_searchByFavorites)
+                        else -> error("Unexpected search type: ${it::class}")
                     }
                 }
             )
 
-            searchTypeSpinner.setSelection(searchTypes.indexOf(viewModel.state.value!!.searchState.searchType))
+            searchTypeSpinner.setSelection(searchTypes.indexOf(viewModel.state.value!!.searchState::class))
 
             searchTypeSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
                 override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
@@ -139,7 +140,7 @@ class ChaptersFragment(private val delegate: Delegate) : CoreFragment<ChaptersFr
         }
 
         viewModel.state.map { it?.searchState }.filterNotNull().onEachChanged { searchState ->
-            searchTypeSpinner.setSelection(viewModel.state.value!!.availableSearchTypes.indexOf(searchState.searchType))
+            searchTypeSpinner.setSelection(viewModel.state.value!!.availableSearchTypes.indexOf(searchState::class))
 
             when (searchState) {
                 is ChaptersViewModel.SearchState.ByGroups -> {

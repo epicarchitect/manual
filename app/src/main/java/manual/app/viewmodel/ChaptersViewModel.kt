@@ -10,6 +10,7 @@ import manual.app.data.MonetizationConfig
 import manual.app.data.Tag as TagData
 import manual.app.premium.PremiumManager
 import manual.app.repository.*
+import kotlin.reflect.KClass
 
 class ChaptersViewModel(
     chaptersRepository: ChaptersRepository,
@@ -23,7 +24,7 @@ class ChaptersViewModel(
     private val searchTextState = MutableStateFlow<String?>(null)
     private val selectedTagIdsState = MutableStateFlow<List<Int>>(emptyList())
     private val groupIdsStack = MutableStateFlow(listOf(ROOT_GROUP_ID))
-    private val searchTypeState = MutableStateFlow(SearchType.BY_GROUPS)
+    private val searchTypeState = MutableStateFlow<KClass<out SearchState>>(SearchState.ByGroups::class)
 
     init {
         combine(
@@ -43,7 +44,7 @@ class ChaptersViewModel(
             val selectedTagIds = it[2] as List<Int>
             val searchText = it[3] as String?
             val groupIdsStack = it[4] as List<Int>
-            val searchType = it[5] as SearchType
+            val searchType = it[5] as KClass<out SearchState>
             val premiumEnabled = it[6] as Boolean
             val monetizationConfig = it[7] as MonetizationConfig
             val favoriteChapterIds = it[8] as List<Int>
@@ -59,25 +60,25 @@ class ChaptersViewModel(
             )
 
             updateState {
-                val availableSearchTypes = mutableListOf<SearchType>().apply {
+                val availableSearchTypes = mutableListOf<KClass<out SearchState>>().apply {
                     if (chapterGroupDatas.isNotEmpty()) {
-                        add(SearchType.BY_GROUPS)
+                        add(SearchState.ByGroups::class)
                     }
 
                     if (tagDatas.isNotEmpty()) {
-                        add(SearchType.BY_TAGS)
+                        add(SearchState.ByTags::class)
                     }
 
-                    add(SearchType.BY_NAME)
+                    add(SearchState.ByName::class)
 
                     if (favoriteChapterIds.isNotEmpty()) {
-                        add(SearchType.BY_FAVORITES)
+                        add(SearchState.ByFavorites::class)
                     }
                 }
 
                 val items = mutableListOf<Item>().apply {
                     when (searchType) {
-                        SearchType.BY_GROUPS -> {
+                        SearchState.ByGroups::class -> {
                             val currentGroupId = groupIdsStack.last()
                             if (currentGroupId == ROOT_GROUP_ID) {
                                 val subgroupIds = mutableSetOf<Int>()
@@ -140,7 +141,7 @@ class ChaptersViewModel(
                                 )
                             }
                         }
-                        SearchType.BY_NAME -> {
+                        SearchState.ByName::class -> {
                             addAll(
                                 chapterDatas.let {
                                     if (searchText.isNullOrEmpty()) it
@@ -152,7 +153,7 @@ class ChaptersViewModel(
                                 }
                             )
                         }
-                        SearchType.BY_TAGS -> {
+                        SearchState.ByTags::class -> {
                             addAll(
                                 chapterDatas.let {
                                     if (selectedTagIds.isEmpty()) it
@@ -164,7 +165,7 @@ class ChaptersViewModel(
                                 }
                             )
                         }
-                        SearchType.BY_FAVORITES -> {
+                        SearchState.ByFavorites::class -> {
                             addAll(
                                 chapterDatas.filter {
                                     favoriteChapterIds.contains(it.id)
@@ -197,7 +198,7 @@ class ChaptersViewModel(
                 }
 
                 when (searchType) {
-                    SearchType.BY_GROUPS -> {
+                    SearchState.ByGroups::class -> {
                         val currentGroupId = groupIdsStack.last()
 
                         State(
@@ -215,7 +216,7 @@ class ChaptersViewModel(
                             availableSearchTypes = availableSearchTypes
                         )
                     }
-                    SearchType.BY_NAME -> {
+                    SearchState.ByName::class -> {
                         State(
                             searchState = SearchState.ByName(searchText),
                             items = items,
@@ -223,7 +224,7 @@ class ChaptersViewModel(
                             availableSearchTypes = availableSearchTypes
                         )
                     }
-                    SearchType.BY_TAGS -> {
+                    SearchState.ByTags::class -> {
                         State(
                             searchState = SearchState.ByTags(
                                 tagDatas.filter {
@@ -240,7 +241,7 @@ class ChaptersViewModel(
                             availableSearchTypes = availableSearchTypes
                         )
                     }
-                    SearchType.BY_FAVORITES -> {
+                    SearchState.ByFavorites::class -> {
                         State(
                             searchState = SearchState.ByFavorites(),
                             items = items,
@@ -248,6 +249,7 @@ class ChaptersViewModel(
                             availableSearchTypes = availableSearchTypes
                         )
                     }
+                    else -> error("Unexpected search type: ${searchType::class}")
                 }
             }
         }.launch()
@@ -261,7 +263,7 @@ class ChaptersViewModel(
         searchTextState.value = text
     }
 
-    fun setSearchType(type: SearchType) {
+    fun setSearchType(type: KClass<out SearchState>) {
         searchTypeState.value = type
     }
 
@@ -302,7 +304,7 @@ class ChaptersViewModel(
         val searchState: SearchState,
         val items: List<Item>,
         val canNavigateBack: Boolean,
-        val availableSearchTypes: List<SearchType>
+        val availableSearchTypes: List<KClass<out SearchState>>
     )
 
     data class Tag(
@@ -326,30 +328,13 @@ class ChaptersViewModel(
     }
 
     sealed class SearchState {
-        abstract val searchType: SearchType
+        data class ByGroups(val currentGroupTitle: String?, val isRoot: Boolean) : SearchState()
 
-        data class ByGroups(val currentGroupTitle: String?, val isRoot: Boolean) : SearchState() {
-            override val searchType = SearchType.BY_GROUPS
-        }
+        data class ByName(val name: String?) : SearchState()
 
-        data class ByName(val name: String?) : SearchState() {
-            override val searchType = SearchType.BY_NAME
-        }
+        data class ByTags(val tags: List<Tag>) : SearchState()
 
-        data class ByTags(val tags: List<Tag>) : SearchState() {
-            override val searchType = SearchType.BY_TAGS
-        }
-
-        class ByFavorites : SearchState() {
-            override val searchType = SearchType.BY_FAVORITES
-        }
-    }
-
-    enum class SearchType {
-        BY_GROUPS,
-        BY_NAME,
-        BY_TAGS,
-        BY_FAVORITES,
+        class ByFavorites : SearchState()
     }
 
     companion object {
