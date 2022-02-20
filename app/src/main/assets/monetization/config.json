@@ -2,8 +2,15 @@
   "showInterstitialAds": true,
   "showNativeAds": true,
   "restrictChapters": true,
-  "availableChapterIds": [
+  "unblockChaptersForRewardedAd": true,
+  "rewardedChapterIds": [
+    1,
     2,
     3
+  ],
+  "availableChapterIds": [
+    4,
+    5,
+    6
   ]
 }

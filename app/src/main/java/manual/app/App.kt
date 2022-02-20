@@ -12,6 +12,7 @@ import kotlinx.coroutines.Dispatchers
 import manual.app.ads.GDPRHelper
 import manual.app.ads.InterstitialAdManager
 import manual.app.ads.NativeAdsManager
+import manual.app.ads.RewardedAdManager
 import manual.app.database.MainDatabase
 import manual.app.premium.BillingClientManager
 import manual.app.premium.PremiumManager
@@ -45,6 +46,7 @@ class App : Application() {
     fun singlesModule() = module(createdAtStart = true) {
         single { AlertDialogManager() }
         single { GDPRHelper(this@App) }
+        single { RewardedAdManager(this@App, get()) }
         single { InterstitialAdManager(this@App, get()) }
         single { NativeAdsManager(this@App, get()) }
         single { ReviewManagerFactory.create(this@App) }
@@ -52,9 +54,11 @@ class App : Application() {
         single { AudioAssetPlayer(this@App, CoroutineScope(Dispatchers.IO)) }
         single { MainDatabase.create(this@App) }
         single { get<MainDatabase>().favoriteChapterIdsDao }
+        single { get<MainDatabase>().unblockedChapterIdsDao }
         single { assets }
         single { GsonBuilder().create() }
         single { FavoriteChapterIdsRepository(get()) }
+        single { UnblockedChapterIdsRepository(get()) }
         single { ContentsRepository(get(), get()) }
         single { ChapterGroupsRepository(get(), get()) }
         single { ChaptersRepository(get(), get()) }
@@ -81,8 +85,8 @@ class App : Application() {
     }
 
     fun viewModelsModule() = module {
-        viewModel { ChaptersViewModel(get(), get(), get(), get(), get(), get()) }
-        viewModel { (chapterId: Int) -> ChapterViewModel(get(), get(), get(), get(), get(), get(), get(), chapterId) }
+        viewModel { ChaptersViewModel(get(), get(), get(), get(), get(), get(), get()) }
+        viewModel { (chapterId: Int) -> ChapterViewModel(get(), get(), get(), get(), get(), get(), get(), get(), chapterId) }
         viewModel { (selectedTagIds: List<Int>) -> TagSelectionViewModel(get(), get(), selectedTagIds) }
     }
 }

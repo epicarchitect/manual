@@ -22,6 +22,7 @@ class ChapterViewModel(
     premiumManager: PremiumManager,
     chaptersRepository: ChaptersRepository,
     contentsRepository: ContentsRepository,
+    private val unblockedChapterIdsRepository: UnblockedChapterIdsRepository,
     private val favoriteChapterIdsRepository: FavoriteChapterIdsRepository,
     private val assetManager: AssetManager,
     private val chapterId: Int
@@ -32,6 +33,7 @@ class ChapterViewModel(
             tagsRepository.tagsFlow(),
             chaptersRepository.chapterFlow(chapterId),
             favoriteChapterIdsRepository.isFavoriteChapterFlow(chapterId),
+            unblockedChapterIdsRepository.isUnblockedChapterFlow(chapterId),
             monetizationConfigRepository.monetizationConfigFlow(),
             premiumManager.premiumEnabledFlow().filterNotNull(),
             contentsRepository.contentsFlow()
@@ -39,9 +41,10 @@ class ChapterViewModel(
             val tagDatas = it[0] as List<TagData>
             val chapterData = it[1] as ChapterData
             val isFavorite = it[2] as Boolean
-            val monetizationConfig = it[3] as MonetizationConfig
-            val premiumEnabled = it[4] as Boolean
-            val contentDatas = it[5] as List<ContentData>
+            val isUnblocked = it[3] as Boolean
+            val monetizationConfig = it[4] as MonetizationConfig
+            val premiumEnabled = it[5] as Boolean
+            val contentDatas = it[6] as List<ContentData>
 
             updateState {
                 State(
@@ -53,13 +56,19 @@ class ChapterViewModel(
                     },
                     isFavorite = isFavorite,
                     isBlocked = monetizationConfig.restrictChapters
+                            && !isUnblocked
                             && !premiumEnabled
                             && !monetizationConfig.availableChapterIds.contains(chapterData.id),
+                    canUnblockByAd = monetizationConfig.restrictChapters
+                            && monetizationConfig.unblockChaptersForRewardedAd
+                            && monetizationConfig.rewardedChapterIds.contains(chapterId)
+                            && !monetizationConfig.availableChapterIds.contains(chapterId)
+                            && !premiumEnabled,
                     contents = contentDatas.let { contents ->
                         chapterData.contentIds.map { id ->
                             checkNotNull(contents.find { it.id == id })
                         }.map {
-                            when(it.source.split(".").last()) {
+                            when (it.source.split(".").last()) {
                                 "html" -> {
                                     Content.Html(
                                         contentId = it.id,
@@ -91,6 +100,10 @@ class ChapterViewModel(
                 )
             }
         }.launch()
+    }
+
+    fun unblock() {
+        unblockedChapterIdsRepository.setUnblockedChapterId(chapterId, true)
     }
 
     fun setFavorite(isFavorite: Boolean) {
@@ -126,6 +139,7 @@ class ChapterViewModel(
         val tags: List<Tag>,
         val isFavorite: Boolean,
         val isBlocked: Boolean,
+        val canUnblockByAd: Boolean,
         val contents: List<Content>
     )
 }

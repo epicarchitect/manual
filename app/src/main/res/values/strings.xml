@@ -4,12 +4,14 @@
     <string name="app_updateDownloaded_description">Обновление приложения скачано</string>
     <string name="app_downloadUpdate_button">Скачать</string>
     <string name="app_completeUpdate_button">Установить</string>
+    <string name="or">или</string>
 
     <string name="premium_productId">android.test.purchased</string>
     <string name="admob_application_id">ca-app-pub-3940256099942544~3347511713</string>
     <string name="admob_publisher_id">pub-3562401600467746</string>
     <string name="admob_interstitialAd_id">ca-app-pub-3940256099942544/1033173712</string>
     <string name="admob_nativeAd_id">ca-app-pub-3940256099942544/2247696110</string>
+    <string name="admob_rewardedAd_id">ca-app-pub-3940256099942544/5224354917</string>
     <string name="privacyPolicy_url">https://alexander-kolmachikhin.github.io/projects/epic_to_to_list/privacy_policy.html</string>
 
     <string name="settings_title">Настройки</string>
@@ -25,6 +27,9 @@
     <string name="chapters_openPlayMarketFailed">Не удалось открыть Play market</string>
     <string name="chapters_premiumOffer_learnMore">Узнать больше</string>
     <string name="chapters_premiumOffer_description">Данная статья доступна только в полной версии.</string>
+    <string name="chapters_unlockByAdOffer_showAd_button">Разблокировать</string>
+    <string name="chapters_unlockByAdOffer_description">Чтобы разблокировать статью посмотрите рекламу.</string>
+    <string name="chapters_unlockByAdOffer_removeAds_button">Отключить рекламу</string>
     <string name="chapters_searchByGroups">Поиск по группам</string>
     <string name="chapters_searchByTags">Поиск по тегам</string>
     <string name="chapters_searchByName">Поиск по названию</string>

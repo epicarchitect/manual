@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fillViewport="true">
+    android:fillViewport="true"
+    android:id="@+id/scrollView">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -115,6 +116,77 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/premiumOffer_description_textView" />
             </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/unlockByAdOffer_layout"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:visibility="visible">
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="200dp"
+                    android:src="@drawable/blocking_background"
+                    app:layout_constraintBottom_toTopOf="@id/unlockByAdOffer_block_imageView"/>
+
+                <ImageView
+                    android:id="@+id/unlockByAdOffer_block_imageView"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:src="?attr/colorBackgroundFloating"
+                    tools:layout_marginTop="350dp"
+                    tools:ignore="ContentDescription" />
+
+                <TextView
+                    android:id="@+id/unlockByAdOffer_description_textView"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="24dp"
+                    android:layout_marginTop="500dp"
+                    android:layout_marginEnd="24dp"
+                    android:gravity="center"
+                    android:text="@string/chapters_unlockByAdOffer_description"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/unlockByAdOffer_showAd_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="24dp"
+                    android:text="@string/chapters_unlockByAdOffer_showAd_button"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/unlockByAdOffer_description_textView" />
+
+                <TextView
+                    android:id="@+id/unlockByAdOffer_or_textView"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="24dp"
+                    android:layout_marginEnd="24dp"
+                    android:gravity="center"
+                    android:text="@string/or"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/unlockByAdOffer_showAd_button" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/unlockByAdOffer_removeAds_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="24dp"
+                    android:text="@string/chapters_unlockByAdOffer_removeAds_button"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/unlockByAdOffer_or_textView" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
 
             <ProgressBar
                 android:id="@+id/progressBar"

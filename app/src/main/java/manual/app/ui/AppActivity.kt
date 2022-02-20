@@ -22,6 +22,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import manual.app.R
 import manual.app.ads.InterstitialAdManager
+import manual.app.ads.RewardedAdManager
 import manual.app.databinding.AppActivityBinding
 import manual.app.premium.PremiumManager
 import manual.app.repository.AppBackgroundsRepository
@@ -42,6 +43,7 @@ class AppActivity : CoreActivity<AppActivityBinding>(AppActivityBinding::inflate
     private val reviewManager: ReviewManager by inject()
     private val monetizationConfigRepository: MonetizationConfigRepository by inject()
     private val interstitialAdManager: InterstitialAdManager by inject()
+    private val rewardedAdManager: RewardedAdManager by inject()
     private val alertDialogManager: AlertDialogManager by inject()
     private val preferences by lazy { getSharedPreferences("AppActivity", MODE_PRIVATE) }
     private var showInterstitialAds: Boolean? = null
@@ -175,6 +177,11 @@ class AppActivity : CoreActivity<AppActivityBinding>(AppActivityBinding::inflate
     override fun onStop() {
         super.onStop()
         appUpdateManager.unregisterListener(installStateUpdatedListener)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        rewardedAdManager.release()
     }
 
     inline fun <reified T : Fragment> navigate(

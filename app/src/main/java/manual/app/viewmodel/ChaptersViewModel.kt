@@ -18,6 +18,7 @@ class ChaptersViewModel(
     monetizationConfigRepository: MonetizationConfigRepository,
     chapterGroupsRepository: ChapterGroupsRepository,
     tagsRepository: TagsRepository,
+    unblockedChapterIdsRepository: UnblockedChapterIdsRepository,
     private val favoriteChapterIdsRepository: FavoriteChapterIdsRepository
 ) : CoreViewModel<ChaptersViewModel.State>() {
 
@@ -37,6 +38,7 @@ class ChaptersViewModel(
             premiumManager.premiumEnabledFlow().filterNotNull(),
             monetizationConfigRepository.monetizationConfigFlow(),
             favoriteChapterIdsRepository.favoriteChapterIdsFlow(),
+            unblockedChapterIdsRepository.unblockedChapterIdsFlow(),
             tagsRepository.tagsFlow(),
         ) {
             val chapterDatas = it[0] as List<ChapterData>
@@ -48,13 +50,20 @@ class ChaptersViewModel(
             val premiumEnabled = it[6] as Boolean
             val monetizationConfig = it[7] as MonetizationConfig
             val favoriteChapterIds = it[8] as List<Int>
-            val tagDatas = it[9] as List<TagData>
+            val unblockedChapterIds = it[9] as List<Int>
+            val tagDatas = it[10] as List<TagData>
 
             fun ChapterData.toItem() = Item.Chapter(
                 id = id,
                 name = name,
                 isFavorite = favoriteChapterIds.contains(id),
                 isBlocked = monetizationConfig.restrictChapters
+                        && !unblockedChapterIds.contains(id)
+                        && !monetizationConfig.availableChapterIds.contains(id)
+                        && !premiumEnabled,
+                canUnblockByAd = monetizationConfig.restrictChapters
+                        && monetizationConfig.unblockChaptersForRewardedAd
+                        && monetizationConfig.rewardedChapterIds.contains(id)
                         && !monetizationConfig.availableChapterIds.contains(id)
                         && !premiumEnabled
             )
@@ -186,7 +195,7 @@ class ChaptersViewModel(
                         mutableListOf<Item>().apply {
                             items.forEach {
                                 add(it)
-                                if (skippedForNativeAd == 4) {
+                                if (skippedForNativeAd == 8) {
                                     add(Item.NativeAd())
                                     skippedForNativeAd = 0
                                 } else {
@@ -317,7 +326,8 @@ class ChaptersViewModel(
             val id: Int,
             val name: String,
             val isFavorite: Boolean,
-            val isBlocked: Boolean
+            val isBlocked: Boolean,
+            val canUnblockByAd: Boolean
         ) : Item()
 
         data class Group(val id: Int, val name: String) : Item()

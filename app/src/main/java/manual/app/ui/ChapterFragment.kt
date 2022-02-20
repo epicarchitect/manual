@@ -5,13 +5,16 @@ import android.content.Intent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
+import androidx.core.view.marginTop
 import androidx.core.view.updateLayoutParams
 import com.bumptech.glide.Glide
 import com.stfalcon.imageviewer.StfalconImageViewer
 import kotlinx.coroutines.flow.*
 import manual.app.R
 import manual.app.ads.NativeAdsManager
+import manual.app.ads.RewardedAdManager
 import manual.app.databinding.*
 import manual.app.viewmodel.ChapterViewModel
 import manual.core.coroutines.flow.launchWith
@@ -35,9 +38,15 @@ class ChapterFragment(
     private val viewModel: ChapterViewModel by viewModel { parametersOf(chapterId) }
     private val nativeAdsManager: NativeAdsManager by inject()
     private val audioAssetPlayer: AudioAssetPlayer by inject()
+    private val rewardedAdManager: RewardedAdManager by inject()
 
-    @SuppressLint("SetTextI18n")
+    @SuppressLint("SetTextI18n", "ClickableViewAccessibility")
     override fun ChapterFragmentBinding.onCreated() {
+
+        unlockByAdOfferBlockImageView.updateLayoutParams<ConstraintLayout.LayoutParams> {
+            topMargin = resources.displayMetrics.heightPixels / 2
+        }
+
         titleTextView.setOnClickListener {
             requireActivity().onBackPressed()
         }
@@ -72,18 +81,26 @@ class ChapterFragment(
 
         combine(
             viewModel.state.map { it?.isFavorite }.distinctUntilChanged(),
-            viewModel.state.map { it?.isBlocked }.distinctUntilChanged()
-        ) { isFavorite, isBlocked ->
+            viewModel.state.map { it?.isBlocked }.distinctUntilChanged(),
+            viewModel.state.map { it?.canUnblockByAd }.distinctUntilChanged(),
+        ) { isFavorite, isBlocked, canUnblockByAd ->
             when {
-                isBlocked == null || isFavorite == null -> {
+                isBlocked == null || isFavorite == null || canUnblockByAd == null -> {
                     favoriteImageView.isVisible = false
                     favoriteImageView.setOnClickListener(null)
                 }
                 isBlocked -> {
-                    favoriteImageView.setImageResource(R.drawable.ic_lock)
-                    favoriteImageView.isVisible = true
-                    favoriteImageView.isEnabled = false
-                    favoriteImageView.setOnClickListener(null)
+                    if (canUnblockByAd) {
+                        favoriteImageView.setImageResource(R.drawable.ic_unblock_key)
+                        favoriteImageView.isVisible = true
+                        favoriteImageView.isEnabled = true
+                        favoriteImageView.setOnClickListener(null)
+                    } else {
+                        favoriteImageView.setImageResource(R.drawable.ic_lock)
+                        favoriteImageView.isVisible = true
+                        favoriteImageView.isEnabled = false
+                        favoriteImageView.setOnClickListener(null)
+                    }
                 }
                 else -> {
                     favoriteImageView.setImageResource(
@@ -101,15 +118,52 @@ class ChapterFragment(
             }
         }.launchWith(viewLifecycleOwner)
 
-        viewModel.state.map { it?.isBlocked }.onEachChanged {
-            premiumOfferLayout.isVisible = it == true
-            contentsRecyclerView.isVisible = it == false
-            if (it == true) {
-                premiumOfferLearnMoreButton.setOnClickListener {
-                    delegate.navigateToPremiumOffer(this@ChapterFragment)
+        premiumOfferLearnMoreButton.setOnClickListener {
+            delegate.navigateToPremiumOffer(this@ChapterFragment)
+        }
+
+        unlockByAdOfferRemoveAdsButton.setOnClickListener {
+            delegate.navigateToPremiumOffer(this@ChapterFragment)
+        }
+
+        unlockByAdOfferShowAdButton.setOnClickListener {
+            rewardedAdManager.showRewardedVideo(
+                requireActivity(),
+                object : RewardedAdManager.RewardedVideoCallback {
+                    override fun onReward() {
+                        viewModel.unblock()
+                    }
                 }
-            } else {
-                premiumOfferLearnMoreButton.setOnClickListener(null)
+            )
+        }
+
+        combine(
+            viewModel.state.map { it?.isBlocked }.distinctUntilChanged(),
+            viewModel.state.map { it?.canUnblockByAd }.distinctUntilChanged()
+        ) { isBlocked, canUnblockByAd ->
+            when {
+                isBlocked == true && canUnblockByAd == false -> {
+                    premiumOfferLayout.isVisible = true
+                    contentsRecyclerView.isVisible = true
+                    unlockByAdOfferLayout.isVisible = false
+                    contentsRecyclerView.isVisible = false
+                    scrollView.setOnTouchListener { _, _ -> true }
+                    contentsRecyclerView.setOnTouchListener { _, _ -> true }
+                }
+                isBlocked == true && canUnblockByAd == true -> {
+                    unlockByAdOfferLayout.isVisible = true
+                    premiumOfferLayout.isVisible = false
+                    contentsRecyclerView.isVisible = true
+                    scrollView.setOnTouchListener { _, _ -> true }
+                    contentsRecyclerView.setOnTouchListener { _, _ -> true }
+                }
+                else -> {
+                    unlockByAdOfferLayout.isVisible = false
+                    premiumOfferLayout.isVisible = false
+                    contentsRecyclerView.isVisible = true
+                    scrollView.setOnTouchListener { _, _ -> false }
+                    contentsRecyclerView.setOnTouchListener { _, _ -> false }
+                }
             }
         }.launchWith(viewLifecycleOwner)
 

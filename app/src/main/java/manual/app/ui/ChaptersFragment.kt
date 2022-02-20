@@ -229,8 +229,13 @@ class ChaptersFragment(private val delegate: Delegate) : CoreFragment<ChaptersFr
                 }.launchIn(scope)
 
                 if (item.isBlocked) {
-                    root.children.forEach { it.isEnabled = false }
-                    favoriteImageView.setImageResource(R.drawable.ic_lock)
+                    if (item.canUnblockByAd) {
+                        root.children.forEach { it.isEnabled = true }
+                        favoriteImageView.setImageResource(R.drawable.ic_unblock_key)
+                    } else {
+                        root.children.forEach { it.isEnabled = false }
+                        favoriteImageView.setImageResource(R.drawable.ic_lock)
+                    }
                 } else {
                     root.children.forEach { it.isEnabled = true }
                     favoriteImageView.setImageResource(
@@ -258,6 +263,7 @@ class ChaptersFragment(private val delegate: Delegate) : CoreFragment<ChaptersFr
                     oldItem.name == newItem.name
                             && oldItem.isFavorite == newItem.isFavorite
                             && oldItem.isBlocked == newItem.isBlocked
+                            && oldItem.canUnblockByAd == newItem.canUnblockByAd
                 }
             }
         }
