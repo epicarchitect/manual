@@ -30,8 +30,8 @@ dependencies {
     implementation("androidx.appcompat:appcompat:1.4.1")
     implementation("androidx.work:work-runtime-ktx:2.7.1")
     implementation("androidx.fragment:fragment-ktx:1.4.1")
-    implementation("androidx.lifecycle:lifecycle-common-java8:2.4.0")
-    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.4.0")
+    implementation("androidx.lifecycle:lifecycle-common-java8:2.4.1")
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.4.1")
     implementation("com.google.android.material:material:1.5.0")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2")
 }

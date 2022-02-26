@@ -2,15 +2,18 @@ package manual.app.ui
 
 import android.annotation.SuppressLint
 import android.content.Intent
+import android.net.Uri
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
-import androidx.core.view.marginTop
 import androidx.core.view.updateLayoutParams
 import com.bumptech.glide.Glide
+import com.google.android.exoplayer2.ExoPlayer
+import com.google.android.exoplayer2.MediaItem
 import com.stfalcon.imageviewer.StfalconImageViewer
+import kotlinx.coroutines.awaitCancellation
 import kotlinx.coroutines.flow.*
 import manual.app.R
 import manual.app.ads.NativeAdsManager
@@ -68,6 +71,7 @@ class ChapterFragment(
             setupHtmlContent()
             setupImageContent()
             setupAudioContent()
+            setupVideoContent()
             setupAdItem()
         }
 
@@ -202,6 +206,33 @@ class ChapterFragment(
                     StfalconImageViewer.Builder(context, listOf(item.uri)) { view, uri ->
                         Glide.with(root).load(uri).into(view)
                     }.withHiddenStatusBar(false).show()
+                }
+            }
+        }
+
+    private fun BindingRecyclerViewAdapterBuilder.setupVideoContent() =
+        setup<ChapterViewModel.Content.Video, ChapterVideoItemBinding>(ChapterVideoItemBinding::inflate) {
+            bind { item ->
+                nameTextView.isVisible = item.name.isNotEmpty()
+                nameTextView.text = item.name
+
+                playerView.player = ExoPlayer.Builder(root.context).build().apply {
+                    playWhenReady = true
+                    repeatMode = ExoPlayer.REPEAT_MODE_ALL
+                    setMediaItem(
+                        MediaItem.fromUri(
+                            Uri.parse("asset:///${item.source}")
+                        )
+                    )
+                    prepare()
+                    play()
+                }
+
+                try {
+                    awaitCancellation()
+                } catch (e: Exception) {
+                    playerView.player?.release()
+                    playerView.player = null
                 }
             }
         }

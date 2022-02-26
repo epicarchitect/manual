@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.awaitCancellation
 import kotlinx.coroutines.launch
 
 fun RecyclerView.requireBindingRecyclerViewAdapter() = adapter as BindingRecyclerViewAdapter
@@ -38,14 +39,14 @@ class ItemProviderBuilder<ITEM : Any, VIEW_BINDING : ViewBinding>(
         private val lifecycleOwner: LifecycleOwner,
         private val bindingFactory: (LayoutInflater, ViewGroup, Boolean) -> VIEW_BINDING
 ) {
-    private var bindFunction: VIEW_BINDING.(CoroutineScope, ITEM) -> Unit = { _, _ -> }
+    private var bindFunction: suspend VIEW_BINDING.(CoroutineScope, ITEM) -> Unit = { _, _ -> }
     private val diffUtilItemCallbackBuilder = DiffUtilItemCallbackBuilder<ITEM>()
 
-    fun bind(function: VIEW_BINDING.(ITEM) -> Unit) {
+    fun bind(function: suspend VIEW_BINDING.(ITEM) -> Unit) {
         bindFunction = { _, item -> function(item) }
     }
 
-    fun bind(function: VIEW_BINDING.(CoroutineScope, ITEM) -> Unit) {
+    fun bind(function: suspend VIEW_BINDING.(CoroutineScope, ITEM) -> Unit) {
         bindFunction = function
     }
 
@@ -61,6 +62,8 @@ class ItemProviderBuilder<ITEM : Any, VIEW_BINDING : ViewBinding>(
                     override fun bind(item: Any) {
                         bindJob = lifecycleOwner.lifecycleScope.launch {
                             (binding as VIEW_BINDING).bindFunction(this, item as ITEM)
+                            kotlinx.coroutines.awaitCancellation()
+                            recycle()
                         }
                     }
 

@@ -83,6 +83,13 @@ class ChapterViewModel(
                                         source = it.source
                                     )
                                 }
+                                "mp4" -> {
+                                    Content.Video(
+                                        contentId = it.id,
+                                        name = it.name,
+                                        source = it.source
+                                    )
+                                }
                                 else -> {
                                     Content.Image(
                                         contentId = it.id,
@@ -124,6 +131,12 @@ class ChapterViewModel(
         ) : Content()
 
         data class Audio(
+            val contentId: Int,
+            val name: String,
+            val source: String
+        ) : Content()
+
+        data class Video(
             val contentId: Int,
             val name: String,
             val source: String

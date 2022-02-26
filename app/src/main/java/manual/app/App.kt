@@ -65,6 +65,7 @@ class App : Application() {
         single { TagGroupsRepository(get(), get()) }
         single { TagsRepository(get(), get()) }
         single { MonetizationConfigRepository(get(), get()) }
+        single { LaunchConfigRepository(get(), get()) }
         single { ChapterIconsRepository(get(), get()) }
         single { ChapterGroupIconsRepository(get(), get()) }
         single { PremiumManager(this@App, get()) }

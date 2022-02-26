@@ -60,18 +60,21 @@ dependencies {
     implementation("com.github.bumptech.glide:glide:4.12.0")
     kapt("com.github.bumptech.glide:compiler:4.12.0")
 
+    /** Video */
+    implementation("com.google.android.exoplayer:exoplayer:2.17.0")
+
     /** Links */
     implementation("me.saket:better-link-movement-method:2.2.0")
 
     /** Database */
-    implementation("androidx.room:room-runtime:2.4.1")
-    implementation("androidx.room:room-ktx:2.4.1")
-    kapt("androidx.room:room-compiler:2.4.1")
+    implementation("androidx.room:room-runtime:2.4.2")
+    implementation("androidx.room:room-ktx:2.4.2")
+    kapt("androidx.room:room-compiler:2.4.2")
 
     /** Ads */
-    implementation("com.google.android.gms:play-services-ads:20.5.0")
+    implementation("com.google.android.gms:play-services-ads:20.6.0")
     implementation("com.google.android.ads.consent:consent-library:1.0.8")
 
     /** Billing */
-    implementation("com.android.billingclient:billing-ktx:4.0.0")
+    implementation("com.android.billingclient:billing-ktx:4.1.0")
 }
