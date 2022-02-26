@@ -34,7 +34,6 @@
                         android:adjustViewBounds="true"
                         android:paddingEnd="5dp"
                         android:paddingBottom="5dp"
-                        tools:src="@drawable/launch"
                         tools:ignore="ContentDescription,RtlSymmetry" />
 
                     <LinearLayout

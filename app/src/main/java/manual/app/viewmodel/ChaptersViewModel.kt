@@ -349,8 +349,5 @@ class ChaptersViewModel(
 
     companion object {
         private const val ROOT_GROUP_ID = Int.MIN_VALUE
-        private val defaultSearchByGroupsState = SearchState.ByGroups(null, true)
-        private val defaultSearchByNameState = SearchState.ByName("")
-        private val defaultSearchByTagsState = SearchState.ByTags(emptyList())
     }
 }

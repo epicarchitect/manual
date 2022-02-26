@@ -131,7 +131,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="200dp"
                     android:src="@drawable/blocking_background"
-                    app:layout_constraintBottom_toTopOf="@id/unlockByAdOffer_block_imageView"/>
+                    app:layout_constraintBottom_toTopOf="@id/unlockByAdOffer_block_imageView"
+                    tools:ignore="ContentDescription" />
 
                 <ImageView
                     android:id="@+id/unlockByAdOffer_block_imageView"

@@ -62,7 +62,7 @@ class ItemProviderBuilder<ITEM : Any, VIEW_BINDING : ViewBinding>(
                     override fun bind(item: Any) {
                         bindJob = lifecycleOwner.lifecycleScope.launch {
                             (binding as VIEW_BINDING).bindFunction(this, item as ITEM)
-                            kotlinx.coroutines.awaitCancellation()
+                            awaitCancellation()
                             recycle()
                         }
                     }
