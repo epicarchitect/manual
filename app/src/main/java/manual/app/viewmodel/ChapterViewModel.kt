@@ -76,7 +76,7 @@ class ChapterViewModel(
                                         html = HtmlCompat.fromHtml(assetManager.read(it.source), HtmlCompat.FROM_HTML_MODE_COMPACT),
                                     )
                                 }
-                                "mp3" -> {
+                                "mp3", "ogg" -> {
                                     Content.Audio(
                                         contentId = it.id,
                                         name = it.name,

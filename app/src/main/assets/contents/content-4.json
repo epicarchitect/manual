@@ -1,5 +1,5 @@
 {
   "id": 4,
-  "name": "Audio 1",
-  "source": "data/russian_english_001.mp3"
+  "name": "Audio ogg format",
+  "source": "data/russian_english_001.ogg"
 }
