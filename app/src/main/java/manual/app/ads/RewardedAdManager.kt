@@ -9,6 +9,9 @@ import com.google.ads.mediation.admob.AdMobAdapter
 import com.google.android.gms.ads.*
 import com.google.android.gms.ads.rewarded.RewardedAd
 import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback
+import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
 import manual.app.R
 
 class RewardedAdManager(
@@ -16,10 +19,15 @@ class RewardedAdManager(
     private val gdprHelper: GDPRHelper
 ) {
 
+    private val isLoadedState = MutableStateFlow(false)
     private var currentActivity: Activity? = null
     private var currentCallback: RewardedVideoCallback? = null
     private var isVideoRunning = false
     private var rewardedAd: RewardedAd? = null
+        set(value) {
+            field = value
+            isLoadedState.value = value != null
+        }
     private val isPersonalized get() = gdprHelper.isEEA && gdprHelper.consentStatus == ConsentStatus.PERSONALIZED
 
     private val fullScreenContentCallback = object : FullScreenContentCallback() {
@@ -61,16 +69,15 @@ class RewardedAdManager(
         override fun onAdFailedToLoad(loadAdError: LoadAdError) {
             super.onAdFailedToLoad(loadAdError)
             Log.e("RewardedAdManager", loadAdError.toString())
-            currentCallback?.let {
-                isVideoRunning = false
-                currentCallback = null
-                rewardedAd = null
-            }
+            isVideoRunning = false
+            currentCallback = null
+            rewardedAd = null
         }
     }
 
-    init {
+    fun isLoadedFlow(): Flow<Boolean> {
         load()
+        return isLoadedState
     }
 
     fun showRewardedVideo(activity: Activity, callback: RewardedVideoCallback) {

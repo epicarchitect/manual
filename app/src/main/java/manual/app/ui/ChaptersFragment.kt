@@ -139,10 +139,6 @@ class ChaptersFragment(private val delegate: Delegate) : CoreFragment<ChaptersFr
             viewModel.navigateBack()
         }
 
-        titleTextView.setOnClickListener {
-            viewModel.navigateBack()
-        }
-
         viewModel.state.map { it?.searchState }.filterNotNull().onEachChanged { searchState ->
             searchTypeSpinner.setSelection(viewModel.state.value!!.availableSearchTypes.indexOf(searchState::class))
 

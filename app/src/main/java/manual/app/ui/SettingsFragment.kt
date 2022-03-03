@@ -31,10 +31,6 @@ class SettingsFragment : CoreFragment<SettingsFragmentBinding>(SettingsFragmentB
     private val monetizationConfigRepository: MonetizationConfigRepository by inject()
 
     override fun SettingsFragmentBinding.onCreated() {
-        titleTextView.setOnClickListener {
-            requireActivity().onBackPressed()
-        }
-
         backButton.setOnClickListener {
             requireActivity().onBackPressed()
         }

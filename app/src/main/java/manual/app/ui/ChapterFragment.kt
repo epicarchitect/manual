@@ -45,13 +45,12 @@ class ChapterFragment(
 
     @SuppressLint("SetTextI18n", "ClickableViewAccessibility")
     override fun ChapterFragmentBinding.onCreated() {
-
         unlockByAdOfferBlockImageView.updateLayoutParams<ConstraintLayout.LayoutParams> {
             topMargin = resources.displayMetrics.heightPixels / 2
         }
 
-        titleTextView.setOnClickListener {
-            requireActivity().onBackPressed()
+        premiumOfferBlockImageView.updateLayoutParams<ConstraintLayout.LayoutParams> {
+            topMargin = resources.displayMetrics.heightPixels / 2
         }
 
         backButton.setOnClickListener {
@@ -143,21 +142,25 @@ class ChapterFragment(
 
         combine(
             viewModel.state.map { it?.isBlocked }.distinctUntilChanged(),
-            viewModel.state.map { it?.canUnblockByAd }.distinctUntilChanged()
-        ) { isBlocked, canUnblockByAd ->
+            viewModel.state.map { it?.canUnblockByAd }.distinctUntilChanged(),
+            rewardedAdManager.isLoadedFlow()
+        ) { isBlocked, canUnblockByAd, isRewardedAdLoaded ->
             when {
                 isBlocked == true && canUnblockByAd == false -> {
                     premiumOfferLayout.isVisible = true
                     contentsRecyclerView.isVisible = true
                     unlockByAdOfferLayout.isVisible = false
-                    contentsRecyclerView.isVisible = false
                     scrollView.setOnTouchListener { _, _ -> true }
                     contentsRecyclerView.setOnTouchListener { _, _ -> true }
                 }
                 isBlocked == true && canUnblockByAd == true -> {
-                    unlockByAdOfferLayout.isVisible = true
-                    premiumOfferLayout.isVisible = false
-                    contentsRecyclerView.isVisible = true
+                    if (isRewardedAdLoaded) {
+                        unlockByAdOfferLayout.isVisible = true
+                        premiumOfferLayout.isVisible = false
+                    } else {
+                        unlockByAdOfferLayout.isVisible = false
+                        premiumOfferLayout.isVisible = true
+                    }
                     scrollView.setOnTouchListener { _, _ -> true }
                     contentsRecyclerView.setOnTouchListener { _, _ -> true }
                 }

@@ -84,20 +84,34 @@
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/premiumOffer_layout"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:visibility="gone"
+                android:layout_height="0dp"
+                android:visibility="visible"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:visibility="visible">
+                app:layout_constraintTop_toTopOf="parent">
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="200dp"
+                    android:src="@drawable/blocking_background"
+                    app:layout_constraintBottom_toTopOf="@id/premiumOffer_block_imageView"
+                    tools:ignore="ContentDescription" />
+
+                <ImageView
+                    android:id="@+id/premiumOffer_block_imageView"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:src="?attr/colorBackgroundFloating"
+                    tools:layout_marginTop="350dp"
+                    tools:ignore="ContentDescription" />
 
                 <TextView
                     android:id="@+id/premiumOffer_description_textView"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="24dp"
-                    android:layout_marginTop="44dp"
+                    android:layout_marginTop="500dp"
                     android:layout_marginEnd="24dp"
                     android:gravity="center"
                     android:text="@string/chapters_premiumOffer_description"
@@ -111,7 +125,6 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="24dp"
                     android:text="@string/chapters_premiumOffer_learnMore"
-                    app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/premiumOffer_description_textView" />
@@ -121,11 +134,12 @@
                 android:id="@+id/unlockByAdOffer_layout"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
+                android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                tools:visibility="visible">
+                tools:visibility="gone">
 
                 <ImageView
                     android:layout_width="match_parent"
