@@ -131,6 +131,10 @@ class ChaptersFragment(private val delegate: Delegate) : CoreFragment<ChaptersFr
             viewModel.navigateBack()
         }
 
+        searchTypePremiumOfferLearnMoreButton.setOnClickListener {
+            delegate.navigateToPremiumOffer(this@ChaptersFragment)
+        }
+
         backButton.setOnClickListener {
             viewModel.navigateBack()
         }
@@ -147,6 +151,8 @@ class ChaptersFragment(private val delegate: Delegate) : CoreFragment<ChaptersFr
                     searchEditText.isVisible = false
                     clearSearchButton.isVisible = false
                     tagsRecyclerView.isVisible = false
+                    searchTypePremiumOfferLayout.isVisible = false
+
                     if (searchState.isRoot) {
                         titleTextView.text = getString(R.string.chapters_title)
                     } else {
@@ -159,6 +165,7 @@ class ChaptersFragment(private val delegate: Delegate) : CoreFragment<ChaptersFr
                     searchEditText.isVisible = true
                     clearSearchButton.isVisible = true
                     tagsRecyclerView.isVisible = false
+                    searchTypePremiumOfferLayout.isVisible = false
 
                     if (searchEditText.text.toString() != searchState.name) {
                         searchEditText.setText(searchState.name)
@@ -168,14 +175,21 @@ class ChaptersFragment(private val delegate: Delegate) : CoreFragment<ChaptersFr
                 }
                 is ChaptersViewModel.SearchState.ByTags -> {
                     titleTextView.text = getString(R.string.chapters_title)
-                    searchEditText.isVisible = false
                     clearSearchButton.isVisible = false
-                    tagsRecyclerView.isVisible = true
-                    tagsRecyclerView.requireBindingRecyclerViewAdapter().loadItems(
-                        listOf(SelectTagsButtonItem)
-                                + searchState.tags
-                                + if (searchState.tags.isEmpty()) listOf(NoTagsSelectedItem) else listOf()
-                    )
+                    searchEditText.isVisible = false
+
+                    if (searchState.isBlocked) {
+                        searchTypePremiumOfferLayout.isVisible = true
+                        tagsRecyclerView.isVisible = false
+                    } else {
+                        searchTypePremiumOfferLayout.isVisible = false
+                        tagsRecyclerView.isVisible = true
+                        tagsRecyclerView.requireBindingRecyclerViewAdapter().loadItems(
+                            listOf(SelectTagsButtonItem)
+                                    + searchState.tags
+                                    + if (searchState.tags.isEmpty()) listOf(NoTagsSelectedItem) else listOf()
+                        )
+                    }
                     searchEditText.hideKeyboard()
                 }
                 is ChaptersViewModel.SearchState.ByFavorites -> {
@@ -183,6 +197,7 @@ class ChaptersFragment(private val delegate: Delegate) : CoreFragment<ChaptersFr
                     searchEditText.isVisible = false
                     clearSearchButton.isVisible = false
                     tagsRecyclerView.isVisible = false
+                    searchTypePremiumOfferLayout.isVisible = false
                     searchEditText.hideKeyboard()
                 }
             }
@@ -231,6 +246,7 @@ class ChaptersFragment(private val delegate: Delegate) : CoreFragment<ChaptersFr
                 if (item.isBlocked) {
                     if (item.canUnblockByAd) {
                         root.children.forEach { it.isEnabled = true }
+                        favoriteImageView.isEnabled = false
                         favoriteImageView.setImageResource(R.drawable.ic_unblock_key)
                     } else {
                         root.children.forEach { it.isEnabled = false }

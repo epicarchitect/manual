@@ -27,6 +27,7 @@
     <string name="chapters_openPlayMarketFailed">Не удалось открыть Play market</string>
     <string name="chapters_premiumOffer_learnMore">Узнать больше</string>
     <string name="chapters_premiumOffer_description">Данная статья доступна только в полной версии.</string>
+    <string name="chapters_searchByTags_premiumOffer_description">Поиск по тегам доступен только в полной версии.</string>
     <string name="chapters_unlockByAdOffer_showAd_button">Разблокировать</string>
     <string name="chapters_unlockByAdOffer_description">Чтобы разблокировать статью посмотрите рекламу.</string>
     <string name="chapters_unlockByAdOffer_removeAds_button">Отключить рекламу</string>

@@ -243,7 +243,8 @@ class ChaptersViewModel(
                                         id = it.id,
                                         name = it.name
                                     )
-                                }
+                                },
+                                isBlocked = !premiumEnabled && monetizationConfig.restrictSearchByTags
                             ),
                             items = items,
                             canNavigateBack = availableSearchTypes.first() != searchType,
@@ -342,7 +343,7 @@ class ChaptersViewModel(
 
         data class ByName(val name: String?) : SearchState()
 
-        data class ByTags(val tags: List<Tag>) : SearchState()
+        data class ByTags(val tags: List<Tag>, val isBlocked: Boolean) : SearchState()
 
         class ByFavorites : SearchState()
     }
