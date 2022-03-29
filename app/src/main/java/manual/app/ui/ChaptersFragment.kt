@@ -229,13 +229,22 @@ class ChaptersFragment(private val delegate: Delegate) : CoreFragment<ChaptersFr
         setup<ChaptersViewModel.Item.Chapter, ChapterItemBinding>(ChapterItemBinding::inflate) {
             bind { scope, item ->
                 nameTextView.text = item.name
-
                 chapterIconsRepository.chapterIconFlow(item.id).onEachChanged {
                     iconImageView.isVisible = it != null
-                    if (it != null) {
-                        Glide.with(root.context)
-                            .load("file:///android_asset/${it.source}")
-                            .into(iconImageView)
+                    if (it == null) return@onEachChanged
+
+                    val parts = it.source.split("/")
+                    when (parts.first()) {
+                        "drawable" -> {
+                            iconImageView.setImageResource(
+                                root.context.resources.getIdentifier(parts.last(), "drawable", root.context.packageName)
+                            )
+                        }
+                        else -> {
+                            Glide.with(root.context)
+                                .load("file:///android_asset/${it.source}")
+                                .into(iconImageView)
+                        }
                     }
                 }.launchIn(scope)
 
@@ -286,12 +295,23 @@ class ChaptersFragment(private val delegate: Delegate) : CoreFragment<ChaptersFr
                 nameTextView.text = item.name
                 chapterGroupIconsRepository.chapterGroupIconFlow(item.id).onEachChanged {
                     iconImageView.isVisible = it != null
-                    if (it != null) {
-                        Glide.with(root.context)
-                            .load("file:///android_asset/${it.source}")
-                            .into(iconImageView)
+                    if (it == null) return@onEachChanged
+
+                    val parts = it.source.split("/")
+                    when (parts.first()) {
+                        "drawable" -> {
+                            iconImageView.setImageResource(
+                                root.context.resources.getIdentifier(parts.last(), "drawable", root.context.packageName)
+                            )
+                        }
+                        else -> {
+                            Glide.with(root.context)
+                                .load("file:///android_asset/${it.source}")
+                                .into(iconImageView)
+                        }
                     }
                 }.launchIn(scope)
+
                 root.setOnClickListener {
                     viewModel.navigateInGroup(item.id)
                 }
