@@ -15,7 +15,7 @@
         dfg
     </text>
 
-    <video src="data/1-1.mp4" />
-    <gif src="data/test.gif" />
-    <audio src="data/russian_english_002.mp3" />
+    <video source="data/1-1.mp4" />
+    <gif source="data/test.gif" />
+    <audio source="data/russian_english_002.mp3" />
 </chapter>

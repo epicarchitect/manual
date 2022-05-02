@@ -1,6 +1,6 @@
 <chapter name="Chapter 1" id="1">
 
-    <image src="data/data-2.jpg" />
+    <image source="data/data-2.jpg" />
 
     <text>
         Text
@@ -12,12 +12,12 @@
         <br/>
     </text>
 
-    <image src="data/data-2.jpg" />
-    <image src="data/data-2.jpg" />
+    <image source="data/data-2.jpg" />
+    <image source="data/data-2.jpg" />
 
-    <video src="data/1-1.mp4" />
+    <video source="data/1-1.mp4" />
 
-    <gif src="data/test.gif" />
+    <gif source="data/test.gif" />
 
     <text>
         Text
@@ -64,5 +64,5 @@
         <br/>
         gsfhsfsfs slf slg s sldk f
     </text>
-    <audio src="data/russian_english_002.mp3" />
+    <audio source="data/russian_english_002.mp3" />
 </chapter>

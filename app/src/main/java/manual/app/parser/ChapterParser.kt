@@ -94,7 +94,7 @@ class ChapterParser {
 
         repeat(attributeCount) {
             when (val attributeName = getAttributeName(it)) {
-                ATTRIBUTE_AUDIO_SRC -> audioSrc = getAttributeValue(it)
+                ATTRIBUTE_AUDIO_SOURCE -> audioSrc = getAttributeValue(it)
                 ATTRIBUTE_AUDIO_NAME -> audioName = getAttributeValue(it)
                 else -> error("Unexpected audio attribute: $attributeName")
             }
@@ -112,7 +112,7 @@ class ChapterParser {
 
         repeat(attributeCount) {
             when (val attributeName = getAttributeName(it)) {
-                ATTRIBUTE_VIDEO_SRC -> videoSrc = getAttributeValue(it)
+                ATTRIBUTE_VIDEO_SOURCE -> videoSrc = getAttributeValue(it)
                 ATTRIBUTE_VIDEO_NAME -> videoName = getAttributeValue(it)
                 else -> error("Unexpected video attribute: $attributeName")
             }
@@ -130,7 +130,7 @@ class ChapterParser {
 
         repeat(attributeCount) {
             when (val attributeName = getAttributeName(it)) {
-                ATTRIBUTE_GIF_SRC -> gifSrc = getAttributeValue(it)
+                ATTRIBUTE_GIF_SOURCE -> gifSrc = getAttributeValue(it)
                 ATTRIBUTE_GIF_NAME -> gifName = getAttributeValue(it)
                 else -> error("Unexpected gif attribute: $attributeName")
             }
@@ -148,7 +148,7 @@ class ChapterParser {
 
         repeat(attributeCount) {
             when (val attributeName = getAttributeName(it)) {
-                ATTRIBUTE_IMAGE_SRC -> imageSrc = getAttributeValue(it)
+                ATTRIBUTE_IMAGE_SOURCE -> imageSrc = getAttributeValue(it)
                 ATTRIBUTE_IMAGE_NAME -> imageName = getAttributeValue(it)
                 else -> error("Unexpected image attribute: $attributeName")
             }
@@ -170,22 +170,22 @@ class ChapterParser {
 
         /** Audio */
         private const val TAG_AUDIO = "audio"
-        private const val ATTRIBUTE_AUDIO_SRC = "src"
+        private const val ATTRIBUTE_AUDIO_SOURCE = "source"
         private const val ATTRIBUTE_AUDIO_NAME = "name"
 
         /** Video */
         private const val TAG_VIDEO = "video"
-        private const val ATTRIBUTE_VIDEO_SRC = "src"
+        private const val ATTRIBUTE_VIDEO_SOURCE = "source"
         private const val ATTRIBUTE_VIDEO_NAME = "name"
 
         /** Gif */
         private const val TAG_GIF = "gif"
-        private const val ATTRIBUTE_GIF_SRC = "src"
+        private const val ATTRIBUTE_GIF_SOURCE = "source"
         private const val ATTRIBUTE_GIF_NAME = "name"
 
         /** Image */
         private const val TAG_IMAGE = "image"
-        private const val ATTRIBUTE_IMAGE_SRC = "src"
+        private const val ATTRIBUTE_IMAGE_SOURCE = "source"
         private const val ATTRIBUTE_IMAGE_NAME = "name"
     }
 }
