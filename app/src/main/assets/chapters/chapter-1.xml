@@ -1,0 +1,68 @@
+<chapter name="Chapter 1" id="1">
+
+    <image src="data/data-2.jpg" />
+
+    <text>
+        Text
+        <a href="manual://chapter/3">Chapter 3</a>
+        <br/>
+
+        text
+        <a href="manual://chapter/4">ссылка на какой то Chapter 4</a>
+        <br/>
+    </text>
+
+    <image src="data/data-2.jpg" />
+    <image src="data/data-2.jpg" />
+
+    <video src="data/1-1.mp4" />
+
+    <gif src="data/test.gif" />
+
+    <text>
+        Text
+        <a href="manual://chapter/3">Chapter 3</a>
+        <br/>
+
+        text
+        <a href="manual://chapter/4">ссылка на какой то Chapter 4</a>
+        <br/>
+
+        text
+        <a href="https://www.youtube.com/">YouTube</a>
+        <br/>
+        test dgkfkdjfkkgdjgfkfjgkfh vdgdfjkgnvbdg hdlgjhdgfhdgbdfbdlfgbdljxfgbldnglbdnxn
+        <br/>
+        gsfhsfsfs slf slg s sldk f
+
+        text
+        <a href="https://vk.com/">VK</a>
+        <br/>
+        test dgkfkdjfkkgdjgfkfjgkfh vdgdfjkgnvbdg hdlgjhdgfhdgbdfbdlfgbdljxfgbldnglbdnxn
+        <br/>
+        gsfhsfsfs slf slg s sldk f
+
+        text
+        <a href="https://developer.android.com/jetpack/compose">Compose</a>
+        <br/>
+        test dgkfkdjfkkgdjgfkfjgkfh vdgdfjkgnvbdg hdlgjhdgfhdgbdfbdlfgbdljxfgbldnglbdnxn
+        <br/>
+        gsfhsfsfs slf slg s sldk f
+
+        <br/>
+        test dgkfkdjfkkgdjgfkfjgkfh vdgdfjkgnvbdg hdlgjhdgfhdgbdfbdlfgbdljxfgbldnglbdnxn
+        <br/>
+        gsfhsfsfs slf slg s sldk f
+
+        <br/>
+        test dgkfkdjfkkgdjgfkfjgkfh vdgdfjkgnvbdg hdlgjhdgfhdgbdfbdlfgbdljxfgbldnglbdnxn
+        <br/>
+        gsfhsfsfs slf slg s sldk f
+
+        <br/>
+        test dgkfkdjfkkgdjgfkfjgkfh vdgdfjkgnvbdg hdlgjhdgfhdgbdfbdlfgbdljxfgbldnglbdnxn
+        <br/>
+        gsfhsfsfs slf slg s sldk f
+    </text>
+    <audio src="data/russian_english_002.mp3" />
+</chapter>

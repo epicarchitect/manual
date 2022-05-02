@@ -3,6 +3,8 @@ package manual.app.ui
 import android.annotation.SuppressLint
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
+import kolmachikhin.alexander.binding.recyclerview.adapter.BindingRecyclerViewAdapter
+import kolmachikhin.alexander.binding.recyclerview.adapter.requireBindingRecyclerViewAdapter
 import kotlinx.coroutines.flow.map
 import manual.app.databinding.TagSelectionBottomSheetDialogFragmentBinding
 import manual.app.databinding.TagSelectionItemBinding
@@ -12,8 +14,6 @@ import manual.core.coroutines.flow.launchWith
 import manual.core.coroutines.flow.onEachChanged
 import manual.core.fragment.dialog.bottomsheet.CoreBottomSheetDialogFragment
 import manual.core.os.require
-import manual.core.view.buildBindingRecyclerViewAdapter
-import manual.core.view.requireBindingRecyclerViewAdapter
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 
@@ -44,7 +44,7 @@ class TagSelectionBottomSheetDialogFragment(
         }
 
         recyclerView.itemAnimator = null
-        recyclerView.adapter = buildBindingRecyclerViewAdapter(viewLifecycleOwner) {
+        recyclerView.adapter = BindingRecyclerViewAdapter {
             setup<TagSelectionViewModel.Item.Tag, TagSelectionItemBinding>(TagSelectionItemBinding::inflate) {
                 bind { item ->
                     checkbox.text = item.name

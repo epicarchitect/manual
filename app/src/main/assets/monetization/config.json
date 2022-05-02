@@ -1,7 +1,7 @@
 {
   "showInterstitialAds": true,
   "showNativeAds": true,
-  "restrictChapters": true,
+  "restrictChapters": false,
   "restrictSearchByTags": true,
   "unblockChaptersForRewardedAd": true,
   "rewardedChapterIds": [

@@ -1,0 +1,21 @@
+<chapter name="Chapter 2" id="2">
+    <text>
+        asd
+        asd
+        <b>asd</b>
+        sad
+        asd
+        asd
+    </text>
+
+    <text>
+        dfg
+        dfg
+        dfg
+        dfg
+    </text>
+
+    <video src="data/1-1.mp4" />
+    <gif src="data/test.gif" />
+    <audio src="data/russian_english_002.mp3" />
+</chapter>

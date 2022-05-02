@@ -22,17 +22,15 @@ class ChapterGroupIconsRepository(
 
     init {
         coroutineScope.launch {
-            coroutineScope.launch {
-                stateFlow.value = gson.fromJson(
-                    assetManager.read("chapter-group-icons/map.json"),
-                    JsonArray::class.java
-                ).map {
-                    val json = it.asJsonObject
-                    ChapterGroupIcon(
-                        json["chapterGroupId"].asInt,
-                        json["source"].asString
-                    )
-                }
+            stateFlow.value = gson.fromJson(
+                assetManager.read("chapter-group-icons/map.json"),
+                JsonArray::class.java
+            ).map {
+                val json = it.asJsonObject
+                ChapterGroupIcon(
+                    json["chapterGroupId"].asInt,
+                    json["source"].asString
+                )
             }
         }
     }

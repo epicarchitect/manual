@@ -2,15 +2,18 @@
 
 package manual.app.viewmodel
 
-import manual.core.viewmodel.CoreViewModel
-import kotlinx.coroutines.flow.*
-import manual.app.data.Chapter as ChapterData
-import manual.app.data.ChapterGroup as ChapterGroupData
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.filterNotNull
+import manual.app.data.ChapterTags
 import manual.app.data.MonetizationConfig
-import manual.app.data.Tag as TagData
 import manual.app.premium.PremiumManager
 import manual.app.repository.*
+import manual.core.viewmodel.CoreViewModel
 import kotlin.reflect.KClass
+import manual.app.data.Chapter as ChapterData
+import manual.app.data.ChapterGroup as ChapterGroupData
+import manual.app.data.Tag as TagData
 
 class ChaptersViewModel(
     chaptersRepository: ChaptersRepository,
@@ -19,6 +22,7 @@ class ChaptersViewModel(
     chapterGroupsRepository: ChapterGroupsRepository,
     tagsRepository: TagsRepository,
     unblockedChapterIdsRepository: UnblockedChapterIdsRepository,
+    chapterTagsRepository: ChapterTagsRepository,
     private val favoriteChapterIdsRepository: FavoriteChapterIdsRepository
 ) : CoreViewModel<ChaptersViewModel.State>() {
 
@@ -40,6 +44,7 @@ class ChaptersViewModel(
             favoriteChapterIdsRepository.favoriteChapterIdsFlow(),
             unblockedChapterIdsRepository.unblockedChapterIdsFlow(),
             tagsRepository.tagsFlow(),
+            chapterTagsRepository.chapterTagsFlow()
         ) {
             val chapterDatas = it[0] as List<ChapterData>
             val chapterGroupDatas = it[1] as List<ChapterGroupData>
@@ -52,6 +57,7 @@ class ChaptersViewModel(
             val favoriteChapterIds = it[8] as List<Int>
             val unblockedChapterIds = it[9] as List<Int>
             val tagDatas = it[10] as List<TagData>
+            val chapterTags = it[11] as List<ChapterTags>
 
             fun ChapterData.toItem() = Item.Chapter(
                 id = id,
@@ -166,7 +172,7 @@ class ChaptersViewModel(
                             addAll(
                                 chapterDatas.let {
                                     if (selectedTagIds.isEmpty()) it
-                                    else it.filterByTagIds(selectedTagIds)
+                                    else it.filterByTagIds(chapterTags, selectedTagIds)
                                 }.map {
                                     it.toItem()
                                 }.sortedBy {
@@ -306,8 +312,13 @@ class ChaptersViewModel(
         }
     }
 
-    private fun List<ChapterData>.filterByTagIds(tags: List<Int>) = filter {
-        it.tagIds.any(tags::contains)
+    private fun List<ChapterData>.filterByTagIds(
+        chapterTags: List<ChapterTags>,
+        selectedTags: List<Int>
+    ) = filter { chapter ->
+        chapterTags.first {
+            it.chapterId == chapter.id
+        }.tagIds.any(selectedTags::contains)
     }
 
     data class State(

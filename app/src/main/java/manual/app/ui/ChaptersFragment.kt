@@ -13,6 +13,9 @@ import androidx.core.view.setPadding
 import androidx.core.view.updateLayoutParams
 import androidx.core.widget.doAfterTextChanged
 import com.bumptech.glide.Glide
+import kolmachikhin.alexander.binding.recyclerview.adapter.BindingRecyclerViewAdapter
+import kolmachikhin.alexander.binding.recyclerview.adapter.BindingRecyclerViewAdapterBuilder
+import kolmachikhin.alexander.binding.recyclerview.adapter.requireBindingRecyclerViewAdapter
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
@@ -65,7 +68,7 @@ class ChaptersFragment(private val delegate: Delegate) : CoreFragment<ChaptersFr
             viewModel.setSearchText(null)
         }
 
-        chaptersRecyclerView.adapter = buildBindingRecyclerViewAdapter(viewLifecycleOwner) {
+        chaptersRecyclerView.adapter = BindingRecyclerViewAdapter {
             setupChapterItem()
             setupGroupItem()
             setupFavoriteGroupItem()
@@ -101,7 +104,7 @@ class ChaptersFragment(private val delegate: Delegate) : CoreFragment<ChaptersFr
             }
         }.launchWith(viewLifecycleOwner)
 
-        tagsRecyclerView.adapter = buildBindingRecyclerViewAdapter(viewLifecycleOwner) {
+        tagsRecyclerView.adapter = BindingRecyclerViewAdapter {
             setup<ChaptersViewModel.Tag, TagItemBinding>(TagItemBinding::inflate) {
                 bind { item ->
                     chip.text = item.name

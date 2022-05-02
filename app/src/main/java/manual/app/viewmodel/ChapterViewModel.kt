@@ -2,29 +2,28 @@
 
 package manual.app.viewmodel
 
-import android.content.res.AssetManager
-import manual.core.viewmodel.CoreViewModel
 import android.net.Uri
 import android.text.Spanned
 import androidx.core.text.HtmlCompat
-import kotlinx.coroutines.flow.*
-import manual.app.data.Chapter as ChapterData
-import manual.app.data.Content as ContentData
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.filterNotNull
+import manual.app.data.ChapterTags
 import manual.app.data.MonetizationConfig
-import manual.app.data.Tag as TagData
 import manual.app.premium.PremiumManager
 import manual.app.repository.*
-import manual.core.resources.read
+import manual.core.viewmodel.CoreViewModel
+import manual.app.data.Chapter as ChapterData
+import manual.app.data.Content as ContentData
+import manual.app.data.Tag as TagData
 
 class ChapterViewModel(
     tagsRepository: TagsRepository,
     monetizationConfigRepository: MonetizationConfigRepository,
     premiumManager: PremiumManager,
     chaptersRepository: ChaptersRepository,
-    contentsRepository: ContentsRepository,
+    chapterTagsRepository: ChapterTagsRepository,
     private val unblockedChapterIdsRepository: UnblockedChapterIdsRepository,
     private val favoriteChapterIdsRepository: FavoriteChapterIdsRepository,
-    private val assetManager: AssetManager,
     private val chapterId: Int
 ) : CoreViewModel<ChapterViewModel.State>() {
 
@@ -36,7 +35,7 @@ class ChapterViewModel(
             unblockedChapterIdsRepository.isUnblockedChapterFlow(chapterId),
             monetizationConfigRepository.monetizationConfigFlow(),
             premiumManager.premiumEnabledFlow().filterNotNull(),
-            contentsRepository.contentsFlow()
+            chapterTagsRepository.chapterTagsFlow(chapterId)
         ) {
             val tagDatas = it[0] as List<TagData>
             val chapterData = it[1] as ChapterData
@@ -44,13 +43,13 @@ class ChapterViewModel(
             val isUnblocked = it[3] as Boolean
             val monetizationConfig = it[4] as MonetizationConfig
             val premiumEnabled = it[5] as Boolean
-            val contentDatas = it[6] as List<ContentData>
+            val chapterTags = it[6] as ChapterTags
 
             updateState {
                 State(
                     title = chapterData.name,
                     tags = tagDatas.filter {
-                        chapterData.tagIds.contains(it.id)
+                        chapterTags.tagIds.contains(it.id)
                     }.map {
                         Tag(it.name)
                     },
@@ -64,40 +63,13 @@ class ChapterViewModel(
                             && monetizationConfig.rewardedChapterIds.contains(chapterId)
                             && !monetizationConfig.availableChapterIds.contains(chapterId)
                             && !premiumEnabled,
-                    contents = contentDatas.let { contents ->
-                        chapterData.contentIds.map { id ->
-                            checkNotNull(contents.find { it.id == id })
-                        }.map {
-                            when (it.source.split(".").last()) {
-                                "html" -> {
-                                    Content.Html(
-                                        contentId = it.id,
-                                        name = it.name,
-                                        html = HtmlCompat.fromHtml(assetManager.read(it.source), HtmlCompat.FROM_HTML_MODE_COMPACT),
-                                    )
-                                }
-                                "mp3", "ogg" -> {
-                                    Content.Audio(
-                                        contentId = it.id,
-                                        name = it.name,
-                                        source = it.source
-                                    )
-                                }
-                                "mp4" -> {
-                                    Content.Video(
-                                        contentId = it.id,
-                                        name = it.name,
-                                        source = it.source
-                                    )
-                                }
-                                else -> {
-                                    Content.Image(
-                                        contentId = it.id,
-                                        name = it.name,
-                                        uri = Uri.parse("file:///android_asset/${it.source}")
-                                    )
-                                }
-                            }
+                    contents = chapterData.contents.map {
+                        when (it) {
+                            is ContentData.Image -> Content.Image(0, it.name ?: "", Uri.parse("file:///android_asset/${it.source}"))
+                            is ContentData.Gif -> Content.Image(0, it.name ?: "", Uri.parse("file:///android_asset/${it.source}"))
+                            is ContentData.Audio -> Content.Audio(0, it.name ?: "", it.source)
+                            is ContentData.Text -> Content.Html( 0, "", HtmlCompat.fromHtml(it.value, HtmlCompat.FROM_HTML_MODE_COMPACT))
+                            is ContentData.Video -> Content.Video(0, it.name ?: "", it.source)
                         }
                     }.toMutableList().apply {
                         if (!premiumEnabled && monetizationConfig.showNativeAds) {

@@ -21,7 +21,7 @@ abstract class CoreViewModel<STATE> : ViewModel() {
         }
     }
 
-    private val coroutineScope = CoroutineScope(Dispatchers.IO)
+    private val coroutineScope = CoroutineScope(Dispatchers.Default)
 
     protected fun Flow<*>.launch() = launchIn(coroutineScope)
 

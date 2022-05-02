@@ -1,7 +1,6 @@
 package manual.app.repository
 
 import android.content.res.AssetManager
-import com.google.gson.Gson
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -9,11 +8,12 @@ import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import manual.app.data.Chapter
-import manual.core.resources.mapEachFile
+import manual.app.parser.ChapterParser
+import manual.core.resources.mapEachInputStream
 
 class ChaptersRepository(
-    private val assetManager: AssetManager,
-    private val gson: Gson
+    assetManager: AssetManager,
+    private val chapterParser: ChapterParser
 ) {
 
     private val coroutineScope = CoroutineScope(Dispatchers.IO)
@@ -21,8 +21,8 @@ class ChaptersRepository(
 
     init {
         coroutineScope.launch {
-            stateFlow.value = assetManager.mapEachFile("chapters") {
-                gson.fromJson(it, Chapter::class.java)
+            stateFlow.value = assetManager.mapEachInputStream("chapters") {
+                it.use(chapterParser::parse)
             }
         }
     }

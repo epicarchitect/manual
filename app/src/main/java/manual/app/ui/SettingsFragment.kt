@@ -7,6 +7,8 @@ import android.widget.SeekBar
 import android.widget.Toast
 import androidx.core.view.isVisible
 import com.bumptech.glide.Glide
+import kolmachikhin.alexander.binding.recyclerview.adapter.BindingRecyclerViewAdapter
+import kolmachikhin.alexander.binding.recyclerview.adapter.requireBindingRecyclerViewAdapter
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import manual.app.R
@@ -18,8 +20,6 @@ import manual.app.repository.AppBackgroundsRepository
 import manual.app.repository.MonetizationConfigRepository
 import manual.core.coroutines.flow.launchWith
 import manual.core.fragment.CoreFragment
-import manual.core.view.buildBindingRecyclerViewAdapter
-import manual.core.view.requireBindingRecyclerViewAdapter
 import org.koin.android.ext.android.inject
 
 class SettingsFragment : CoreFragment<SettingsFragmentBinding>(SettingsFragmentBinding::inflate) {
@@ -37,7 +37,7 @@ class SettingsFragment : CoreFragment<SettingsFragmentBinding>(SettingsFragmentB
 
         fontSizeSeekBar.progress = ((fontScaleManager.fontScale - 1.0f) * 10).toInt()
         fontSizeSeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-            override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean)  = Unit
+            override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) = Unit
             override fun onStartTrackingTouch(seekBar: SeekBar) = Unit
             override fun onStopTrackingTouch(seekBar: SeekBar) {
                 fontScaleManager.fontScale = 1.0f + seekBar.progress.toFloat() / 10
@@ -46,7 +46,7 @@ class SettingsFragment : CoreFragment<SettingsFragmentBinding>(SettingsFragmentB
         })
 
 
-        bgRecyclerView.adapter = buildBindingRecyclerViewAdapter(viewLifecycleOwner) {
+        bgRecyclerView.adapter = BindingRecyclerViewAdapter {
             setup<AppBackground, BgItemBinding>(BgItemBinding::inflate) {
                 bind { scope, item ->
                     when (item) {
@@ -56,7 +56,7 @@ class SettingsFragment : CoreFragment<SettingsFragmentBinding>(SettingsFragmentB
                         AppBackgroundsRepository.nightAppBackground -> {
                             imageView.setImageResource(android.R.color.background_dark)
                         }
-                        else  ->  {
+                        else -> {
                             Glide.with(root).load(Uri.parse("file:///android_asset/${item.source}")).into(imageView)
                         }
                     }
@@ -84,7 +84,7 @@ class SettingsFragment : CoreFragment<SettingsFragmentBinding>(SettingsFragmentB
 
         monetizationConfigRepository.monetizationConfigFlow().onEach {
             val isAdsShowing = it.showInterstitialAds || it.showNativeAds
-            changeGdprButton.isVisible = isAdsShowing  && gdprHelper.isEEA
+            changeGdprButton.isVisible = isAdsShowing && gdprHelper.isEEA
             gdprDescriptionTextView.isVisible = isAdsShowing && gdprHelper.isEEA
             changeGdprButton.setOnClickListener {
                 gdprHelper.openConsentDialog(requireActivity()) {}

@@ -13,6 +13,9 @@ import com.bumptech.glide.Glide
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.MediaItem
 import com.stfalcon.imageviewer.StfalconImageViewer
+import kolmachikhin.alexander.binding.recyclerview.adapter.BindingRecyclerViewAdapter
+import kolmachikhin.alexander.binding.recyclerview.adapter.BindingRecyclerViewAdapterBuilder
+import kolmachikhin.alexander.binding.recyclerview.adapter.requireBindingRecyclerViewAdapter
 import kotlinx.coroutines.awaitCancellation
 import kotlinx.coroutines.flow.*
 import manual.app.R
@@ -24,10 +27,7 @@ import manual.core.coroutines.flow.launchWith
 import manual.core.coroutines.flow.onEachChanged
 import manual.core.fragment.CoreFragment
 import manual.core.os.require
-import manual.core.view.BindingRecyclerViewAdapterBuilder
-import manual.core.view.buildBindingRecyclerViewAdapter
 import manual.core.view.handleLinks
-import manual.core.view.requireBindingRecyclerViewAdapter
 import me.saket.bettermovementmethod.BetterLinkMovementMethod
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -57,7 +57,7 @@ class ChapterFragment(
             requireActivity().onBackPressed()
         }
 
-        tagsRecyclerView.adapter = buildBindingRecyclerViewAdapter(viewLifecycleOwner) {
+        tagsRecyclerView.adapter = BindingRecyclerViewAdapter {
             setup<ChapterViewModel.Tag, TagItemBinding>(TagItemBinding::inflate) {
                 bind { item ->
                     chip.text = item.name
@@ -66,7 +66,7 @@ class ChapterFragment(
         }
 
         contentsRecyclerView.itemAnimator = null
-        contentsRecyclerView.adapter = buildBindingRecyclerViewAdapter(viewLifecycleOwner) {
+        contentsRecyclerView.adapter = BindingRecyclerViewAdapter {
             setupHtmlContent()
             setupImageContent()
             setupAudioContent()
