@@ -48,10 +48,14 @@ class ChapterViewModel(
             updateState {
                 State(
                     title = chapterData.name,
-                    tags = tagDatas.filter {
-                        chapterTags?.tagIds?.contains(it.id) ?: false
-                    }.map {
-                        Tag(it.name)
+                    tags = if (chapterTags == null) {
+                        emptyList()
+                    } else {
+                        tagDatas.filter {
+                            chapterTags.tagIds.contains(it.id)
+                        }.map {
+                            Tag(it.name)
+                        }
                     },
                     isFavorite = isFavorite,
                     isBlocked = monetizationConfig.restrictChapters
