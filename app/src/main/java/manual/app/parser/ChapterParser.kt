@@ -84,7 +84,6 @@ class ChapterParser {
             }
         }
 
-        Log.d("test123", stringBuilder.toString())
         return Content.Text(stringBuilder.toString())
     }
 

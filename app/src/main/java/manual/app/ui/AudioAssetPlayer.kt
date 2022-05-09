@@ -60,7 +60,6 @@ class AudioAssetPlayer(
 
             application.assets.openFd(path).use {
                 setDataSource(it.fileDescriptor, it.startOffset, it.length)
-                Log.d("test123", "it.length: ${it.length}")
             }
 
             mutableState.value = State(

@@ -20,12 +20,10 @@ class MonetizationConfigRepository(
 
     init {
         coroutineScope.launch {
-            coroutineScope.launch {
-                stateFlow.value = gson.fromJson(
-                    assetManager.read("monetization/config.json"),
-                    MonetizationConfig::class.java
-                )
-            }
+            stateFlow.value = gson.fromJson(
+                assetManager.read("monetization/config.json"),
+                MonetizationConfig::class.java
+            )
         }
     }
 

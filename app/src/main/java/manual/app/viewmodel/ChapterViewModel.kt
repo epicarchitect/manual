@@ -43,13 +43,13 @@ class ChapterViewModel(
             val isUnblocked = it[3] as Boolean
             val monetizationConfig = it[4] as MonetizationConfig
             val premiumEnabled = it[5] as Boolean
-            val chapterTags = it[6] as ChapterTags
+            val chapterTags = it[6] as? ChapterTags
 
             updateState {
                 State(
                     title = chapterData.name,
                     tags = tagDatas.filter {
-                        chapterTags.tagIds.contains(it.id)
+                        chapterTags?.tagIds?.contains(it.id) ?: false
                     }.map {
                         Tag(it.name)
                     },

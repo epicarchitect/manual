@@ -22,15 +22,19 @@ class ChapterTagsRepository(
 
     init {
         coroutineScope.launch {
-            stateFlow.value = gson.fromJson(
-                assetManager.read("chapter-tags/map.json"),
-                JsonArray::class.java
-            ).map {
-                val json = it.asJsonObject
-                ChapterTags(
-                    json["chapterId"].asInt,
-                    json["tagIds"].asJsonArray.map { it.asInt }
-                )
+            try {
+                stateFlow.value = gson.fromJson(
+                    assetManager.read("chapter-tags/map.json"),
+                    JsonArray::class.java
+                ).map {
+                    val json = it.asJsonObject
+                    ChapterTags(
+                        json["chapterId"].asInt,
+                        json["tagIds"].asJsonArray.map { it.asInt }
+                    )
+                }
+            } catch (t: Throwable) {
+                stateFlow.value = emptyList()
             }
         }
     }

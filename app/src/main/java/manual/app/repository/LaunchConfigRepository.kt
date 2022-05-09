@@ -20,12 +20,10 @@ class LaunchConfigRepository(
 
     init {
         coroutineScope.launch {
-            coroutineScope.launch {
-                stateFlow.value = gson.fromJson(
-                    assetManager.read("app/launch-config.json"),
-                    LaunchConfig::class.java
-                )
-            }
+            stateFlow.value = gson.fromJson(
+                assetManager.read("app/launch-config.json"),
+                LaunchConfig::class.java
+            )
         }
     }
 
