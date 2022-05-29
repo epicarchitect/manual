@@ -316,9 +316,9 @@ class ChaptersViewModel(
         chapterTags: List<ChapterTags>,
         selectedTags: List<Int>
     ) = filter { chapter ->
-        chapterTags.first {
+        chapterTags.firstOrNull {
             it.chapterId == chapter.id
-        }.tagIds.any(selectedTags::contains)
+        }?.tagIds?.any(selectedTags::contains) ?: false
     }
 
     data class State(
