@@ -24,14 +24,15 @@ class ChaptersViewModel(
     tagsRepository: TagsRepository,
     unblockedChapterIdsRepository: UnblockedChapterIdsRepository,
     chapterTagsRepository: ChapterTagsRepository,
-    private val notesRepository: NotesRepository,
+    notesRepository: NotesRepository,
     private val favoriteChapterIdsRepository: FavoriteChapterIdsRepository
 ) : CoreViewModel<ChaptersViewModel.State>() {
 
     private val searchTextState = MutableStateFlow<String?>(null)
     private val selectedTagIdsState = MutableStateFlow<List<Int>>(emptyList())
     private val groupIdsStack = MutableStateFlow(listOf(ROOT_GROUP_ID))
-    private val searchTypeState = MutableStateFlow<KClass<out SearchState>>(SearchState.ByGroups::class)
+    private val searchTypeState =
+        MutableStateFlow<KClass<out SearchState>>(SearchState.ByGroups::class)
 
     init {
         combine(
@@ -135,14 +136,15 @@ class ChaptersViewModel(
                                     }
                                 )
 
-                                if (notesConfig.isEnabled) {
+                                if (notesConfig.positionInChaptersByGroups >= 0) {
                                     add(
-                                        notesConfig.position,
+                                        notesConfig.positionInChaptersByGroups,
                                         Item.NotesButtonItem
                                     )
                                 }
                             } else {
-                                val currentGroupData = chapterGroupDatas.first { it.id == currentGroupId }
+                                val currentGroupData =
+                                    chapterGroupDatas.first { it.id == currentGroupId }
 
                                 addAll(
                                     chapterDatas.filter {
@@ -168,6 +170,7 @@ class ChaptersViewModel(
                                 )
                             }
                         }
+
                         SearchState.ByName::class -> {
                             addAll(
                                 chapterDatas.let {
@@ -180,6 +183,7 @@ class ChaptersViewModel(
                                 }
                             )
                         }
+
                         SearchState.ByTags::class -> {
                             addAll(
                                 chapterDatas.let {
@@ -191,13 +195,14 @@ class ChaptersViewModel(
                                     it.id
                                 }
                             )
-                            if (notesConfig.isEnabled) {
+                            if (notesConfig.positionInChaptersByTags >= 0) {
                                 add(
-                                    notesConfig.position,
+                                    notesConfig.positionInChaptersByTags,
                                     Item.NotesButtonItem
                                 )
                             }
                         }
+
                         SearchState.ByFavorites::class -> {
                             addAll(
                                 chapterDatas.filter {
@@ -239,6 +244,7 @@ class ChaptersViewModel(
                                 ROOT_GROUP_ID -> {
                                     SearchState.ByGroups(null, true)
                                 }
+
                                 else -> {
                                     val group = chapterGroupDatas.first { it.id == currentGroupId }
                                     SearchState.ByGroups(group.name, false)
@@ -249,6 +255,7 @@ class ChaptersViewModel(
                             availableSearchTypes = availableSearchTypes
                         )
                     }
+
                     SearchState.ByName::class -> {
                         State(
                             searchState = SearchState.ByName(searchText),
@@ -257,6 +264,7 @@ class ChaptersViewModel(
                             availableSearchTypes = availableSearchTypes
                         )
                     }
+
                     SearchState.ByTags::class -> {
                         State(
                             searchState = SearchState.ByTags(
@@ -275,6 +283,7 @@ class ChaptersViewModel(
                             availableSearchTypes = availableSearchTypes
                         )
                     }
+
                     SearchState.ByFavorites::class -> {
                         State(
                             searchState = SearchState.ByFavorites(),
@@ -283,6 +292,7 @@ class ChaptersViewModel(
                             availableSearchTypes = availableSearchTypes
                         )
                     }
+
                     else -> error("Unexpected search type: ${searchType::class}")
                 }
             }
@@ -312,6 +322,7 @@ class ChaptersViewModel(
                     is SearchState.ByGroups -> {
                         groupIdsStack.value = groupIdsStack.value.dropLast(1)
                     }
+
                     else -> {
                         searchTypeState.value = state.availableSearchTypes.first()
                     }
@@ -324,11 +335,12 @@ class ChaptersViewModel(
         selectedTagIdsState.value = ids
     }
 
-    private fun List<ChapterData>.filterByName(text: String) = text.trim().split(" ").let { textParts ->
-        filter { chapter ->
-            textParts.all { chapter.name.contains(it, ignoreCase = true) }
+    private fun List<ChapterData>.filterByName(text: String) =
+        text.trim().split(" ").let { textParts ->
+            filter { chapter ->
+                textParts.all { chapter.name.contains(it, ignoreCase = true) }
+            }
         }
-    }
 
     private fun List<ChapterData>.filterByTagIds(
         chapterTags: List<ChapterTags>,
