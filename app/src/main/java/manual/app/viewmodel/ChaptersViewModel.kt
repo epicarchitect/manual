@@ -195,7 +195,7 @@ class ChaptersViewModel(
                                     it.id
                                 }
                             )
-                            if (notesConfig.positionInChaptersByTags >= 0) {
+                            if (selectedTagIds.isEmpty() && notesConfig.positionInChaptersByTags >= 0) {
                                 add(
                                     notesConfig.positionInChaptersByTags,
                                     Item.NotesButtonItem
