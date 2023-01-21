@@ -38,7 +38,7 @@
     <string name="chapters_searchByName_hint">Введите название статьи</string>
     <string name="chapters_selectTags_button">Выбрать теги</string>
     <string name="chapters_noTagsSelected">Теги не выбраны.</string>
-    <string name="chapters_go_to_notes">Перейти к заметкам</string>
+    <string name="chapters_go_to_notes">Личный блакнот</string>
 
     <string name="tagSelection_title">Теги</string>
     <string name="tagSelection_apply_button">Применить</string>
@@ -56,7 +56,7 @@
     <string name="removeAdsOffer_description">Хотите отключить рекламу?</string>
     <string name="removeAdsOffer_learMore_button">Узнать больше</string>
 
-    <string name="notes_title">Заметки</string>
+    <string name="notes_title">Личный блакнот</string>
     <string name="notes_empty">Заметки отсутствуют</string>
     <string name="note_title">Заметка</string>
     <string name="note_saved_message">Заметка сохранена</string>

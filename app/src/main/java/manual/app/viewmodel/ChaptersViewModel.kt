@@ -115,9 +115,6 @@ class ChaptersViewModel(
                                     subgroupChapterIds.contains(it.id)
                                 }
 
-                                if (notesConfig.isEnabled) {
-                                    add(Item.NotesButtonItem)
-                                }
 
                                 addAll(
                                     rootChapterDatas.map {
@@ -137,6 +134,13 @@ class ChaptersViewModel(
                                         it.id
                                     }
                                 )
+
+                                if (notesConfig.isEnabled) {
+                                    add(
+                                        notesConfig.position,
+                                        Item.NotesButtonItem
+                                    )
+                                }
                             } else {
                                 val currentGroupData = chapterGroupDatas.first { it.id == currentGroupId }
 
