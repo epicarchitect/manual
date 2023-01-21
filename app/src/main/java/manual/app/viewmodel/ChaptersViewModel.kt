@@ -191,6 +191,12 @@ class ChaptersViewModel(
                                     it.id
                                 }
                             )
+                            if (notesConfig.isEnabled) {
+                                add(
+                                    notesConfig.position,
+                                    Item.NotesButtonItem
+                                )
+                            }
                         }
                         SearchState.ByFavorites::class -> {
                             addAll(
