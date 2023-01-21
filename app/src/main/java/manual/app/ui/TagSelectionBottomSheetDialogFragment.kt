@@ -3,8 +3,9 @@ package manual.app.ui
 import android.annotation.SuppressLint
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
-import kolmachikhin.alexander.binding.recyclerview.adapter.BindingRecyclerViewAdapter
-import kolmachikhin.alexander.binding.recyclerview.adapter.requireBindingRecyclerViewAdapter
+import epicarchitect.recyclerview.EpicAdapter
+import epicarchitect.recyclerview.bind
+import epicarchitect.recyclerview.requireEpicAdapter
 import kotlinx.coroutines.flow.map
 import manual.app.databinding.TagSelectionBottomSheetDialogFragmentBinding
 import manual.app.databinding.TagSelectionItemBinding
@@ -32,7 +33,10 @@ class TagSelectionBottomSheetDialogFragment(
     @SuppressLint("SetTextI18n")
     override fun TagSelectionBottomSheetDialogFragmentBinding.onCreated() {
         doneButton.setOnClickListener {
-            delegate.onSelected(this@TagSelectionBottomSheetDialogFragment, viewModel.getSelectedTagIds())
+            delegate.onSelected(
+                this@TagSelectionBottomSheetDialogFragment,
+                viewModel.getSelectedTagIds()
+            )
         }
 
         selectAllButton.setOnClickListener {
@@ -44,7 +48,7 @@ class TagSelectionBottomSheetDialogFragment(
         }
 
         recyclerView.itemAnimator = null
-        recyclerView.adapter = BindingRecyclerViewAdapter {
+        recyclerView.adapter = EpicAdapter {
             setup<TagSelectionViewModel.Item.Tag, TagSelectionItemBinding>(TagSelectionItemBinding::inflate) {
                 bind { item ->
                     checkbox.text = item.name
@@ -74,7 +78,7 @@ class TagSelectionBottomSheetDialogFragment(
         }.launchWith(viewLifecycleOwner)
 
         viewModel.state.map { it?.items }.onEachChanged {
-            recyclerView.requireBindingRecyclerViewAdapter().loadItems(it ?: emptyList())
+            recyclerView.requireEpicAdapter().loadItems(it ?: emptyList())
         }.launchWith(viewLifecycleOwner)
     }
 

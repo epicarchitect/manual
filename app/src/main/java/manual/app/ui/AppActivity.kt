@@ -23,6 +23,7 @@ import kotlinx.coroutines.runBlocking
 import manual.app.R
 import manual.app.ads.InterstitialAdManager
 import manual.app.ads.RewardedAdManager
+import manual.app.data.Note
 import manual.app.databinding.AppActivityBinding
 import manual.app.premium.PremiumManager
 import manual.app.repository.AppBackgroundsRepository
@@ -75,6 +76,8 @@ class AppActivity : CoreActivity<AppActivityBinding>(AppActivityBinding::inflate
         setFactory { PremiumOfferFragment(FullVersionOfferFragmentDelegate()) }
         setFactory { ChaptersFragment(ChaptersFragmentDelegate()) }
         setFactory { ChapterFragment(ChapterFragmentDelegate()) }
+        setFactory { NotesFragment(NotesFragmentDelegate()) }
+        setFactory { NoteFragment(NoteFragmentDelegate()) }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -132,7 +135,10 @@ class AppActivity : CoreActivity<AppActivityBinding>(AppActivityBinding::inflate
                 with(reviewManager) {
                     requestReviewFlow().addOnCompleteListener { request ->
                         if (request.isSuccessful) {
-                            launchReviewFlow(this@AppActivity, request.result).addOnCompleteListener {
+                            launchReviewFlow(
+                                this@AppActivity,
+                                request.result
+                            ).addOnCompleteListener {
                                 reviewRequested = true
                             }
                         }
@@ -160,7 +166,10 @@ class AppActivity : CoreActivity<AppActivityBinding>(AppActivityBinding::inflate
             }
         }
 
-        supportFragmentManager.registerFragmentLifecycleCallbacks(FragmentLifecycleCallbacks(), false)
+        supportFragmentManager.registerFragmentLifecycleCallbacks(
+            FragmentLifecycleCallbacks(),
+            false
+        )
     }
 
     override fun onResume() {
@@ -220,10 +229,30 @@ class AppActivity : CoreActivity<AppActivityBinding>(AppActivityBinding::inflate
         override fun navigateToPremiumOffer(fragment: ChaptersFragment) {
             navigate<PremiumOfferFragment>()
         }
+
+        override fun navigateToNotes(fragment: ChaptersFragment) {
+            navigate<NotesFragment>()
+        }
     }
 
     private inner class FullVersionOfferFragmentDelegate : PremiumOfferFragment.Delegate {
         override fun onPremiumPurchased(fragment: PremiumOfferFragment) {
+            supportFragmentManager.popBackStack()
+        }
+    }
+
+    private inner class NotesFragmentDelegate : NotesFragment.Delegate {
+        override fun onNoteCLick(note: Note) {
+            navigate<NoteFragment>(NoteFragment.buildArguments(note.id))
+        }
+
+        override fun onAddNoteCLick() {
+            navigate<NoteFragment>(NoteFragment.buildArguments(null))
+        }
+    }
+
+    private inner class NoteFragmentDelegate : NoteFragment.Delegate {
+        override fun onNoteDelete() {
             supportFragmentManager.popBackStack()
         }
     }

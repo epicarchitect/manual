@@ -3,7 +3,6 @@ package manual.app.ui
 import android.app.Application
 import android.media.AudioAttributes
 import android.media.MediaPlayer
-import android.util.Log
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow

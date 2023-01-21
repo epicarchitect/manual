@@ -7,6 +7,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterNotNull
 import manual.app.data.ChapterTags
 import manual.app.data.MonetizationConfig
+import manual.app.data.NotesConfig
 import manual.app.premium.PremiumManager
 import manual.app.repository.*
 import manual.core.viewmodel.CoreViewModel
@@ -23,6 +24,7 @@ class ChaptersViewModel(
     tagsRepository: TagsRepository,
     unblockedChapterIdsRepository: UnblockedChapterIdsRepository,
     chapterTagsRepository: ChapterTagsRepository,
+    private val notesRepository: NotesRepository,
     private val favoriteChapterIdsRepository: FavoriteChapterIdsRepository
 ) : CoreViewModel<ChaptersViewModel.State>() {
 
@@ -44,7 +46,8 @@ class ChaptersViewModel(
             favoriteChapterIdsRepository.favoriteChapterIdsFlow(),
             unblockedChapterIdsRepository.unblockedChapterIdsFlow(),
             tagsRepository.tagsFlow(),
-            chapterTagsRepository.chapterTagsFlow()
+            chapterTagsRepository.chapterTagsFlow(),
+            notesRepository.configFlow()
         ) {
             val chapterDatas = it[0] as List<ChapterData>
             val chapterGroupDatas = it[1] as List<ChapterGroupData>
@@ -58,6 +61,7 @@ class ChaptersViewModel(
             val unblockedChapterIds = it[9] as List<Int>
             val tagDatas = it[10] as List<TagData>
             val chapterTags = it[11] as List<ChapterTags>
+            val notesConfig = it[12] as NotesConfig
 
             fun ChapterData.toItem() = Item.Chapter(
                 id = id,
@@ -109,6 +113,10 @@ class ChaptersViewModel(
 
                                 val rootChapterDatas = chapterDatas.filterNot {
                                     subgroupChapterIds.contains(it.id)
+                                }
+
+                                if (notesConfig.isEnabled) {
+                                    add(Item.NotesButtonItem)
                                 }
 
                                 addAll(
@@ -345,6 +353,8 @@ class ChaptersViewModel(
         data class Group(val id: Int, val name: String) : Item()
 
         class NativeAd : Item()
+
+        object NotesButtonItem : Item()
 
         object FavoritesGroup : Item()
     }

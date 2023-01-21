@@ -13,9 +13,11 @@ import androidx.core.view.setPadding
 import androidx.core.view.updateLayoutParams
 import androidx.core.widget.doAfterTextChanged
 import com.bumptech.glide.Glide
-import kolmachikhin.alexander.binding.recyclerview.adapter.BindingRecyclerViewAdapter
-import kolmachikhin.alexander.binding.recyclerview.adapter.BindingRecyclerViewAdapterBuilder
-import kolmachikhin.alexander.binding.recyclerview.adapter.requireBindingRecyclerViewAdapter
+import epicarchitect.recyclerview.EpicAdapter
+import epicarchitect.recyclerview.EpicAdapterBuilder
+import epicarchitect.recyclerview.bind
+import epicarchitect.recyclerview.requireEpicAdapter
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
@@ -24,6 +26,7 @@ import manual.app.ads.NativeAdsManager
 import manual.app.databinding.*
 import manual.app.repository.ChapterGroupIconsRepository
 import manual.app.repository.ChapterIconsRepository
+import manual.app.repository.NotesRepository
 import manual.app.viewmodel.ChaptersViewModel
 import manual.core.coroutines.flow.launchWith
 import manual.core.coroutines.flow.onEachChanged
@@ -36,7 +39,8 @@ import manual.core.view.*
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 
-class ChaptersFragment(private val delegate: Delegate) : CoreFragment<ChaptersFragmentBinding>(ChaptersFragmentBinding::inflate) {
+class ChaptersFragment(private val delegate: Delegate) :
+    CoreFragment<ChaptersFragmentBinding>(ChaptersFragmentBinding::inflate) {
 
     private val viewModel: ChaptersViewModel by sharedViewModel()
     private val nativeAdsManager: NativeAdsManager by inject()
@@ -44,7 +48,11 @@ class ChaptersFragment(private val delegate: Delegate) : CoreFragment<ChaptersFr
     private val chapterGroupIconsRepository: ChapterGroupIconsRepository by inject()
 
     override fun FragmentFactoryStore.setup() {
-        setFactory { TagSelectionBottomSheetDialogFragment(TagSelectionBottomSheetDialogFragmentDelegate()) }
+        setFactory {
+            TagSelectionBottomSheetDialogFragment(
+                TagSelectionBottomSheetDialogFragmentDelegate()
+            )
+        }
     }
 
     @SuppressLint("SetTextI18n")
@@ -68,43 +76,57 @@ class ChaptersFragment(private val delegate: Delegate) : CoreFragment<ChaptersFr
             viewModel.setSearchText(null)
         }
 
-        chaptersRecyclerView.adapter = BindingRecyclerViewAdapter {
+        chaptersRecyclerView.adapter = EpicAdapter {
+            setup<ChaptersViewModel.Item.NotesButtonItem, ChaptertsNotesButtonItemBinding>(ChaptertsNotesButtonItemBinding::inflate) {
+                bind { _ ->
+                    root.setOnClickListener {
+                        delegate.navigateToNotes(this@ChaptersFragment)
+                    }
+                }
+            }
             setupChapterItem()
             setupGroupItem()
             setupFavoriteGroupItem()
             setupAdItem()
         }
 
-        viewModel.state.map { it?.availableSearchTypes }.filterNotNull().onEachChanged { searchTypes ->
-            searchTypeLayout.isVisible = searchTypes.isNotEmpty()
-            bottomDivider.isVisible = searchTypes.isNotEmpty()
-            searchTypeSpinner.isEnabled = searchTypes.size > 1
+        viewModel.state.map { it?.availableSearchTypes }.filterNotNull()
+            .onEachChanged { searchTypes ->
+                searchTypeLayout.isVisible = searchTypes.isNotEmpty()
+                bottomDivider.isVisible = searchTypes.isNotEmpty()
+                searchTypeSpinner.isEnabled = searchTypes.size > 1
 
-            searchTypeSpinner.adapter = SearchTypeSpinnerAdapter(
-                requireContext(),
-                searchTypes.map {
-                    when (it) {
-                        ChaptersViewModel.SearchState.ByGroups::class -> getString(R.string.chapters_searchByGroups)
-                        ChaptersViewModel.SearchState.ByTags::class -> getString(R.string.chapters_searchByTags)
-                        ChaptersViewModel.SearchState.ByName::class -> getString(R.string.chapters_searchByName)
-                        ChaptersViewModel.SearchState.ByFavorites::class -> getString(R.string.chapters_searchByFavorites)
-                        else -> error("Unexpected search type: ${it::class}")
+                searchTypeSpinner.adapter = SearchTypeSpinnerAdapter(
+                    requireContext(),
+                    searchTypes.map {
+                        when (it) {
+                            ChaptersViewModel.SearchState.ByGroups::class -> getString(R.string.chapters_searchByGroups)
+                            ChaptersViewModel.SearchState.ByTags::class -> getString(R.string.chapters_searchByTags)
+                            ChaptersViewModel.SearchState.ByName::class -> getString(R.string.chapters_searchByName)
+                            ChaptersViewModel.SearchState.ByFavorites::class -> getString(R.string.chapters_searchByFavorites)
+                            else -> error("Unexpected search type: ${it::class}")
+                        }
                     }
-                }
-            )
+                )
 
-            searchTypeSpinner.setSelection(searchTypes.indexOf(viewModel.state.value!!.searchState::class))
+                searchTypeSpinner.setSelection(searchTypes.indexOf(viewModel.state.value!!.searchState::class))
 
-            searchTypeSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-                override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                    viewModel.setSearchType(searchTypes[position])
-                }
+                searchTypeSpinner.onItemSelectedListener =
+                    object : AdapterView.OnItemSelectedListener {
+                        override fun onItemSelected(
+                            parent: AdapterView<*>?,
+                            view: View?,
+                            position: Int,
+                            id: Long
+                        ) {
+                            viewModel.setSearchType(searchTypes[position])
+                        }
 
-                override fun onNothingSelected(parent: AdapterView<*>?) = Unit
-            }
-        }.launchWith(viewLifecycleOwner)
+                        override fun onNothingSelected(parent: AdapterView<*>?) = Unit
+                    }
+            }.launchWith(viewLifecycleOwner)
 
-        tagsRecyclerView.adapter = BindingRecyclerViewAdapter {
+        tagsRecyclerView.adapter = EpicAdapter {
             setup<ChaptersViewModel.Tag, TagItemBinding>(TagItemBinding::inflate) {
                 bind { item ->
                     chip.text = item.name
@@ -114,11 +136,12 @@ class ChaptersFragment(private val delegate: Delegate) : CoreFragment<ChaptersFr
             setup<SelectTagsButtonItem, SelectTagsButtonItemBinding>(SelectTagsButtonItemBinding::inflate) {
                 bind { _ ->
                     root.setOnClickListener {
-                        fragmentFactoryStore.instantiate<TagSelectionBottomSheetDialogFragment>().apply {
-                            arguments = TagSelectionBottomSheetDialogFragment.buildArguments(
-                                (viewModel.state.value!!.searchState as ChaptersViewModel.SearchState.ByTags).tags.map { it.id }
-                            )
-                        }.show(childFragmentManager, null)
+                        fragmentFactoryStore.instantiate<TagSelectionBottomSheetDialogFragment>()
+                            .apply {
+                                arguments = TagSelectionBottomSheetDialogFragment.buildArguments(
+                                    (viewModel.state.value!!.searchState as ChaptersViewModel.SearchState.ByTags).tags.map { it.id }
+                                )
+                            }.show(childFragmentManager, null)
                     }
                 }
             }
@@ -130,9 +153,10 @@ class ChaptersFragment(private val delegate: Delegate) : CoreFragment<ChaptersFr
             progressBar.isVisible = it
         }.launchWith(viewLifecycleOwner)
 
-        val backPressedCallback = requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, false) {
-            viewModel.navigateBack()
-        }
+        val backPressedCallback =
+            requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, false) {
+                viewModel.navigateBack()
+            }
 
         searchTypePremiumOfferLearnMoreButton.setOnClickListener {
             delegate.navigateToPremiumOffer(this@ChaptersFragment)
@@ -143,7 +167,11 @@ class ChaptersFragment(private val delegate: Delegate) : CoreFragment<ChaptersFr
         }
 
         viewModel.state.map { it?.searchState }.filterNotNull().onEachChanged { searchState ->
-            searchTypeSpinner.setSelection(viewModel.state.value!!.availableSearchTypes.indexOf(searchState::class))
+            searchTypeSpinner.setSelection(
+                viewModel.state.value!!.availableSearchTypes.indexOf(
+                    searchState::class
+                )
+            )
 
             when (searchState) {
                 is ChaptersViewModel.SearchState.ByGroups -> {
@@ -183,7 +211,7 @@ class ChaptersFragment(private val delegate: Delegate) : CoreFragment<ChaptersFr
                     } else {
                         searchTypePremiumOfferLayout.isVisible = false
                         tagsRecyclerView.isVisible = true
-                        tagsRecyclerView.requireBindingRecyclerViewAdapter().loadItems(
+                        tagsRecyclerView.requireEpicAdapter().loadItems(
                             listOf(SelectTagsButtonItem)
                                     + searchState.tags
                                     + if (searchState.tags.isEmpty()) listOf(NoTagsSelectedItem) else listOf()
@@ -203,7 +231,7 @@ class ChaptersFragment(private val delegate: Delegate) : CoreFragment<ChaptersFr
         }.launchWith(viewLifecycleOwner)
 
         viewModel.state.map { it?.items }.onEachChanged {
-            chaptersRecyclerView.requireBindingRecyclerViewAdapter().loadItems(it ?: emptyList())
+            chaptersRecyclerView.requireEpicAdapter().loadItems(it ?: emptyList())
             noChaptersTextView.isVisible = it != null && it.isEmpty()
         }.launchWith(viewLifecycleOwner)
 
@@ -228,9 +256,9 @@ class ChaptersFragment(private val delegate: Delegate) : CoreFragment<ChaptersFr
         }.launchWith(viewLifecycleOwner)
     }
 
-    private fun BindingRecyclerViewAdapterBuilder.setupChapterItem() =
+    private fun EpicAdapterBuilder.setupChapterItem() =
         setup<ChaptersViewModel.Item.Chapter, ChapterItemBinding>(ChapterItemBinding::inflate) {
-            bind { scope, item ->
+            bind { scope, _, item ->
                 nameTextView.text = item.name
                 chapterIconsRepository.chapterIconFlow(item.id).onEachChanged {
                     iconImageView.isVisible = it != null
@@ -240,7 +268,11 @@ class ChaptersFragment(private val delegate: Delegate) : CoreFragment<ChaptersFr
                     when (parts.first()) {
                         "drawable" -> {
                             iconImageView.setImageResource(
-                                root.context.resources.getIdentifier(parts.last(), "drawable", root.context.packageName)
+                                root.context.resources.getIdentifier(
+                                    parts.last(),
+                                    "drawable",
+                                    root.context.packageName
+                                )
                             )
                         }
                         else -> {
@@ -292,9 +324,9 @@ class ChaptersFragment(private val delegate: Delegate) : CoreFragment<ChaptersFr
             }
         }
 
-    private fun BindingRecyclerViewAdapterBuilder.setupGroupItem() =
+    private fun EpicAdapterBuilder.setupGroupItem() =
         setup<ChaptersViewModel.Item.Group, GroupItemBinding>(GroupItemBinding::inflate) {
-            bind { scope, item ->
+            bind { scope, _, item ->
                 nameTextView.text = item.name
                 chapterGroupIconsRepository.chapterGroupIconFlow(item.id).onEachChanged {
                     iconImageView.isVisible = it != null
@@ -304,7 +336,11 @@ class ChaptersFragment(private val delegate: Delegate) : CoreFragment<ChaptersFr
                     when (parts.first()) {
                         "drawable" -> {
                             iconImageView.setImageResource(
-                                root.context.resources.getIdentifier(parts.last(), "drawable", root.context.packageName)
+                                root.context.resources.getIdentifier(
+                                    parts.last(),
+                                    "drawable",
+                                    root.context.packageName
+                                )
                             )
                         }
                         else -> {
@@ -321,14 +357,14 @@ class ChaptersFragment(private val delegate: Delegate) : CoreFragment<ChaptersFr
             }
         }
 
-    private fun BindingRecyclerViewAdapterBuilder.setupFavoriteGroupItem() =
+    private fun EpicAdapterBuilder.setupFavoriteGroupItem() =
         setup<ChaptersViewModel.Item.FavoritesGroup, TitleItemBinding>(TitleItemBinding::inflate) {
             bind { _ ->
                 textView.setText(R.string.chapters_favoriteGroup_title)
             }
         }
 
-    private fun BindingRecyclerViewAdapterBuilder.setupAdItem() =
+    private fun EpicAdapterBuilder.setupAdItem() =
         setup<ChaptersViewModel.Item.NativeAd, NativeAdItemBinding>(NativeAdItemBinding::inflate) {
             bind { _ ->
                 val nativeAd = nativeAdsManager.randomNativeAd()
@@ -446,8 +482,12 @@ class ChaptersFragment(private val delegate: Delegate) : CoreFragment<ChaptersFr
         ) = getView(position, convertView, parent)
     }
 
-    private inner class TagSelectionBottomSheetDialogFragmentDelegate : TagSelectionBottomSheetDialogFragment.Delegate {
-        override fun onSelected(fragment: TagSelectionBottomSheetDialogFragment, tagIds: List<Int>) {
+    private inner class TagSelectionBottomSheetDialogFragmentDelegate :
+        TagSelectionBottomSheetDialogFragment.Delegate {
+        override fun onSelected(
+            fragment: TagSelectionBottomSheetDialogFragment,
+            tagIds: List<Int>
+        ) {
             fragment.dismiss()
             viewModel.setSelectedTagIds(tagIds)
         }
@@ -461,5 +501,6 @@ class ChaptersFragment(private val delegate: Delegate) : CoreFragment<ChaptersFr
         fun navigateToChapter(fragment: ChaptersFragment, chapterId: Int)
         fun navigateToSettings(fragment: ChaptersFragment)
         fun navigateToPremiumOffer(fragment: ChaptersFragment)
+        fun navigateToNotes(fragment: ChaptersFragment)
     }
 }

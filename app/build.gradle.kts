@@ -5,13 +5,19 @@ plugins {
 }
 
 android {
+    bundle {
+        storeArchive {
+            enable = true
+        }
+    }
+
     namespace = "manual.app"
-    compileSdk = 32
+    compileSdk = 33
 
     defaultConfig {
         applicationId = "manual.app"
         minSdk = 21
-        targetSdk = 32
+        targetSdk = 33
         versionCode = 1
         versionName = "1.0"
     }
@@ -46,7 +52,7 @@ dependencies {
     implementation("com.google.android.play:core:1.10.3")
     implementation("com.google.android.play:core-ktx:1.8.1")
 
-    implementation("com.github.alexander-kolmachikhin:BindingRecyclerViewAdapter:1.0.3")
+    implementation("com.github.epicarchitect:epic-adapter:1.0.7")
 
     /** Kotlin */
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.1")

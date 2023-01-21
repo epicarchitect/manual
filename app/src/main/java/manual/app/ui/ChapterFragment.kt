@@ -13,9 +13,10 @@ import com.bumptech.glide.Glide
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.MediaItem
 import com.stfalcon.imageviewer.StfalconImageViewer
-import kolmachikhin.alexander.binding.recyclerview.adapter.BindingRecyclerViewAdapter
-import kolmachikhin.alexander.binding.recyclerview.adapter.BindingRecyclerViewAdapterBuilder
-import kolmachikhin.alexander.binding.recyclerview.adapter.requireBindingRecyclerViewAdapter
+import epicarchitect.recyclerview.EpicAdapter
+import epicarchitect.recyclerview.EpicAdapterBuilder
+import epicarchitect.recyclerview.bind
+import epicarchitect.recyclerview.requireEpicAdapter
 import kotlinx.coroutines.awaitCancellation
 import kotlinx.coroutines.flow.*
 import manual.app.R
@@ -57,7 +58,7 @@ class ChapterFragment(
             requireActivity().onBackPressed()
         }
 
-        tagsRecyclerView.adapter = BindingRecyclerViewAdapter {
+        tagsRecyclerView.adapter = EpicAdapter {
             setup<ChapterViewModel.Tag, TagItemBinding>(TagItemBinding::inflate) {
                 bind { item ->
                     chip.text = item.name
@@ -66,7 +67,7 @@ class ChapterFragment(
         }
 
         contentsRecyclerView.itemAnimator = null
-        contentsRecyclerView.adapter = BindingRecyclerViewAdapter {
+        contentsRecyclerView.adapter = EpicAdapter {
             setupHtmlContent()
             setupImageContent()
             setupAudioContent()
@@ -175,15 +176,15 @@ class ChapterFragment(
         }.launchWith(viewLifecycleOwner)
 
         viewModel.state.map { it?.contents }.onEachChanged {
-            contentsRecyclerView.requireBindingRecyclerViewAdapter().loadItems(it ?: emptyList())
+            contentsRecyclerView.requireEpicAdapter().loadItems(it ?: emptyList())
         }.launchWith(viewLifecycleOwner)
 
         viewModel.state.map { it?.tags }.onEachChanged {
-            tagsRecyclerView.requireBindingRecyclerViewAdapter().loadItems(it ?: emptyList())
+            tagsRecyclerView.requireEpicAdapter().loadItems(it ?: emptyList())
         }.launchWith(viewLifecycleOwner)
     }
 
-    private fun BindingRecyclerViewAdapterBuilder.setupHtmlContent() =
+    private fun EpicAdapterBuilder.setupHtmlContent() =
         setup<ChapterViewModel.Content.Html, ChapterTextItemBinding>(ChapterTextItemBinding::inflate) {
             bind { item ->
                 nameTextView.isVisible = item.name.isNotEmpty()
@@ -191,7 +192,10 @@ class ChapterFragment(
                 textView.movementMethod = BetterLinkMovementMethod.getInstance()
                 textView.text = item.html.handleLinks {
                     if (it.scheme == "manual") {
-                        delegate.navigateToChapter(this@ChapterFragment, it.pathSegments.last().toInt())
+                        delegate.navigateToChapter(
+                            this@ChapterFragment,
+                            it.pathSegments.last().toInt()
+                        )
                     } else {
                         startActivity(Intent(Intent.ACTION_VIEW, it))
                     }
@@ -199,7 +203,7 @@ class ChapterFragment(
             }
         }
 
-    private fun BindingRecyclerViewAdapterBuilder.setupImageContent() =
+    private fun EpicAdapterBuilder.setupImageContent() =
         setup<ChapterViewModel.Content.Image, ChapterImageItemBinding>(ChapterImageItemBinding::inflate) {
             bind { item ->
                 nameTextView.isVisible = item.name.isNotEmpty()
@@ -213,7 +217,7 @@ class ChapterFragment(
             }
         }
 
-    private fun BindingRecyclerViewAdapterBuilder.setupVideoContent() =
+    private fun EpicAdapterBuilder.setupVideoContent() =
         setup<ChapterViewModel.Content.Video, ChapterVideoItemBinding>(ChapterVideoItemBinding::inflate) {
             bind { item ->
                 nameTextView.isVisible = item.name.isNotEmpty()
@@ -241,9 +245,9 @@ class ChapterFragment(
         }
 
     @SuppressLint("SetTextI18n")
-    private fun BindingRecyclerViewAdapterBuilder.setupAudioContent() =
+    private fun EpicAdapterBuilder.setupAudioContent() =
         setup<ChapterViewModel.Content.Audio, ChapterAudioItemBinding>(ChapterAudioItemBinding::inflate) {
-            bind { scope, item ->
+            bind { scope, _, item ->
                 nameTextView.isVisible = item.name.isNotEmpty()
                 nameTextView.text = item.name
                 audioAssetPlayer.state.onEach {
@@ -267,7 +271,11 @@ class ChapterFragment(
                             object : SeekBar.OnSeekBarChangeListener {
                                 override fun onStartTrackingTouch(seekBar: SeekBar) = Unit
                                 override fun onStopTrackingTouch(seekBar: SeekBar) = Unit
-                                override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
+                                override fun onProgressChanged(
+                                    seekBar: SeekBar,
+                                    progress: Int,
+                                    fromUser: Boolean
+                                ) {
                                     if (fromUser) {
                                         audioAssetPlayer.seekTo(progress)
                                     }
@@ -297,7 +305,7 @@ class ChapterFragment(
         }
 
 
-    private fun BindingRecyclerViewAdapterBuilder.setupAdItem() =
+    private fun EpicAdapterBuilder.setupAdItem() =
         setup<ChapterViewModel.Content.NativeAd, NativeAdItemBinding>(NativeAdItemBinding::inflate) {
             bind { _ ->
                 val nativeAd = nativeAdsManager.randomNativeAd()

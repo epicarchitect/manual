@@ -13,6 +13,7 @@ import manual.app.ads.GDPRHelper
 import manual.app.ads.InterstitialAdManager
 import manual.app.ads.NativeAdsManager
 import manual.app.ads.RewardedAdManager
+import manual.app.database.IdGenerator
 import manual.app.database.MainDatabase
 import manual.app.parser.ChapterParser
 import manual.app.premium.BillingClientManager
@@ -24,6 +25,8 @@ import manual.app.ui.FontScaleManager
 import manual.app.ui.NightModeManager
 import manual.app.viewmodel.ChapterViewModel
 import manual.app.viewmodel.ChaptersViewModel
+import manual.app.viewmodel.NoteViewModel
+import manual.app.viewmodel.NotesViewModel
 import manual.app.viewmodel.TagSelectionViewModel
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
@@ -45,6 +48,7 @@ class App : Application() {
     }
 
     fun singlesModule() = module(createdAtStart = true) {
+        single { IdGenerator(this@App) }
         single { AlertDialogManager() }
         single { GDPRHelper(this@App) }
         single { RewardedAdManager(this@App, get()) }
@@ -56,9 +60,11 @@ class App : Application() {
         single { MainDatabase.create(this@App) }
         single { get<MainDatabase>().favoriteChapterIdsDao }
         single { get<MainDatabase>().unblockedChapterIdsDao }
+        single { get<MainDatabase>().notesDao }
         single { assets }
         single { GsonBuilder().create() }
         single { FavoriteChapterIdsRepository(get()) }
+        single { NotesRepository(get(), get(), get(), get()) }
         single { UnblockedChapterIdsRepository(get()) }
         single { ChapterGroupsRepository(get(), get()) }
         single { ChapterParser() }
@@ -88,8 +94,10 @@ class App : Application() {
     }
 
     fun viewModelsModule() = module {
-        viewModel { ChaptersViewModel(get(), get(), get(), get(), get(), get(), get(), get()) }
+        viewModel { ChaptersViewModel(get(), get(), get(), get(), get(), get(), get(), get(), get()) }
         viewModel { (chapterId: Int) -> ChapterViewModel(get(), get(), get(), get(), get(), get(), get(), chapterId) }
         viewModel { (selectedTagIds: List<Int>) -> TagSelectionViewModel(get(), get(), selectedTagIds) }
+        viewModel { NotesViewModel(get()) }
+        viewModel { (noteId: Int?) -> NoteViewModel(get(), noteId) }
     }
 }

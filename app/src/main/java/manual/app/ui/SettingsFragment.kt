@@ -7,8 +7,8 @@ import android.widget.SeekBar
 import android.widget.Toast
 import androidx.core.view.isVisible
 import com.bumptech.glide.Glide
-import kolmachikhin.alexander.binding.recyclerview.adapter.BindingRecyclerViewAdapter
-import kolmachikhin.alexander.binding.recyclerview.adapter.requireBindingRecyclerViewAdapter
+import epicarchitect.recyclerview.EpicAdapter
+import epicarchitect.recyclerview.requireEpicAdapter
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import manual.app.R
@@ -37,7 +37,9 @@ class SettingsFragment : CoreFragment<SettingsFragmentBinding>(SettingsFragmentB
 
         fontSizeSeekBar.progress = ((fontScaleManager.fontScale - 1.0f) * 10).toInt()
         fontSizeSeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-            override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) = Unit
+            override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) =
+                Unit
+
             override fun onStartTrackingTouch(seekBar: SeekBar) = Unit
             override fun onStopTrackingTouch(seekBar: SeekBar) {
                 fontScaleManager.fontScale = 1.0f + seekBar.progress.toFloat() / 10
@@ -46,9 +48,9 @@ class SettingsFragment : CoreFragment<SettingsFragmentBinding>(SettingsFragmentB
         })
 
 
-        bgRecyclerView.adapter = BindingRecyclerViewAdapter {
+        bgRecyclerView.adapter = EpicAdapter {
             setup<AppBackground, BgItemBinding>(BgItemBinding::inflate) {
-                bind { scope, item ->
+                bind { scope, _, item ->
                     when (item) {
                         AppBackgroundsRepository.lightAppBackground -> {
                             imageView.setImageResource(android.R.color.background_light)
@@ -57,7 +59,8 @@ class SettingsFragment : CoreFragment<SettingsFragmentBinding>(SettingsFragmentB
                             imageView.setImageResource(android.R.color.background_dark)
                         }
                         else -> {
-                            Glide.with(root).load(Uri.parse("file:///android_asset/${item.source}")).into(imageView)
+                            Glide.with(root).load(Uri.parse("file:///android_asset/${item.source}"))
+                                .into(imageView)
                         }
                     }
 
@@ -79,7 +82,7 @@ class SettingsFragment : CoreFragment<SettingsFragmentBinding>(SettingsFragmentB
         }
 
         appBackgroundsRepository.appBackgroundsFlow().onEach {
-            bgRecyclerView.requireBindingRecyclerViewAdapter().loadItems(it)
+            bgRecyclerView.requireEpicAdapter().loadItems(it)
         }.launchWith(viewLifecycleOwner)
 
         monetizationConfigRepository.monetizationConfigFlow().onEach {

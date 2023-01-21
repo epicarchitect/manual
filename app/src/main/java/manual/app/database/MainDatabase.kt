@@ -11,19 +11,26 @@ import androidx.sqlite.db.SupportSQLiteDatabase
     entities = [
         FavoriteChapterIdEntity::class,
         UnblockedChapterIdEntity::class,
+        NoteEntity::class
     ],
-    version = 3,
+    version = 4,
     exportSchema = false
 )
 abstract class MainDatabase : RoomDatabase() {
 
     abstract val favoriteChapterIdsDao: FavoriteChapterIdsDao
     abstract val unblockedChapterIdsDao: UnblockedChapterIdsDao
+    abstract val notesDao: NotesDao
 
     companion object {
-        fun create(context: Context) = Room.databaseBuilder(context, MainDatabase::class.java, "main")
-            .addMigrations(Migration1To2, Migration2To3)
-            .build()
+        fun create(context: Context) =
+            Room.databaseBuilder(context, MainDatabase::class.java, "main")
+                .addMigrations(
+                    Migration1To2,
+                    Migration2To3,
+                    Migration3To4
+                )
+                .build()
     }
 
     object Migration1To2 : Migration(1, 2) {
@@ -35,6 +42,12 @@ abstract class MainDatabase : RoomDatabase() {
     object Migration2To3 : Migration(2, 3) {
         override fun migrate(database: SupportSQLiteDatabase) {
             database.execSQL("CREATE TABLE IF NOT EXISTS `unblockedChapterIds` (`chapterId` INTEGER NOT NULL, PRIMARY KEY(`chapterId`))")
+        }
+    }
+
+    object Migration3To4 : Migration(3, 4) {
+        override fun migrate(database: SupportSQLiteDatabase) {
+            database.execSQL("CREATE TABLE IF NOT EXISTS `notes` (`id` INTEGER NOT NULL PRIMARY KEY, `title` TEXT NOT NULL, `content` TEXT NOT NULL)")
         }
     }
 }
