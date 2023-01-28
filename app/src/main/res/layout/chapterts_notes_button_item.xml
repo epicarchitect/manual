@@ -1,28 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
     android:background="?android:attr/selectableItemBackground">
 
+    <ImageView
+        android:id="@+id/icon_imageView"
+        android:layout_width="44dp"
+        android:layout_height="44dp"
+        android:layout_marginStart="16dp"
+        android:src="@drawable/notes_icon"
+        app:layout_constraintBottom_toBottomOf="@id/name_textView"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/name_textView"
+        tools:ignore="ContentDescription" />
 
     <TextView
         android:id="@+id/name_textView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
+        android:layout_marginHorizontal="16dp"
         android:layout_marginVertical="16dp"
         android:ellipsize="end"
         android:maxLines="3"
-        android:layout_marginHorizontal="16dp"
+        android:text="@string/chapters_go_to_notes"
         android:textAppearance="?attr/textAppearanceBody1"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/next_imageView"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:text="@string/chapters_go_to_notes" />
+        app:layout_constraintStart_toEndOf="@id/icon_imageView"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
         android:id="@+id/next_imageView"
