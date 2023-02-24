@@ -66,15 +66,15 @@ dependencies {
     implementation("io.insert-koin:koin-android:3.2.0")
 
     /** Json */
-    implementation("com.google.code.gson:gson:2.9.0")
+    implementation("com.google.code.gson:gson:2.10")
 
     /** Images */
     implementation("com.github.stfalcon-studio:StfalconImageViewer:v1.0.1")
-    implementation("com.github.bumptech.glide:glide:4.12.0")
-    kapt("com.github.bumptech.glide:compiler:4.12.0")
+    implementation("com.github.bumptech.glide:glide:4.14.2")
+    kapt("com.github.bumptech.glide:compiler:4.14.2")
 
     /** Video */
-    implementation("com.google.android.exoplayer:exoplayer:2.17.1")
+    implementation("com.google.android.exoplayer:exoplayer:2.18.3")
 
     /** Links */
     implementation("me.saket:better-link-movement-method:2.2.0")
@@ -85,9 +85,9 @@ dependencies {
     kapt("androidx.room:room-compiler:2.4.2")
 
     /** Ads */
-    implementation("com.google.android.gms:play-services-ads:21.0.0")
+    implementation("com.google.android.gms:play-services-ads:21.5.0")
     implementation("com.google.android.ads.consent:consent-library:1.0.8")
 
     /** Billing */
-    implementation("com.android.billingclient:billing-ktx:5.0.0")
+    implementation("com.android.billingclient:billing-ktx:5.1.0")
 }
