@@ -35,6 +35,6 @@ dependencies {
     implementation("androidx.fragment:fragment-ktx:1.5.5")
     implementation("androidx.lifecycle:lifecycle-common-java8:2.5.1")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.5.1")
-    implementation("com.google.android.material:material:1.6.0")
+    implementation("com.google.android.material:material:1.8.0")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.1")
 }
