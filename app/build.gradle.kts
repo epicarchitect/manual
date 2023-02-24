@@ -62,8 +62,8 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
 
     /** DI */
-    implementation("io.insert-koin:koin-core:3.2.0")
-    implementation("io.insert-koin:koin-android:3.2.0")
+    implementation("io.insert-koin:koin-core:3.3.3")
+    implementation("io.insert-koin:koin-android:3.3.3")
 
     /** Json */
     implementation("com.google.code.gson:gson:2.10")
