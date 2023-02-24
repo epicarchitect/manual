@@ -59,7 +59,7 @@ dependencies {
     implementation("com.github.epicarchitect:epic-adapter:1.0.7")
 
     /** Kotlin */
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.1")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
 
     /** DI */
     implementation("io.insert-koin:koin-core:3.2.0")
