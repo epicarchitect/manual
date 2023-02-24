@@ -6,7 +6,8 @@ import androidx.core.content.edit
 
 class NightModeManager(private val preferences: SharedPreferences) {
 
-    var mode = preferences.getInt(KEY_MODE, AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM).toThemeMode()
+    var mode =
+        preferences.getInt(KEY_MODE, AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM).toThemeMode()
         set(value) {
             field = value
             value.toAppCompatDelegateMode().let {

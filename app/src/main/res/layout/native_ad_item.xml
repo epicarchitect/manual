@@ -17,10 +17,10 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:paddingHorizontal="12dp"
                 android:layout_marginTop="12dp"
-                android:layout_marginBottom="4dp">
+                android:layout_marginBottom="4dp"
+                android:orientation="vertical"
+                android:paddingHorizontal="12dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -51,9 +51,9 @@
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
-                                android:textSize="16sp"
                                 android:textAppearance="?attr/textAppearanceHeadline6"
-                                tools:text="Test Ad: Google Ads"/>
+                                android:textSize="16sp"
+                                tools:text="Test Ad: Google Ads" />
 
                             <TextView
                                 android:layout_width="wrap_content"
@@ -76,9 +76,9 @@
                                 android:layout_height="match_parent"
                                 android:gravity="bottom"
                                 android:textSize="14sp"
-                                tools:text="Advertiser"
                                 android:textStyle="bold"
-                                tools:ignore="RtlSymmetry" />
+                                tools:ignore="RtlSymmetry"
+                                tools:text="Advertiser" />
 
                             <RatingBar
                                 android:id="@+id/ratingBar"
@@ -89,7 +89,7 @@
                                 android:numStars="5"
                                 android:progressTint="#4CAF50"
                                 android:stepSize="0.5"
-                                tools:progress="50"/>
+                                tools:progress="50" />
                         </LinearLayout>
                     </LinearLayout>
                 </LinearLayout>
@@ -104,14 +104,14 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:textSize="12sp"
-                        tools:text="Stay up to date with your Ads Check how your ads are performing"/>
+                        tools:text="Stay up to date with your Ads Check how your ads are performing" />
 
                     <com.google.android.gms.ads.nativead.MediaView
                         android:id="@+id/ad_mediaView"
                         android:layout_width="match_parent"
                         android:layout_height="175dp"
-                        tools:background="#333"
-                        android:layout_gravity="center_horizontal" />
+                        android:layout_gravity="center_horizontal"
+                        tools:background="#333" />
 
                     <LinearLayout
                         android:layout_width="wrap_content"
@@ -127,8 +127,8 @@
                             android:paddingLeft="5dp"
                             android:paddingEnd="5dp"
                             android:paddingRight="5dp"
-                            tools:text="FREE"
-                            android:textSize="12sp" />
+                            android:textSize="12sp"
+                            tools:text="FREE" />
 
                         <TextView
                             android:id="@+id/adStore_textView"
@@ -138,17 +138,17 @@
                             android:paddingLeft="5dp"
                             android:paddingEnd="5dp"
                             android:paddingRight="5dp"
-                            tools:text="Google Play"
-                            android:textSize="12sp" />
+                            android:textSize="12sp"
+                            tools:text="Google Play" />
 
                         <Button
                             android:id="@+id/adAction_button"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            tools:text="Install"
-                            android:textColor="#4CAF50"
                             android:gravity="center"
-                            android:textSize="12sp" />
+                            android:textColor="#4CAF50"
+                            android:textSize="12sp"
+                            tools:text="Install" />
                     </LinearLayout>
                 </LinearLayout>
             </LinearLayout>

@@ -9,16 +9,16 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface FavoriteChapterIdsDao {
 
-   @Insert(onConflict = OnConflictStrategy.REPLACE)
-   suspend fun insert(entity: FavoriteChapterIdEntity)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insert(entity: FavoriteChapterIdEntity)
 
-   @Query("DELETE FROM favoriteChapterIds WHERE chapterId = :id")
-   suspend fun delete(id: Int)
+    @Query("DELETE FROM favoriteChapterIds WHERE chapterId = :id")
+    suspend fun delete(id: Int)
 
-   @Query("SELECT * FROM favoriteChapterIds WHERE chapterId = :id")
-   fun entityFlow(id: Int): Flow<FavoriteChapterIdEntity?>
-   
-   @Query("SELECT * FROM favoriteChapterIds")
-   fun entitiesFlow(): Flow<List<FavoriteChapterIdEntity>>
+    @Query("SELECT * FROM favoriteChapterIds WHERE chapterId = :id")
+    fun entityFlow(id: Int): Flow<FavoriteChapterIdEntity?>
+
+    @Query("SELECT * FROM favoriteChapterIds")
+    fun entitiesFlow(): Flow<List<FavoriteChapterIdEntity>>
 
 }

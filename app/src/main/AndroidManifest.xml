@@ -35,7 +35,7 @@
             android:exported="true"
             android:screenOrientation="portrait"
             android:theme="@style/Activity"
-            tools:ignore="LockedOrientationActivity"/>
+            tools:ignore="LockedOrientationActivity" />
 
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"

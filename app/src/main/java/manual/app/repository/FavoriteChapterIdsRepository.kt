@@ -20,7 +20,8 @@ class FavoriteChapterIdsRepository(private val favoriteChapterIdsDao: FavoriteCh
         }
     }
 
-    fun isFavoriteChapterFlow(chapterId: Int) = favoriteChapterIdsDao.entityFlow(chapterId).map { it != null }
+    fun isFavoriteChapterFlow(chapterId: Int) =
+        favoriteChapterIdsDao.entityFlow(chapterId).map { it != null }
 
     fun favoriteChapterIdsFlow() = favoriteChapterIdsDao.entitiesFlow().mapItems { it.chapterId }
 

@@ -47,7 +47,8 @@
             android:src="@drawable/ic_delete"
             app:layout_constraintBottom_toBottomOf="@id/title_textView"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@id/title_textView" />
+            app:layout_constraintTop_toTopOf="@id/title_textView"
+            tools:ignore="ContentDescription" />
 
         <manual.core.view.Divider
             android:id="@+id/top_divider"

@@ -7,10 +7,10 @@ import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.widget.FrameLayout
 import androidx.core.view.updateLayoutParams
-import manual.core.os.getOr
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import manual.core.R
+import manual.core.os.getOr
 
 abstract class CoreBottomSheetDialog(
     context: Context,
@@ -41,7 +41,9 @@ abstract class CoreBottomSheetDialog(
     }
 
     override fun onStart() {
-        behavior.state = restoredInstanceState.getOr(SavedInstanceArgument.BEHAVIOR_STATE) { initialBehaviorState }
+        super.onStart()
+        behavior.state =
+            restoredInstanceState.getOr(SavedInstanceArgument.BEHAVIOR_STATE) { initialBehaviorState }
     }
 
     private object SavedInstanceArgument {

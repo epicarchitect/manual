@@ -1,10 +1,21 @@
 package manual.app.premium
 
 import android.content.Context
-import com.android.billingclient.api.*
+import com.android.billingclient.api.AcknowledgePurchaseParams
+import com.android.billingclient.api.BillingClient
+import com.android.billingclient.api.BillingResult
+import com.android.billingclient.api.Purchase
+import com.android.billingclient.api.SkuDetails
+import com.android.billingclient.api.SkuDetailsParams
+import com.android.billingclient.api.acknowledgePurchase
+import com.android.billingclient.api.querySkuDetails
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import manual.app.R
 
 class PremiumManager(
@@ -62,20 +73,21 @@ class PremiumManager(
             }
         }.launchIn(coroutineScope)
 
-        billingClientManager.purchaseResultFlow().combine(billingClientStateFlow) { billingResult, billingClient ->
-            val purchases = billingResult?.second
+        billingClientManager.purchaseResultFlow()
+            .combine(billingClientStateFlow) { billingResult, billingClient ->
+                val purchases = billingResult?.second
 
-            billingResultStateFlow.value = billingResult?.first
-            if (purchases != null && purchases.isNotEmpty() && billingClient != null) {
-                billingClient.acknowledgePurchase(
-                    AcknowledgePurchaseParams.newBuilder()
-                        .setPurchaseToken(purchases.first().purchaseToken)
-                        .build()
-                )
+                billingResultStateFlow.value = billingResult?.first
+                if (purchases != null && purchases.isNotEmpty() && billingClient != null) {
+                    billingClient.acknowledgePurchase(
+                        AcknowledgePurchaseParams.newBuilder()
+                            .setPurchaseToken(purchases.first().purchaseToken)
+                            .build()
+                    )
 
-                checkFullVersion(billingClient)
-            }
-        }.launchIn(coroutineScope)
+                    checkFullVersion(billingClient)
+                }
+            }.launchIn(coroutineScope)
     }
 
     private fun checkFullVersion(client: BillingClient) {

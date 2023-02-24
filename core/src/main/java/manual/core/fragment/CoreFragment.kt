@@ -42,7 +42,8 @@ abstract class CoreFragment<BINDING : ViewBinding>(
         super.onCreate(savedInstanceState)
         lastSavedInstanceState = savedInstanceState
         onCreatedCount = savedInstanceState.getOr(SavedStateArgument.Int.ON_CREATED_COUNT) { 0 }
-        onViewCreatedCount = savedInstanceState.getOr(SavedStateArgument.Int.ON_VIEW_CREATED_COUNT) { 0 }
+        onViewCreatedCount =
+            savedInstanceState.getOr(SavedStateArgument.Int.ON_VIEW_CREATED_COUNT) { 0 }
         onCreatedCount++
     }
 

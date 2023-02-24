@@ -4,13 +4,11 @@ import android.content.res.AssetManager
 import com.google.gson.Gson
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import manual.app.data.MonetizationConfig
 import manual.app.data.Note
 import manual.app.data.NotesConfig
 import manual.app.database.IdGenerator

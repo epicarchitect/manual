@@ -6,10 +6,10 @@ import androidx.core.view.isVisible
 import androidx.transition.TransitionManager
 import kotlinx.coroutines.flow.onEach
 import manual.app.R
-import manual.core.coroutines.flow.launchWith
 import manual.app.databinding.PremiumOfferFragmentBinding
-import manual.core.fragment.CoreFragment
 import manual.app.premium.PremiumManager
+import manual.core.coroutines.flow.launchWith
+import manual.core.fragment.CoreFragment
 import manual.core.resources.read
 import org.koin.android.ext.android.inject
 
@@ -40,7 +40,11 @@ class PremiumOfferFragment(
         premiumManager.premiumEnabledFlow().onEach {
             if (it == true) {
                 delegate.onPremiumPurchased(this@PremiumOfferFragment)
-                Toast.makeText(requireContext(), R.string.premiumOfferFragment_finished, Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    requireContext(),
+                    R.string.premiumOfferFragment_finished,
+                    Toast.LENGTH_SHORT
+                ).show()
             }
         }.launchWith(viewLifecycleOwner)
     }

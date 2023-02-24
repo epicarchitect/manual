@@ -18,7 +18,19 @@ import manual.app.database.MainDatabase
 import manual.app.parser.ChapterParser
 import manual.app.premium.BillingClientManager
 import manual.app.premium.PremiumManager
-import manual.app.repository.*
+import manual.app.repository.AppBackgroundsRepository
+import manual.app.repository.ChapterGroupIconsRepository
+import manual.app.repository.ChapterGroupsRepository
+import manual.app.repository.ChapterIconsRepository
+import manual.app.repository.ChapterTagsRepository
+import manual.app.repository.ChaptersRepository
+import manual.app.repository.FavoriteChapterIdsRepository
+import manual.app.repository.LaunchConfigRepository
+import manual.app.repository.MonetizationConfigRepository
+import manual.app.repository.NotesRepository
+import manual.app.repository.TagGroupsRepository
+import manual.app.repository.TagsRepository
+import manual.app.repository.UnblockedChapterIdsRepository
 import manual.app.ui.AlertDialogManager
 import manual.app.ui.AudioAssetPlayer
 import manual.app.ui.FontScaleManager
@@ -94,9 +106,38 @@ class App : Application() {
     }
 
     fun viewModelsModule() = module {
-        viewModel { ChaptersViewModel(get(), get(), get(), get(), get(), get(), get(), get(), get()) }
-        viewModel { (chapterId: Int) -> ChapterViewModel(get(), get(), get(), get(), get(), get(), get(), chapterId) }
-        viewModel { (selectedTagIds: List<Int>) -> TagSelectionViewModel(get(), get(), selectedTagIds) }
+        viewModel {
+            ChaptersViewModel(
+                get(),
+                get(),
+                get(),
+                get(),
+                get(),
+                get(),
+                get(),
+                get(),
+                get()
+            )
+        }
+        viewModel { (chapterId: Int) ->
+            ChapterViewModel(
+                get(),
+                get(),
+                get(),
+                get(),
+                get(),
+                get(),
+                get(),
+                chapterId
+            )
+        }
+        viewModel { (selectedTagIds: List<Int>) ->
+            TagSelectionViewModel(
+                get(),
+                get(),
+                selectedTagIds
+            )
+        }
         viewModel { NotesViewModel(get()) }
         viewModel { (noteId: Int?) -> NoteViewModel(get(), noteId) }
     }

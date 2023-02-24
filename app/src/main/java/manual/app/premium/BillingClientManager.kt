@@ -19,9 +19,12 @@ class BillingClientManager(
 
     private val coroutineScope = CoroutineScope(Dispatchers.IO)
     private val statusStateFlow = MutableStateFlow<Status?>(null)
-    private val billingResultStateFlow = MutableStateFlow<Pair<BillingResult, List<Purchase>?>?>(null)
+    private val billingResultStateFlow =
+        MutableStateFlow<Pair<BillingResult, List<Purchase>?>?>(null)
     private val billingClient = BillingClient.newBuilder(application)
-        .setListener { billingResult, purchases -> billingResultStateFlow.value = billingResult to purchases }
+        .setListener { billingResult, purchases ->
+            billingResultStateFlow.value = billingResult to purchases
+        }
         .enablePendingPurchases()
         .build()
 

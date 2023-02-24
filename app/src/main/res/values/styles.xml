@@ -51,7 +51,9 @@
     <style name="Base.Widget.TextInputLayout.OutlinedBox.Dense" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense">
         <item name="boxStrokeWidth">1dp</item>
         <item name="boxStrokeWidthFocused">1dp</item>
-        <item name="materialThemeOverlay">@style/Base.ThemeOverlay.TextInputEditText.OutlinedBox.Dense</item>
+        <item name="materialThemeOverlay">
+            @style/Base.ThemeOverlay.TextInputEditText.OutlinedBox.Dense
+        </item>
     </style>
 
     <style name="Base.ThemeOverlay.TextInputEditText.OutlinedBox.Dense" parent="ThemeOverlay.MaterialComponents.TextInputEditText.OutlinedBox.Dense">

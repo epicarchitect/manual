@@ -5,11 +5,11 @@
     <text>
         Text
         <a href="manual://chapter/3">Chapter 3</a>
-        <br/>
+        <br />
 
         text
         <a href="manual://chapter/4">ссылка на какой то Chapter 4</a>
-        <br/>
+        <br />
     </text>
 
     <image source="data/data-2.jpg" />
@@ -22,46 +22,46 @@
     <text>
         Text
         <a href="manual://chapter/3">Chapter 3</a>
-        <br/>
+        <br />
 
         text
         <a href="manual://chapter/4">ссылка на какой то Chapter 4</a>
-        <br/>
+        <br />
 
         text
         <a href="https://www.youtube.com/">YouTube</a>
-        <br/>
+        <br />
         test dgkfkdjfkkgdjgfkfjgkfh vdgdfjkgnvbdg hdlgjhdgfhdgbdfbdlfgbdljxfgbldnglbdnxn
-        <br/>
+        <br />
         gsfhsfsfs slf slg s sldk f
 
         text
         <a href="https://vk.com/">VK</a>
-        <br/>
+        <br />
         test dgkfkdjfkkgdjgfkfjgkfh vdgdfjkgnvbdg hdlgjhdgfhdgbdfbdlfgbdljxfgbldnglbdnxn
-        <br/>
+        <br />
         gsfhsfsfs slf slg s sldk f
 
         text
         <a href="https://developer.android.com/jetpack/compose">Compose</a>
-        <br/>
+        <br />
         test dgkfkdjfkkgdjgfkfjgkfh vdgdfjkgnvbdg hdlgjhdgfhdgbdfbdlfgbdljxfgbldnglbdnxn
-        <br/>
+        <br />
         gsfhsfsfs slf slg s sldk f
 
-        <br/>
+        <br />
         test dgkfkdjfkkgdjgfkfjgkfh vdgdfjkgnvbdg hdlgjhdgfhdgbdfbdlfgbdljxfgbldnglbdnxn
-        <br/>
+        <br />
         gsfhsfsfs slf slg s sldk f
 
-        <br/>
+        <br />
         test dgkfkdjfkkgdjgfkfjgkfh vdgdfjkgnvbdg hdlgjhdgfhdgbdfbdlfgbdljxfgbldnglbdnxn
-        <br/>
+        <br />
         gsfhsfsfs slf slg s sldk f
 
-        <br/>
+        <br />
         test dgkfkdjfkkgdjgfkfjgkfh vdgdfjkgnvbdg hdlgjhdgfhdgbdfbdlfgbdljxfgbldnglbdnxn
-        <br/>
+        <br />
         gsfhsfsfs slf slg s sldk f
     </text>
     <audio source="data/russian_english_002.mp3" />

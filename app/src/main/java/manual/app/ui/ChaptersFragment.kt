@@ -17,7 +17,6 @@ import epicarchitect.recyclerview.EpicAdapter
 import epicarchitect.recyclerview.EpicAdapterBuilder
 import epicarchitect.recyclerview.bind
 import epicarchitect.recyclerview.requireEpicAdapter
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
@@ -26,7 +25,6 @@ import manual.app.ads.NativeAdsManager
 import manual.app.databinding.*
 import manual.app.repository.ChapterGroupIconsRepository
 import manual.app.repository.ChapterIconsRepository
-import manual.app.repository.NotesRepository
 import manual.app.viewmodel.ChaptersViewModel
 import manual.core.coroutines.flow.launchWith
 import manual.core.coroutines.flow.onEachChanged
@@ -77,7 +75,9 @@ class ChaptersFragment(private val delegate: Delegate) :
         }
 
         chaptersRecyclerView.adapter = EpicAdapter {
-            setup<ChaptersViewModel.Item.NotesButtonItem, ChaptertsNotesButtonItemBinding>(ChaptertsNotesButtonItemBinding::inflate) {
+            setup<ChaptersViewModel.Item.NotesButtonItem, ChaptertsNotesButtonItemBinding>(
+                ChaptertsNotesButtonItemBinding::inflate
+            ) {
                 bind { _ ->
                     root.setOnClickListener {
                         delegate.navigateToNotes(this@ChaptersFragment)

@@ -6,7 +6,8 @@ fun SeekBar.onStopProgressChanging(onChanged: (Int) -> Unit) {
     var lastProgress = progress
     setOnSeekBarChangeListener(
         object : SeekBar.OnSeekBarChangeListener {
-            override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) = Unit
+            override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) =
+                Unit
 
             override fun onStartTrackingTouch(seekBar: SeekBar) = Unit
 

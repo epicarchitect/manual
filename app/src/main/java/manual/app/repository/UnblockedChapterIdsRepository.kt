@@ -20,7 +20,8 @@ class UnblockedChapterIdsRepository(private val unblockedChapterIdsDao: Unblocke
         }
     }
 
-    fun isUnblockedChapterFlow(chapterId: Int) = unblockedChapterIdsDao.entityFlow(chapterId).map { it != null }
+    fun isUnblockedChapterFlow(chapterId: Int) =
+        unblockedChapterIdsDao.entityFlow(chapterId).map { it != null }
 
     fun unblockedChapterIdsFlow() = unblockedChapterIdsDao.entitiesFlow().mapItems { it.chapterId }
 

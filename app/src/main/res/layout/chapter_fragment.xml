@@ -2,10 +2,10 @@
 <androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/scrollView"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fillViewport="true"
-    android:id="@+id/scrollView">
+    android:fillViewport="true">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -103,8 +103,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:src="?attr/colorBackgroundFloating"
-                    tools:layout_marginTop="350dp"
-                    tools:ignore="ContentDescription" />
+                    tools:ignore="ContentDescription"
+                    tools:layout_marginTop="350dp" />
 
                 <TextView
                     android:id="@+id/premiumOffer_description_textView"
@@ -153,8 +153,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:src="?attr/colorBackgroundFloating"
-                    tools:layout_marginTop="350dp"
-                    tools:ignore="ContentDescription" />
+                    tools:ignore="ContentDescription"
+                    tools:layout_marginTop="350dp" />
 
                 <TextView
                     android:id="@+id/unlockByAdOffer_description_textView"

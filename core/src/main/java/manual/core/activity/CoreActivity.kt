@@ -91,6 +91,7 @@ abstract class CoreActivity<BINDING : ViewBinding>(
         object Int {
             const val ON_CREATED_COUNT = "ON_CREATED_COUNT"
         }
+
         object Parcelable {
             const val LAST_INTENT = "LAST_INTENT"
         }

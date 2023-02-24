@@ -6,12 +6,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.viewbinding.ViewBinding
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import manual.core.dialog.bottomsheet.CoreBottomSheetDialog
 import manual.core.fragment.CoreFragmentFactory
 import manual.core.fragment.FragmentFactoryStore
 import manual.core.os.getOr
-import com.google.android.material.bottomsheet.BottomSheetBehavior
-import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
 abstract class CoreBottomSheetDialogFragment<BINDING : ViewBinding>(
     private val inflateBinding: (LayoutInflater, ViewGroup?, Boolean) -> BINDING,
@@ -48,7 +48,8 @@ abstract class CoreBottomSheetDialogFragment<BINDING : ViewBinding>(
         super.onCreate(savedInstanceState)
         lastSavedInstanceState = savedInstanceState
         onCreatedCount = savedInstanceState.getOr(SavedStateArgument.Int.ON_CREATED_COUNT) { 0 }
-        onViewCreatedCount = savedInstanceState.getOr(SavedStateArgument.Int.ON_VIEW_CREATED_COUNT) { 0 }
+        onViewCreatedCount =
+            savedInstanceState.getOr(SavedStateArgument.Int.ON_VIEW_CREATED_COUNT) { 0 }
         onCreatedCount++
     }
 

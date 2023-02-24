@@ -1,6 +1,5 @@
 package manual.app.parser
 
-import android.util.Log
 import android.util.Xml
 import manual.app.data.Chapter
 import manual.app.data.Content
@@ -54,7 +53,7 @@ class ChapterParser {
         )
     }
 
-    private fun XmlPullParser.readTextTag(): Content.Text{
+    private fun XmlPullParser.readTextTag(): Content.Text {
         val stringBuilder = StringBuilder()
         val startDepth = depth
 

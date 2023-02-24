@@ -1,11 +1,15 @@
 package manual.core.viewmodel
 
 import androidx.lifecycle.ViewModel
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.launch
 
 abstract class CoreViewModel<STATE> : ViewModel() {
 
@@ -25,7 +29,8 @@ abstract class CoreViewModel<STATE> : ViewModel() {
 
     protected fun Flow<*>.launch() = launchIn(coroutineScope)
 
-    protected fun launch(block: suspend CoroutineScope.() -> Unit) = coroutineScope.launch(block = block)
+    protected fun launch(block: suspend CoroutineScope.() -> Unit) =
+        coroutineScope.launch(block = block)
 
     override fun onCleared() {
         coroutineScope.cancel()
