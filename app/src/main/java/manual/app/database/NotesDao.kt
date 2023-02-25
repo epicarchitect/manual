@@ -17,6 +17,6 @@ interface NotesDao {
     @Query("SELECT * FROM notes WHERE id = :id")
     fun entityFlow(id: Int): Flow<NoteEntity?>
 
-    @Query("SELECT * FROM notes")
+    @Query("SELECT * FROM notes ORDER BY id DESC")
     fun entitiesFlow(): Flow<List<NoteEntity>>
 }
