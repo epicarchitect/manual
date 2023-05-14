@@ -67,7 +67,7 @@ dependencies {
     implementation("io.insert-koin:koin-android:3.3.3")
 
     /** Json */
-    implementation("com.google.code.gson:gson:2.10")
+    implementation("com.google.code.gson:gson:2.10.1")
 
     /** Images */
     implementation("com.github.bumptech.glide:glide:4.15.1")
