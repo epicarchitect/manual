@@ -86,8 +86,7 @@ dependencies {
 
     /** Ads */
     implementation("com.google.android.gms:play-services-ads:22.0.0")
-    implementation("com.google.android.ads.consent:consent-library:1.0.8")
 
     /** Billing */
-    implementation("com.android.billingclient:billing-ktx:5.1.0")
+    implementation("com.android.billingclient:billing-ktx:6.0.0")
 }

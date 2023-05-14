@@ -4,7 +4,6 @@ import android.app.Activity
 import android.content.Context
 import android.util.Log
 import androidx.core.os.bundleOf
-import com.google.ads.consent.ConsentStatus
 import com.google.ads.mediation.admob.AdMobAdapter
 import com.google.android.gms.ads.AdError
 import com.google.android.gms.ads.AdRequest
@@ -17,10 +16,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import manual.app.R
 
-class RewardedAdManager(
-    private val context: Context,
-    private val gdprHelper: GDPRHelper
-) {
+class RewardedAdManager(private val context: Context) {
 
     private val isLoadedState = MutableStateFlow(false)
     private var currentActivity: Activity? = null
@@ -31,8 +27,6 @@ class RewardedAdManager(
             field = value
             isLoadedState.value = value != null
         }
-//    private val isPersonalized get() = gdprHelper.isEEA && gdprHelper.consentStatus == ConsentStatus.PERSONALIZED
-    private val isPersonalized = false
 
     private val fullScreenContentCallback = object : FullScreenContentCallback() {
         override fun onAdShowedFullScreenContent() {
@@ -85,31 +79,27 @@ class RewardedAdManager(
     }
 
     fun showRewardedVideo(activity: Activity, callback: RewardedVideoCallback) {
-        gdprHelper.checkConsent(activity) { status ->
-            currentActivity = activity
-            currentCallback = callback
-            if (rewardedAd != null && !isVideoRunning) {
-                rewardedAd?.show(activity, onUserEarnedRewardListener)
-            } else {
-                load()
-            }
+        currentActivity = activity
+        currentCallback = callback
+        if (rewardedAd != null && !isVideoRunning) {
+            rewardedAd?.show(activity, onUserEarnedRewardListener)
+        } else {
+            load()
         }
     }
 
-    private fun buildRequest(isPersonalized: Boolean) = AdRequest.Builder().apply {
-        if (!isPersonalized) {
-            addNetworkExtrasBundle(
-                AdMobAdapter::class.java,
-                bundleOf("npa" to "1")
-            )
-        }
+    private fun buildRequest() = AdRequest.Builder().apply {
+        addNetworkExtrasBundle(
+            AdMobAdapter::class.java,
+            bundleOf("npa" to "1")
+        )
     }.build()
 
     private fun load() {
         RewardedAd.load(
             context,
             context.getString(R.string.admob_rewardedAd_id),
-            buildRequest(isPersonalized),
+            buildRequest(),
             rewardedAdLoadCallback
         )
     }

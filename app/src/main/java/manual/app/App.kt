@@ -9,7 +9,6 @@ import com.google.android.play.core.review.ReviewManagerFactory
 import com.google.gson.GsonBuilder
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import manual.app.ads.GDPRHelper
 import manual.app.ads.InterstitialAdManager
 import manual.app.ads.NativeAdsManager
 import manual.app.ads.RewardedAdManager
@@ -62,10 +61,9 @@ class App : Application() {
     fun singlesModule() = module(createdAtStart = true) {
         single { IdGenerator(this@App) }
         single { AlertDialogManager() }
-        single { GDPRHelper(this@App) }
-        single { RewardedAdManager(this@App, get()) }
-        single { InterstitialAdManager(this@App, get()) }
-        single { NativeAdsManager(this@App, get()) }
+        single { RewardedAdManager(this@App) }
+        single { InterstitialAdManager(this@App) }
+        single { NativeAdsManager(this@App) }
         single { ReviewManagerFactory.create(this@App) }
         single { AppUpdateManagerFactory.create(this@App) }
         single { AudioAssetPlayer(this@App, CoroutineScope(Dispatchers.IO)) }

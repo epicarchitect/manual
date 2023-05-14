@@ -12,7 +12,6 @@ import epicarchitect.recyclerview.requireEpicAdapter
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import manual.app.R
-import manual.app.ads.GDPRHelper
 import manual.app.data.AppBackground
 import manual.app.databinding.BgItemBinding
 import manual.app.databinding.SettingsFragmentBinding
@@ -26,7 +25,6 @@ class SettingsFragment : CoreFragment<SettingsFragmentBinding>(SettingsFragmentB
 
     private val fontScaleManager: FontScaleManager by inject()
     private val nightModeManager: NightModeManager by inject()
-    private val gdprHelper: GDPRHelper by inject()
     private val appBackgroundsRepository: AppBackgroundsRepository by inject()
     private val monetizationConfigRepository: MonetizationConfigRepository by inject()
 

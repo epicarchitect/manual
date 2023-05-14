@@ -3,7 +3,6 @@ package manual.app.ads
 import android.content.Context
 import android.util.Log
 import androidx.core.os.bundleOf
-import com.google.ads.consent.ConsentStatus
 import com.google.ads.mediation.admob.AdMobAdapter
 import com.google.android.gms.ads.AdListener
 import com.google.android.gms.ads.AdLoader
@@ -14,14 +13,9 @@ import com.google.android.gms.ads.nativead.NativeAdOptions
 import manual.app.R
 import kotlin.random.Random
 
-class NativeAdsManager(
-    private val context: Context,
-    private val gdprHelper: GDPRHelper
-) {
+class NativeAdsManager(private val context: Context) {
 
     private val nativeAds = mutableListOf<NativeAd>()
-//    private val isPersonalized get() = gdprHelper.isEEA && gdprHelper.consentStatus == ConsentStatus.PERSONALIZED
-    private val isPersonalized = false
     private val random = Random(System.currentTimeMillis())
 
     init {
@@ -42,7 +36,7 @@ class NativeAdsManager(
             )
             .withNativeAdOptions(NativeAdOptions.Builder().build())
             .build()
-            .loadAds(buildRequest(isPersonalized), 20)
+            .loadAds(buildRequest(), 20)
     }
 
     fun randomNativeAd() = try {
@@ -52,12 +46,10 @@ class NativeAdsManager(
         null
     }
 
-    private fun buildRequest(isPersonalized: Boolean) = AdRequest.Builder().apply {
-        if (!isPersonalized) {
-            addNetworkExtrasBundle(
-                AdMobAdapter::class.java,
-                bundleOf("npa" to "1")
-            )
-        }
+    private fun buildRequest() = AdRequest.Builder().apply {
+        addNetworkExtrasBundle(
+            AdMobAdapter::class.java,
+            bundleOf("npa" to "1")
+        )
     }.build()
 }
