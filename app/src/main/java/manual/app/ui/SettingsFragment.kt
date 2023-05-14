@@ -87,10 +87,12 @@ class SettingsFragment : CoreFragment<SettingsFragmentBinding>(SettingsFragmentB
 
         monetizationConfigRepository.monetizationConfigFlow().onEach {
             val isAdsShowing = it.showInterstitialAds || it.showNativeAds
-            changeGdprButton.isVisible = isAdsShowing && gdprHelper.isEEA
-            gdprDescriptionTextView.isVisible = isAdsShowing && gdprHelper.isEEA
+//            changeGdprButton.isVisible = isAdsShowing && gdprHelper.isEEA
+//            gdprDescriptionTextView.isVisible = isAdsShowing && gdprHelper.isEEA
+            changeGdprButton.isVisible = false
+            gdprDescriptionTextView.isVisible = false
             changeGdprButton.setOnClickListener {
-                gdprHelper.openConsentDialog(requireActivity()) {}
+//                gdprHelper.openConsentDialog(requireActivity()) {}
             }
         }.launchWith(viewLifecycleOwner)
 
