@@ -80,9 +80,9 @@ dependencies {
     implementation("me.saket:better-link-movement-method:2.2.0")
 
     /** Database */
-    implementation("androidx.room:room-runtime:2.5.0")
-    implementation("androidx.room:room-ktx:2.5.0")
-    ksp("androidx.room:room-compiler:2.5.0")
+    implementation("androidx.room:room-runtime:2.5.1")
+    implementation("androidx.room:room-ktx:2.5.1")
+    ksp("androidx.room:room-compiler:2.5.1")
 
     /** Ads */
     implementation("com.google.android.gms:play-services-ads:21.5.0")
