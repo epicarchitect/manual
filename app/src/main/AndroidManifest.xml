@@ -38,6 +38,14 @@
             android:theme="@style/Activity"
             tools:ignore="LockedOrientationActivity" />
 
+        <activity
+            android:name=".ui.ImageActivity"
+            android:exported="true"
+            android:noHistory="true"
+            android:screenOrientation="portrait"
+            android:theme="@style/Activity"
+            tools:ignore="LockedOrientationActivity" />
+
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
             android:value="@string/admob_application_id" />

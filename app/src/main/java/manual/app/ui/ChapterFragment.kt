@@ -12,7 +12,6 @@ import androidx.core.view.updateLayoutParams
 import com.bumptech.glide.Glide
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.MediaItem
-import com.stfalcon.imageviewer.StfalconImageViewer
 import epicarchitect.recyclerview.EpicAdapter
 import epicarchitect.recyclerview.EpicAdapterBuilder
 import epicarchitect.recyclerview.bind
@@ -93,6 +92,7 @@ class ChapterFragment(
                     favoriteImageView.isVisible = false
                     favoriteImageView.setOnClickListener(null)
                 }
+
                 isBlocked -> {
                     if (canUnblockByAd) {
                         favoriteImageView.setImageResource(R.drawable.ic_unblock_key)
@@ -106,6 +106,7 @@ class ChapterFragment(
                         favoriteImageView.setOnClickListener(null)
                     }
                 }
+
                 else -> {
                     favoriteImageView.setImageResource(
                         if (isFavorite) R.drawable.ic_star_checked
@@ -154,6 +155,7 @@ class ChapterFragment(
                     scrollView.setOnTouchListener { _, _ -> true }
                     contentsRecyclerView.setOnTouchListener { _, _ -> true }
                 }
+
                 isBlocked == true && canUnblockByAd == true -> {
                     if (isRewardedAdLoaded) {
                         unlockByAdOfferLayout.isVisible = true
@@ -165,6 +167,7 @@ class ChapterFragment(
                     scrollView.setOnTouchListener { _, _ -> true }
                     contentsRecyclerView.setOnTouchListener { _, _ -> true }
                 }
+
                 else -> {
                     unlockByAdOfferLayout.isVisible = false
                     premiumOfferLayout.isVisible = false
@@ -210,9 +213,11 @@ class ChapterFragment(
                 nameTextView.text = item.name
                 Glide.with(root).load(item.uri).into(imageView)
                 imageView.setOnClickListener {
-                    StfalconImageViewer.Builder(context, listOf(item.uri)) { view, uri ->
-                        Glide.with(root).load(uri).into(view)
-                    }.withHiddenStatusBar(false).show()
+                    ImageActivity.open(
+                        context = it.context,
+                        uri = item.uri,
+                        title = item.name
+                    )
                 }
             }
         }

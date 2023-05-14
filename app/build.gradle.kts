@@ -2,6 +2,7 @@ plugins {
     id("com.android.application")
     id("kotlin-android")
     id("com.google.devtools.ksp") version "1.8.10-1.0.9"
+    id("kotlin-parcelize")
 }
 
 android {
@@ -69,9 +70,9 @@ dependencies {
     implementation("com.google.code.gson:gson:2.10")
 
     /** Images */
-    implementation("com.github.stfalcon-studio:StfalconImageViewer:v1.0.1")
-    implementation("com.github.bumptech.glide:glide:4.14.2")
-    ksp("com.github.bumptech.glide:compiler:4.14.2")
+    implementation("com.github.bumptech.glide:glide:4.15.1")
+    ksp("com.github.bumptech.glide:compiler:4.15.1")
+    implementation("com.davemorrissey.labs:subsampling-scale-image-view-androidx:3.10.0")
 
     /** Video */
     implementation("com.google.android.exoplayer:exoplayer:2.18.3")

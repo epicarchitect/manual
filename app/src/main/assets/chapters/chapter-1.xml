@@ -14,6 +14,7 @@
 
     <image source="data/data-2.jpg" />
     <image source="data/data-2.jpg" />
+    <image source="data/large-image.png" name="Large image" />
 
     <video source="data/1-1.mp4" />
 
