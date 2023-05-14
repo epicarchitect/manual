@@ -20,7 +20,8 @@ class NativeAdsManager(
 ) {
 
     private val nativeAds = mutableListOf<NativeAd>()
-    private val isPersonalized get() = gdprHelper.isEEA && gdprHelper.consentStatus == ConsentStatus.PERSONALIZED
+//    private val isPersonalized get() = gdprHelper.isEEA && gdprHelper.consentStatus == ConsentStatus.PERSONALIZED
+    private val isPersonalized = false
     private val random = Random(System.currentTimeMillis())
 
     init {

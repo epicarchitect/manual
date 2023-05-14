@@ -31,7 +31,8 @@ class RewardedAdManager(
             field = value
             isLoadedState.value = value != null
         }
-    private val isPersonalized get() = gdprHelper.isEEA && gdprHelper.consentStatus == ConsentStatus.PERSONALIZED
+//    private val isPersonalized get() = gdprHelper.isEEA && gdprHelper.consentStatus == ConsentStatus.PERSONALIZED
+    private val isPersonalized = false
 
     private val fullScreenContentCallback = object : FullScreenContentCallback() {
         override fun onAdShowedFullScreenContent() {
