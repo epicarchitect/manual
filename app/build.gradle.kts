@@ -71,11 +71,10 @@ dependencies {
 
     /** Images */
     implementation("com.github.bumptech.glide:glide:4.15.1")
-    ksp("com.github.bumptech.glide:compiler:4.15.1")
     implementation("com.davemorrissey.labs:subsampling-scale-image-view-androidx:3.10.0")
 
     /** Video */
-    implementation("com.google.android.exoplayer:exoplayer:2.18.3")
+    implementation("com.google.android.exoplayer:exoplayer:2.18.6")
 
     /** Links */
     implementation("me.saket:better-link-movement-method:2.2.0")
