@@ -85,7 +85,7 @@ dependencies {
     ksp("androidx.room:room-compiler:2.5.1")
 
     /** Ads */
-    implementation("com.google.android.gms:play-services-ads:21.5.0")
+    implementation("com.google.android.gms:play-services-ads:22.0.0")
     implementation("com.google.android.ads.consent:consent-library:1.0.8")
 
     /** Billing */
