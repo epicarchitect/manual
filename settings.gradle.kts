@@ -1,3 +1,5 @@
 rootProject.name = "Manual"
-include(":app")
-include(":core")
+include(
+    ":app",
+    ":core"
+)
