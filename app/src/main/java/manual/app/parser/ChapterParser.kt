@@ -72,11 +72,13 @@ class ChapterParser {
                     }
                     stringBuilder.append(">")
                 }
+
                 XmlPullParser.END_TAG -> {
                     stringBuilder.append("</")
                     stringBuilder.append(name)
                     stringBuilder.append(">")
                 }
+
                 XmlPullParser.TEXT -> {
                     stringBuilder.append(text)
                 }

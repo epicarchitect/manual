@@ -53,9 +53,11 @@ class SettingsFragment : CoreFragment<SettingsFragmentBinding>(SettingsFragmentB
                         AppBackgroundsRepository.lightAppBackground -> {
                             imageView.setImageResource(android.R.color.background_light)
                         }
+
                         AppBackgroundsRepository.nightAppBackground -> {
                             imageView.setImageResource(android.R.color.background_dark)
                         }
+
                         else -> {
                             Glide.with(root).load(Uri.parse("file:///android_asset/${item.source}"))
                                 .into(imageView)

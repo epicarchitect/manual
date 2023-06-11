@@ -74,17 +74,20 @@ class ChapterViewModel(
                                 it.name ?: "",
                                 Uri.parse("file:///android_asset/${it.source}")
                             )
+
                             is ContentData.Gif -> Content.Image(
                                 0,
                                 it.name ?: "",
                                 Uri.parse("file:///android_asset/${it.source}")
                             )
+
                             is ContentData.Audio -> Content.Audio(0, it.name ?: "", it.source)
                             is ContentData.Text -> Content.Html(
                                 0,
                                 "",
                                 HtmlCompat.fromHtml(it.value, HtmlCompat.FROM_HTML_MODE_COMPACT)
                             )
+
                             is ContentData.Video -> Content.Video(0, it.name ?: "", it.source)
                         }
                     }.toMutableList().apply {

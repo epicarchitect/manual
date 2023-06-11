@@ -93,9 +93,11 @@ class AppActivity : CoreActivity<AppActivityBinding>(AppActivityBinding::inflate
                 AppBackgroundsRepository.lightAppBackground -> {
                     backgroundImageView.setBackgroundResource(android.R.color.background_light)
                 }
+
                 AppBackgroundsRepository.nightAppBackground -> {
                     backgroundImageView.setBackgroundResource(android.R.color.background_dark)
                 }
+
                 else -> {
                     Glide.with(backgroundImageView)
                         .load(Uri.parse("file:///android_asset/${appBackground.source}"))

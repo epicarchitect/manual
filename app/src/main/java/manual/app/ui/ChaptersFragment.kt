@@ -187,6 +187,7 @@ class ChaptersFragment(private val delegate: Delegate) :
                     }
                     searchEditText.hideKeyboard()
                 }
+
                 is ChaptersViewModel.SearchState.ByName -> {
                     titleTextView.text = getString(R.string.chapters_title)
                     searchEditText.isVisible = true
@@ -200,6 +201,7 @@ class ChaptersFragment(private val delegate: Delegate) :
 
                     clearSearchButton.isVisible = !searchState.name.isNullOrEmpty()
                 }
+
                 is ChaptersViewModel.SearchState.ByTags -> {
                     titleTextView.text = getString(R.string.chapters_title)
                     clearSearchButton.isVisible = false
@@ -219,6 +221,7 @@ class ChaptersFragment(private val delegate: Delegate) :
                     }
                     searchEditText.hideKeyboard()
                 }
+
                 is ChaptersViewModel.SearchState.ByFavorites -> {
                     titleTextView.text = getString(R.string.chapters_title)
                     searchEditText.isVisible = false
@@ -275,6 +278,7 @@ class ChaptersFragment(private val delegate: Delegate) :
                                 )
                             )
                         }
+
                         else -> {
                             Glide.with(root.context)
                                 .load("file:///android_asset/${it.source}")
@@ -343,6 +347,7 @@ class ChaptersFragment(private val delegate: Delegate) :
                                 )
                             )
                         }
+
                         else -> {
                             Glide.with(root.context)
                                 .load("file:///android_asset/${it.source}")

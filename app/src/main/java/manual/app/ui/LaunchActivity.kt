@@ -40,6 +40,7 @@ class LaunchActivity : CoreActivity<LaunchActivityBinding>(LaunchActivityBinding
                         play()
                     }
                 }
+
                 else -> {
                     backgroundImageView.isVisible = true
                     playerView.isVisible = false

@@ -36,6 +36,7 @@ class PremiumManager(
                 is BillingClientManager.Status.Connected -> {
                     billingClientStateFlow.value = it.billingClient
                 }
+
                 is BillingClientManager.Status.Unavailable -> {
                     if (premiumEnabledStateFlow.value == null) {
                         premiumEnabledStateFlow.value = false
@@ -43,6 +44,7 @@ class PremiumManager(
 
                     billingClientStateFlow.value = null
                 }
+
                 else -> {
                     // nothing
                 }
