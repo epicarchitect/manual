@@ -6,29 +6,6 @@ plugins {
     id("convention.android.base")
 }
 
-android {
-    signingConfigs {
-        register("release") {
-            storeFile = file("signing/release.jks")
-            storePassword = "epicdebug"
-            keyAlias = "epicdebug"
-            keyPassword = "epicdebug"
-        }
-    }
-
-    buildTypes {
-        release {
-            signingConfig = signingConfigs.getByName("release")
-            isMinifyEnabled = false
-            isShrinkResources = false
-        }
-
-        debug {
-            applicationIdSuffix = ".debug"
-        }
-    }
-}
-
 dependencies {
     implementation(projects.core)
     implementation(libs.google.gson)
