@@ -34,7 +34,6 @@
         <activity
             android:name=".ui.AppActivity"
             android:exported="true"
-            android:screenOrientation="portrait"
             android:theme="@style/Activity"
             tools:ignore="LockedOrientationActivity" />
 
@@ -42,7 +41,6 @@
             android:name=".ui.ImageActivity"
             android:exported="true"
             android:noHistory="true"
-            android:screenOrientation="portrait"
             android:theme="@style/Activity"
             tools:ignore="LockedOrientationActivity" />
 

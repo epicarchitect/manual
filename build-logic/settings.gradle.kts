@@ -1,7 +1,6 @@
-enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
+rootProject.name = "build-logic"
 
 pluginManagement {
-    includeBuild("build-logic")
     repositories {
         google()
         mavenCentral()
@@ -11,18 +10,13 @@ pluginManagement {
 
 dependencyResolutionManagement {
     repositories {
-        google()
-        jcenter()
         mavenCentral()
-        maven("https://jitpack.io")
+        google()
+        gradlePluginPortal()
     }
-
     versionCatalogs {
         create("libs") {
-            from(files("libs.versions.toml"))
+            from(files("../libs.versions.toml"))
         }
     }
 }
-
-rootProject.name = "Manual"
-include(":app", ":core")
